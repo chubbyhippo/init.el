@@ -1,4 +1,4 @@
-(cua-mode)
-(pixel-scroll-precision-mode)
-(which-key-mode)
-(windmove-default-keybindings)
+(cua-mode 1)
+(pixel-scroll-precision-mode 1)
+(which-key-mode 1)
+(windmove-default-keybindings 'shift)
