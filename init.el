@@ -13,3 +13,10 @@
   :bind (
 	 ("C-;" . avy-goto-char-timer)
 	 ("C-:" . avy-goto-line)))
+
+(use-package expreg
+  :ensure t
+  :demand t
+  :bind (
+	 ("C-'" . expreg-expand)
+	 ("C-\"" . expreg-contract)))
