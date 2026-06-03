@@ -6,3 +6,10 @@
 (setopt auto-revert-interval 5)
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode 1)
+
+(use-package avy
+  :ensure t
+  :demand t
+  :bind (
+	 ("C-;" . avy-goto-char-timer)
+	 ("C-:" . avy-goto-line)))
