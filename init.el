@@ -7,8 +7,6 @@
 (setopt auto-revert-check-vc-info t)
 (global-auto-revert-mode 1)
 
-(unless (package-installed-p 'avy)
-  (package-install 'avy))
 (use-package avy
   :ensure t
   :demand t
