@@ -21,6 +21,13 @@
 	 ("C-'" . expreg-expand)
 	 ("C-\"" . expreg-contract)))
 
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-pcm-leading-wildcard t))
+
 (use-package emacs
   :config
   (load-theme 'modus-vivendi)) 
