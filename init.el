@@ -20,3 +20,7 @@
   :bind (
 	 ("C-'" . expreg-expand)
 	 ("C-\"" . expreg-contract)))
+
+(use-package emacs
+  :config
+  (load-theme 'modus-vivendi)) 
