@@ -55,7 +55,7 @@
 
 (use-package marginalia
   :ensure t
-  :config
+  :init
   (marginalia-mode 1))
 
 (use-package emacs
