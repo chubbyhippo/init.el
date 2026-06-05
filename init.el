@@ -48,6 +48,11 @@
   (completion-category-overrides '((file (styles partial-completion))))
   (completion-pcm-leading-wildcard t))
 
+(use-package vertico
+  :custom
+  :init
+  (vertico-mode 1))
+
 (use-package emacs
   :config
   (load-theme 'modus-vivendi)) 
