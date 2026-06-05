@@ -55,4 +55,14 @@
 
 (use-package emacs
   :config
-  (load-theme 'modus-vivendi)) 
+  (load-theme 'modus-vivendi))
+
+(use-package emacs
+  :config
+  (load-theme 'modus-vivendi)
+  :custom
+  (context-menu-mode t)
+  (enable-recursive-minibuffers t)
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
