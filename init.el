@@ -13,10 +13,15 @@
   :init
   (windmove-default-keybindings 'shift))
 
-(setopt auto-revert-avoid-polling t)
-(setopt auto-revert-interval 5)
-(setopt auto-revert-check-vc-info t)
-(global-auto-revert-mode 1)
+(use-package autorevert
+  :ensure nil
+  :custom
+  (auto-revert-avoid-polling t)
+  (auto-revert-interval 5)
+  (auto-revert-check-vc-info t)
+  :init
+  (global-auto-revert-mode 1))
+
 (savehist-mode 1)
 
 (use-package avy
