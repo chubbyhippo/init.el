@@ -22,7 +22,10 @@
   :init
   (global-auto-revert-mode 1))
 
-(savehist-mode 1)
+(use-package savehist
+  :ensure nil
+  :init
+  (savehist-mode 1))
 
 (use-package avy
   :ensure t
