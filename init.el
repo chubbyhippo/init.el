@@ -59,6 +59,8 @@
   (marginalia-mode 1))
 
 (use-package emacs
+  :init
+  (xterm-mouse-mode 1)
   :config
   (load-theme 'modus-vivendi)
   :custom
