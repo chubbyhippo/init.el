@@ -52,6 +52,7 @@
   :ensure t
   :init
   (vertico-mode 1))
+
 (use-package marginalia
   :ensure t
   :config
