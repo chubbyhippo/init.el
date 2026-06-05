@@ -3,7 +3,10 @@
   :init
   (pixel-scroll-precision-mode 1))
 
-(which-key-mode 1)
+(use-package which-key
+  :ensure nil
+  :init
+  (which-key-mode 1))
 (windmove-default-keybindings 'shift)
 
 (setopt auto-revert-avoid-polling t)
