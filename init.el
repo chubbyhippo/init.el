@@ -49,7 +49,7 @@
   (completion-pcm-leading-wildcard t))
 
 (use-package vertico
-  :custom
+  :ensure t
   :init
   (vertico-mode 1))
 (use-package marginalia
