@@ -60,10 +60,6 @@
 
 (use-package emacs
   :config
-  (load-theme 'modus-vivendi))
-
-(use-package emacs
-  :config
   (load-theme 'modus-vivendi)
   :custom
   (context-menu-mode t)
