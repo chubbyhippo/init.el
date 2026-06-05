@@ -52,6 +52,10 @@
   :custom
   :init
   (vertico-mode 1))
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
 
 (use-package emacs
   :config
