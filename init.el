@@ -7,7 +7,11 @@
   :ensure nil
   :init
   (which-key-mode 1))
-(windmove-default-keybindings 'shift)
+
+(use-package windmove
+  :ensure nil
+  :init
+  (windmove-default-keybindings 'shift))
 
 (setopt auto-revert-avoid-polling t)
 (setopt auto-revert-interval 5)
