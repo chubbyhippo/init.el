@@ -27,6 +27,8 @@
   :init
   (savehist-mode 1))
 
+;;; GNU ELPA
+
 (use-package avy
   :ensure t
   :demand t
@@ -72,6 +74,8 @@
         ("SPC" . corfu-insert-separator)
         ("C-n" . corfu-next)
         ("C-p" . corfu-previous)))
+
+;;; End GNU ELPA
 
 (use-package emacs
   :config
