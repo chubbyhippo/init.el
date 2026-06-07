@@ -77,6 +77,9 @@
 
 ;;; End GNU ELPA
 
+;;; NonGNU ELPA
+;;; End NonGNU ELPA
+
 (use-package emacs
   :config
   (load-theme 'modus-vivendi)
