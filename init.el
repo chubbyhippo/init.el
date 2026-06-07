@@ -135,6 +135,7 @@
 (use-package emacs
   :config
   (load-theme 'modus-vivendi)
+  (global-set-key (kbd "C-c SPC") #'set-mark-command)
   :custom
   (context-menu-mode t)
   (enable-recursive-minibuffers t)
