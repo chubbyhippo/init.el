@@ -60,11 +60,35 @@
   :init
   (marginalia-mode 1))
 
+(use-package consult
+  :ensure t
+  :bind (
+         ;; Drop-in replacements
+         ("C-x b" . consult-buffer)
+         ("M-y"   . consult-yank-pop)
+         ;; Searching
+         ("M-s r" . consult-ripgrep)
+         ("M-s l" . consult-line)
+         ("M-s s" . consult-line)
+         ("M-s L" . consult-line-multi)
+         ("M-s o" . consult-outline)
+         ;; Isearch integration
+         :map isearch-mode-map
+         ("M-e" . consult-isearch-history)
+         ("M-s e" . consult-isearch-history)
+         ("M-s l" . consult-line)
+         ("M-s L" . consult-line-multi))
+  :config
+  ;; Narrowing lets you restrict results to certain groups of candidates
+  (setq consult-narrow-key "<"))
+
+(use-package embark-consult
+  :ensure t)
 (use-package embark
   :ensure t
   :bind
   (("C-." . embark-act)
-   ("C-;" . embark-dwim)
+   ("M-." . embark-dwim)
    ("C-h B" . embark-bindings))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
