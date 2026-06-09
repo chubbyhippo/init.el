@@ -142,6 +142,7 @@
   (global-set-key (kbd "C-c SPC") #'set-mark-command)
   :custom
   (context-menu-mode t)
+  (tab-always-indent 'complete)
   (enable-recursive-minibuffers t)
   (read-extended-command-predicate #'command-completion-default-include-p)
   (minibuffer-prompt-properties
