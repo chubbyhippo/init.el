@@ -160,7 +160,9 @@
 (use-package emacs
   :config
   (load-theme 'modus-vivendi)
-  (global-set-key (kbd "C-c SPC") #'set-mark-command)
+  (define-key key-translation-map (kbd "ESC") (kbd "<f5>"))
+  (global-set-key (kbd "<f5> SPC") #'set-mark-command)
+  (global-set-key (kbd "<f5> <f5> <f5>") #'keyboard-escape-quit)
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
