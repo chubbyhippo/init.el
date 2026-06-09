@@ -27,6 +27,12 @@
   :init
   (savehist-mode 1))
 
+(use-package recentf
+  :ensure nil
+  :init 
+  (recentf-mode 1)
+  :custom 
+  (recentf-max-saved-items 200))
 ;;; GNU ELPA
 
 (use-package avy
