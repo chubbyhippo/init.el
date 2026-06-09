@@ -33,6 +33,7 @@
   (recentf-mode 1)
   :custom 
   (recentf-max-saved-items 200))
+
 ;;; GNU ELPA
 
 (use-package avy
