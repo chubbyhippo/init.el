@@ -43,7 +43,6 @@
 
 (use-package expreg
   :ensure t
-  :demand t
   :bind (
 	 ("C-'" . expreg-expand)
 	 ("C-\"" . expreg-contract)))
