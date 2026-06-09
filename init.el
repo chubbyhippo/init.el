@@ -37,7 +37,6 @@
 
 (use-package avy
   :ensure t
-  :demand t
   :bind (
 	 ("C-;" . avy-goto-char-timer)
 	 ("C-:" . avy-goto-line)))
