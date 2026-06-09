@@ -1,3 +1,8 @@
+;; Lower the GC ceiling raised in early-init.el once startup is done.
+(add-hook 'emacs-startup-hook
+          (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16 MB
+
+;;; Built-in
 (use-package pixel-scroll
   :ensure nil
   :init
@@ -33,9 +38,9 @@
   (recentf-mode 1)
   :custom 
   (recentf-max-saved-items 200))
+;;; End Built-in
 
 ;;; GNU ELPA
-
 (use-package avy
   :ensure t
   :bind (
@@ -137,11 +142,9 @@
   :bind ("C-x u" . vundo)
   :custom
   (vundo-glyph-alist vundo-unicode-symbols))
-
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
-
 (use-package multiple-cursors
   :ensure t
   :bind
