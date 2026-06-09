@@ -82,8 +82,6 @@
   ;; Narrowing lets you restrict results to certain groups of candidates
   (setq consult-narrow-key "<"))
 
-(use-package embark-consult
-  :ensure t)
 (use-package embark
   :ensure t
   :bind
