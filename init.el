@@ -131,6 +131,12 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file))
 
+(use-package vundo
+  :ensure t
+  :bind ("C-x u" . vundo)
+  :custom
+  (vundo-glyph-alist vundo-unicode-symbols))
+
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
