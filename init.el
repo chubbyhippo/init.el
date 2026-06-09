@@ -159,10 +159,7 @@
 
 (use-package emacs
   :config
-  (load-theme 'modus-vivendi)
-  (global-set-key (kbd "<f5>") 'leader)
-  (define-key leader (kbd "SPC")       #'set-mark-command)
-  (define-key leader (kbd "<f5> <f5>") #'keyboard-escape-quit) 
+  (load-theme 'modus-vivendi) 
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
