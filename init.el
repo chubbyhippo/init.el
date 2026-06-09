@@ -84,7 +84,13 @@
          ("M-s L" . consult-line-multi))
   :config
   ;; Narrowing lets you restrict results to certain groups of candidates
-  (setq consult-narrow-key "<"))
+  (setq consult-narrow-key "<")
+
+(setq xref-show-xrefs-function #'consult-xref
+      xref-show-definitions-function #'consult-xref)
+(setq register-preview-delay 0.5
+      register-preview-function #'consult-register-format)
+(advice-add #'register-preview :override #'consult-register-window))
 
 (use-package embark
   :ensure t
