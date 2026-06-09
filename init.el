@@ -16,7 +16,7 @@
 (use-package windmove
   :ensure nil
   :init
-  (windmove-default-keybindings 'shift))
+  (windmove-default-keybindings 'control))
 
 (use-package autorevert
   :ensure nil
