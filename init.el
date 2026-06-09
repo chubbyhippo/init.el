@@ -125,6 +125,12 @@
         ("C-n" . corfu-next)
         ("C-p" . corfu-previous)))
 
+(use-package cape
+  :ensure t
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file))
+
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
