@@ -114,6 +114,7 @@
   (corfu-cycle t)
   :init
   (global-corfu-mode 1)
+  (corfu-popupinfo-mode 1)
   :bind
   (:map corfu-map
         ("SPC" . corfu-insert-separator)
