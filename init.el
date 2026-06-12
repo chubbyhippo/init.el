@@ -7,7 +7,7 @@
   :config
   (load-theme 'modus-vivendi)
   (repeat-mode 1)
-  ;; Leader bindings: kanata NUM-thumb hold sends C-c <key> (see kanata-settings)
+  (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
