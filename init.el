@@ -89,8 +89,11 @@
   :ensure t
   :bind (
 	 ("M-o"     . avy-goto-char-timer)
-	 ("M-g g"   . avy-goto-line)   ; typing digits still = goto-line
-	 ("M-g M-g" . avy-goto-line)))
+	 ("M-g g"   . avy-goto-line)
+	 ("M-g M-g" . avy-goto-line)
+	 ("C-c j w" . avy-goto-word-2)
+	 ("C-c j l" . avy-goto-line)
+	 ("C-c j c" . avy-goto-char-timer)))
 
 (use-package expreg
   :ensure t
