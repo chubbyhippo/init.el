@@ -44,14 +44,21 @@
 (use-package avy
   :ensure t
   :bind (
-	 ("C-;" . avy-goto-char-timer)
-	 ("C-:" . avy-goto-line)))
+	 ("M-o"     . avy-goto-char-timer)
+	 ("M-g g"   . avy-goto-line)   ; typing digits still = goto-line
+	 ("M-g M-g" . avy-goto-line)))
 
 (use-package expreg
   :ensure t
   :bind (
-	 ("C-'" . expreg-expand)
-	 ("C-\"" . expreg-contract)))
+	 ("M-'" . expreg-expand))   ; M- works in emacs -nw (ESC prefix), C-' doesn't
+  :config
+  ;; contract only matters mid-sequence: M-' then ' = expand more, ; = contract
+  ;; (needs repeat-mode, enabled in the emacs block below)
+  (defvar-keymap expreg-repeat-map
+    :repeat t
+    "'" #'expreg-expand
+    ";" #'expreg-contract))
 
 (use-package orderless
   :ensure t
@@ -159,7 +166,8 @@
 
 (use-package emacs
   :config
-  (load-theme 'modus-vivendi) 
+  (load-theme 'modus-vivendi)
+  (repeat-mode 1)
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
