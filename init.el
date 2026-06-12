@@ -3,6 +3,18 @@
           (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16 MB
 
 ;;; Built-in
+(use-package emacs
+  :config
+  (load-theme 'modus-vivendi)
+  (repeat-mode 1)
+  :custom
+  (context-menu-mode t)
+  (tab-always-indent 'complete)
+  (enable-recursive-minibuffers t)
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt)))
+
 (use-package pixel-scroll
   :ensure nil
   :init
@@ -54,7 +66,7 @@
 	 ("M-'" . expreg-expand))   ; M- works in emacs -nw (ESC prefix), C-' doesn't
   :config
   ;; contract only matters mid-sequence: M-' then ' = expand more, ; = contract
-  ;; (needs repeat-mode, enabled in the emacs block below)
+  ;; (needs repeat-mode, enabled in the emacs block at the top)
   (defvar-keymap expreg-repeat-map
     :repeat t
     "'" #'expreg-expand
@@ -163,15 +175,3 @@
    ("C-c C-<" . mc/mark-all-like-this)))
 
 ;;; End NonGNU ELPA
-
-(use-package emacs
-  :config
-  (load-theme 'modus-vivendi)
-  (repeat-mode 1)
-  :custom
-  (context-menu-mode t)
-  (tab-always-indent 'complete)
-  (enable-recursive-minibuffers t)
-  (read-extended-command-predicate #'command-completion-default-include-p)
-  (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt)))
