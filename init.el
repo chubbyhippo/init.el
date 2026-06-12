@@ -57,6 +57,31 @@
   (recentf-mode 1)
   :custom 
   (recentf-max-saved-items 200))
+
+(use-package saveplace
+  :ensure nil
+  :init
+  (save-place-mode 1))
+
+(use-package delsel ;; typing replaces the active region — pairs with expreg
+  :ensure nil
+  :init
+  (delete-selection-mode 1))
+
+(use-package elec-pair
+  :ensure nil
+  :init
+  (electric-pair-mode 1))
+
+(use-package winner ;; C-c <left> = undo window layout change — pairs with windmove
+  :ensure nil
+  :init
+  (winner-mode 1))
+
+(use-package completion-preview ;; Emacs 30 ghost-text suggestion; coexists with corfu
+  :ensure nil
+  :init
+  (global-completion-preview-mode 1))
 ;;; End Built-in
 
 ;;; GNU ELPA
@@ -90,6 +115,14 @@
   :ensure t
   :init
   (vertico-mode 1))
+
+(use-package vertico-directory ;; ships inside the vertico package
+  :ensure nil
+  :after vertico
+  :bind (:map vertico-map
+              ("RET"   . vertico-directory-enter)
+              ("DEL"   . vertico-directory-delete-char)
+              ("M-DEL" . vertico-directory-delete-word)))
 
 (use-package marginalia
   :ensure t
@@ -180,5 +213,16 @@
    ("C-M->" . mc/skip-to-next-like-this)
    ("C-M-<" . mc/skip-to-previous-like-this)
    ("C-c C-<" . mc/mark-all-like-this)))
+
+(use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
+  :ensure t
+  :init
+  (unless (display-graphic-p)
+    (corfu-terminal-mode 1)))
+
+(use-package wgrep ;; consult-ripgrep → embark-export → C-c C-p → edit matches in place
+  :ensure t
+  :custom
+  (wgrep-auto-save-buffer t))
 
 ;;; End NonGNU ELPA
