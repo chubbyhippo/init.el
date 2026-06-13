@@ -73,7 +73,13 @@
 (use-package winner ;; C-c <left> = undo window layout change — pairs with windmove
   :ensure nil
   :init
-  (winner-mode 1))
+  (winner-mode 1)
+  :config
+  ;; After C-c <left>, keep cycling layouts with just <left>/<right>. Needs repeat-mode.
+  (defvar-keymap winner-repeat-map
+    :repeat t
+    "<left>"  #'winner-undo
+    "<right>" #'winner-redo))
 
 (use-package completion-preview ;; Emacs 30 ghost-text suggestion; coexists with corfu
   :ensure nil
