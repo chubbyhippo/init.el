@@ -98,14 +98,14 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-'" . expreg-expand))   ; M- works in emacs -nw (ESC prefix), C-' doesn't
+	 ("M-r" . expreg-expand))   ; base-layer key; M- still works in emacs -nw (ESC prefix)
   :config
-  ;; contract only matters mid-sequence: M-' then ' = expand more, ; = contract
+  ;; mid-sequence: M-r then . = expand more, , = contract
   ;; (needs repeat-mode, enabled in the emacs block at the top)
   (defvar-keymap expreg-repeat-map
     :repeat t
-    "'" #'expreg-expand
-    ";" #'expreg-contract))
+    "." #'expreg-expand
+    "," #'expreg-contract))
 
 (use-package orderless
   :ensure t
