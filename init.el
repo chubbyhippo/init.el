@@ -11,9 +11,6 @@
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
-  (keymap-global-set "C-c b" #'consult-buffer)
-  (keymap-global-set "C-c r" #'consult-ripgrep)
-  (keymap-global-set "C-c l" #'consult-line)
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -135,6 +132,9 @@
 (use-package consult
   :ensure t
   :bind (
+         ("C-c b" . consult-buffer)
+         ("C-c r" . consult-ripgrep)
+         ("C-c l" . consult-line)
          ;; Drop-in replacements
          ("C-x b" . consult-buffer)
          ("M-y"   . consult-yank-pop)
