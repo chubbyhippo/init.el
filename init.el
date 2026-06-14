@@ -13,6 +13,7 @@
   (save-place-mode 1)
   (delete-selection-mode 1) ; typing replaces the active region — pairs with expreg
   (electric-pair-mode 1)
+  (global-completion-preview-mode 1) ; Emacs 30 ghost-text suggestion; coexists with corfu
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -56,11 +57,6 @@
     :repeat t
     "<left>"  #'winner-undo
     "<right>" #'winner-redo))
-
-(use-package completion-preview ;; Emacs 30 ghost-text suggestion; coexists with corfu
-  :ensure nil
-  :init
-  (global-completion-preview-mode 1))
 ;;; End Built-in
 
 ;;; GNU ELPA
