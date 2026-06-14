@@ -9,6 +9,7 @@
   (repeat-mode 1)
   (which-key-mode 1)
   (pixel-scroll-precision-mode 1)
+  (savehist-mode 1)
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -34,11 +35,6 @@
   (auto-revert-check-vc-info t)
   :init
   (global-auto-revert-mode 1))
-
-(use-package savehist
-  :ensure nil
-  :init
-  (savehist-mode 1))
 
 (use-package recentf
   :ensure nil
