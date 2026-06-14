@@ -19,6 +19,7 @@
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (windmove-default-keybindings 'control)
+  (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -43,10 +44,6 @@
   :custom 
   (recentf-max-saved-items 200))
 
-(use-package winner ;; C-c <left> = undo window layout change — pairs with windmove
-  :ensure nil
-  :init
-  (winner-mode 1))
 ;;; End Built-in
 
 ;;; GNU ELPA
@@ -63,7 +60,8 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-r" . expreg-expand)))   ; base-layer key; M- still works in emacs -nw (ESC prefix)
+	 ("M-r" . expreg-expand)      ; base-layer key; M- still works in emacs -nw (ESC prefix)
+	 ("M-R" . expreg-contract)))  ; M-S-r contracts one step (re-press M-r to expand more)
 
 (use-package orderless
   :ensure t
@@ -175,7 +173,9 @@
    ("C-c m n" . mc/mark-next-like-this)
    ("C-c m p" . mc/mark-previous-like-this)
    ("C-c m a" . mc/mark-all-like-this)
-   ("C-c m d" . mc/mark-all-dwim)))
+   ("C-c m d" . mc/mark-all-dwim)
+   ("C-c m N" . mc/skip-to-next-like-this)
+   ("C-c m P" . mc/skip-to-previous-like-this)))
 
 (use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
   :ensure t
