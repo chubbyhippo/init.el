@@ -12,6 +12,7 @@
   (savehist-mode 1)
   (save-place-mode 1)
   (delete-selection-mode 1) ; typing replaces the active region — pairs with expreg
+  (electric-pair-mode 1)
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -44,11 +45,6 @@
   (recentf-mode 1)
   :custom 
   (recentf-max-saved-items 200))
-
-(use-package elec-pair
-  :ensure nil
-  :init
-  (electric-pair-mode 1))
 
 (use-package winner ;; C-c <left> = undo window layout change — pairs with windmove
   :ensure nil
