@@ -8,6 +8,7 @@
   (load-theme 'modus-vivendi)
   (repeat-mode 1)
   (which-key-mode 1)
+  (pixel-scroll-precision-mode 1)
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -19,11 +20,6 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)))
-
-(use-package pixel-scroll
-  :ensure nil
-  :init
-  (pixel-scroll-precision-mode 1))
 
 (use-package windmove
   :ensure nil
