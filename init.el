@@ -11,6 +11,7 @@
   (pixel-scroll-precision-mode 1)
   (savehist-mode 1)
   (save-place-mode 1)
+  (delete-selection-mode 1) ; typing replaces the active region — pairs with expreg
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -43,11 +44,6 @@
   (recentf-mode 1)
   :custom 
   (recentf-max-saved-items 200))
-
-(use-package delsel ;; typing replaces the active region — pairs with expreg
-  :ensure nil
-  :init
-  (delete-selection-mode 1))
 
 (use-package elec-pair
   :ensure nil
