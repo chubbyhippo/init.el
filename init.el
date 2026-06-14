@@ -96,14 +96,7 @@
 	 ("M-g M-g" . avy-goto-line)
 	 ("C-c j w" . avy-goto-char-2)
 	 ("C-c j l" . avy-goto-line)
-	 ("C-c j c" . avy-goto-char-timer))
-  :config
-  ;; After a jump, re-jump with just w / l / c. Needs repeat-mode.
-  (defvar-keymap avy-repeat-map
-    :repeat t
-    "w" #'avy-goto-char-2
-    "l" #'avy-goto-line
-    "c" #'avy-goto-char-timer))
+	 ("C-c j c" . avy-goto-char-timer)))
 
 (use-package expreg
   :ensure t
