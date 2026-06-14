@@ -46,13 +46,7 @@
 (use-package winner ;; C-c <left> = undo window layout change — pairs with windmove
   :ensure nil
   :init
-  (winner-mode 1)
-  :config
-  ;; After C-c <left>, keep cycling layouts with just <left>/<right>. Needs repeat-mode.
-  (defvar-keymap winner-repeat-map
-    :repeat t
-    "<left>"  #'winner-undo
-    "<right>" #'winner-redo))
+  (winner-mode 1))
 ;;; End Built-in
 
 ;;; GNU ELPA
@@ -69,14 +63,7 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-r" . expreg-expand))   ; base-layer key; M- still works in emacs -nw (ESC prefix)
-  :config
-  ;; mid-sequence: M-r then . = expand more, , = contract
-  ;; (needs repeat-mode, enabled in the emacs block at the top)
-  (defvar-keymap expreg-repeat-map
-    :repeat t
-    "." #'expreg-expand
-    "," #'expreg-contract))
+	 ("M-r" . expreg-expand)))   ; base-layer key; M- still works in emacs -nw (ESC prefix)
 
 (use-package orderless
   :ensure t
@@ -188,15 +175,7 @@
    ("C-c m n" . mc/mark-next-like-this)
    ("C-c m p" . mc/mark-previous-like-this)
    ("C-c m a" . mc/mark-all-like-this)
-   ("C-c m d" . mc/mark-all-dwim))
-  :config
-  ;; After C-c m n/p, keep marking with just n/p (skip with N/P). Needs repeat-mode.
-  (defvar-keymap mc-repeat-map
-    :repeat t
-    "n" #'mc/mark-next-like-this
-    "p" #'mc/mark-previous-like-this
-    "N" #'mc/skip-to-next-like-this
-    "P" #'mc/skip-to-previous-like-this))
+   ("C-c m d" . mc/mark-all-dwim)))
 
 (use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
   :ensure t
