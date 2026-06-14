@@ -18,6 +18,7 @@
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
+  (windmove-default-keybindings 'control)
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -25,11 +26,6 @@
   (read-extended-command-predicate #'command-completion-default-include-p)
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)))
-
-(use-package windmove
-  :ensure nil
-  :init
-  (windmove-default-keybindings 'control))
 
 (use-package autorevert
   :ensure nil
