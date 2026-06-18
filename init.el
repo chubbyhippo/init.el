@@ -11,7 +11,7 @@
   (pixel-scroll-precision-mode 1)
   (savehist-mode 1)
   (save-place-mode 1)
-  (delete-selection-mode 1) ; typing replaces the active region — pairs with expreg
+  (cua-mode 1)              ; C-c/C-x/C-v copy/cut/paste when region active; C-z undo; includes delete-selection-mode
   (electric-pair-mode 1)
   (global-completion-preview-mode 1) ; Emacs 30 ghost-text suggestion; coexists with corfu
   (keymap-set key-translation-map "M-m" "C-c")
