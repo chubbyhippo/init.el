@@ -18,7 +18,9 @@
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
-  (windmove-default-keybindings 'control)
+  (keymap-global-set "C-z"   #'undo-only)
+  (keymap-global-set "C-S-z" #'undo-redo)
+  (windmove-default-keybindings)
   (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
   :custom
   (context-menu-mode t)
