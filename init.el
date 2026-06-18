@@ -11,7 +11,8 @@
   (pixel-scroll-precision-mode 1)
   (savehist-mode 1)
   (save-place-mode 1)
-  (cua-mode 1)              ; C-c/C-x/C-v copy/cut/paste when region active; C-z undo; includes delete-selection-mode
+  (delete-selection-mode 1) ; typing replaces the active region — pairs with expreg
+  (keymap-global-set "C-v" #'yank)
   (electric-pair-mode 1)
   (global-completion-preview-mode 1) ; Emacs 30 ghost-text suggestion; coexists with corfu
   (keymap-set key-translation-map "M-m" "C-c")
@@ -20,6 +21,17 @@
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
+  (define-prefix-command 'leader-map)
+  (keymap-global-set "M-SPC" 'leader-map)
+  (keymap-set leader-map "f" #'find-file)
+  (keymap-set leader-map "s" #'save-buffer)
+  (keymap-set leader-map "k" #'kill-current-buffer)
+  (keymap-set leader-map "b" #'consult-buffer)
+  (keymap-set leader-map "r" #'consult-ripgrep)
+  (keymap-set leader-map "l" #'consult-line)
+  (keymap-set leader-map "j w" #'avy-goto-char-2)
+  (keymap-set leader-map "j l" #'avy-goto-line)
+  (keymap-set leader-map "j c" #'avy-goto-char-timer)
   (windmove-default-keybindings)
   (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
   :custom
