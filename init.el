@@ -13,7 +13,8 @@
   (save-place-mode 1)
   (cua-mode 1)              ; C-c/C-x/C-v copy/cut/paste (region-aware); includes delete-selection-mode
   (electric-pair-mode 1)
-  (global-completion-preview-mode 1) ; Emacs 30 ghost-text suggestion; coexists with corfu
+  (when (fboundp 'global-completion-preview-mode)
+    (global-completion-preview-mode 1)) ; Emacs 30 ghost-text suggestion; coexists with corfu
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -115,12 +116,11 @@
   :config
   ;; Narrowing lets you restrict results to certain groups of candidates
   (setq consult-narrow-key "<")
-
-(setq xref-show-xrefs-function #'consult-xref
-      xref-show-definitions-function #'consult-xref)
-(setq register-preview-delay 0.5
-      register-preview-function #'consult-register-format)
-(advice-add #'register-preview :override #'consult-register-window))
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
+  (setq register-preview-delay 0.5
+        register-preview-function #'consult-register-format)
+  (advice-add #'register-preview :override #'consult-register-window))
 
 (use-package embark
   :ensure t
@@ -146,6 +146,7 @@
   (corfu-auto-delay 0.2)
   (corfu-auto-prefix 2)
   (corfu-cycle t)
+  (corfu-popupinfo-delay '(0.5 . 0.1))
   :init
   (global-corfu-mode 1)
   (corfu-popupinfo-mode 1)
@@ -266,11 +267,11 @@
      '("O" . meow-to-block)
      '("p" . meow-yank)
      '("q" . meow-quit)
-     '("Q" . meow-goto-line)
+     '("Q" . avy-goto-line)
      '("r" . meow-replace)
      '("R" . meow-swap-grab)
-     '("s" . avy-goto-char-timer)
-     '("S" . avy-goto-line)
+     '("s" . meow-kill)
+     '("S" . avy-goto-char-timer)
      '("t" . meow-till)
      '("u" . meow-undo)
      '("U" . meow-undo-in-selection)
