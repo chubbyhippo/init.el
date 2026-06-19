@@ -5,7 +5,7 @@
 ;;; Built-in
 (use-package emacs
   :config
-  (load-theme 'modus-vivendi)
+  (load-theme 'modus-operandi)
   (repeat-mode 1)
   (which-key-mode 1)
   (pixel-scroll-precision-mode 1)
