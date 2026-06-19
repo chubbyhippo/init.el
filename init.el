@@ -196,12 +196,15 @@
 (use-package multiple-cursors
   :ensure t
   :bind
-  (("C-S-c C-S-c" . mc/edit-lines)
-   ("C->" . mc/mark-next-like-this)
-   ("C-<" . mc/mark-previous-like-this)
-   ("C-M->" . mc/skip-to-next-like-this)
-   ("C-M-<" . mc/skip-to-previous-like-this)
-   ("C-c C-<" . mc/mark-all-like-this)))
+  (("C-c m l" . mc/edit-lines)
+   ("C-c m n" . mc/mark-next-like-this)
+   ("C-c m p" . mc/mark-previous-like-this)
+   ("C-c m N" . mc/skip-to-next-like-this)
+   ("C-c m P" . mc/skip-to-previous-like-this)
+   ("C-c m a" . mc/mark-all-like-this))
+  :hook
+  (multiple-cursors-mode-enabled  . meow-insert-mode)
+  (multiple-cursors-mode-disabled . meow-normal-mode))
 
 (use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
   :ensure t
