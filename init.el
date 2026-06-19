@@ -20,17 +20,7 @@
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
-  (define-prefix-command 'leader-map)
-  (keymap-global-set "M-SPC" 'leader-map)
-  (keymap-set leader-map "f" #'find-file)
-  (keymap-set leader-map "s" #'save-buffer)
-  (keymap-set leader-map "k" #'kill-current-buffer)
-  (keymap-set leader-map "b" #'consult-buffer)
-  (keymap-set leader-map "r" #'consult-ripgrep)
-  (keymap-set leader-map "l" #'consult-line)
-  (keymap-set leader-map "j w" #'avy-goto-char-2)
-  (keymap-set leader-map "j l" #'avy-goto-line)
-  (keymap-set leader-map "j c" #'avy-goto-char-timer)
+  ;; These C-c keys double as leader shortcuts: SPC f, SPC s, SPC k (see Meow below).
   (windmove-default-keybindings)
   (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
   :custom
@@ -199,5 +189,103 @@
   :ensure t
   :custom
   (wgrep-auto-save-buffer t))
+
+;; Meow brings Vim-style modal editing. You're always in one of two main states:
+;;   NORMAL — keys run commands (move, select, edit); you start here.
+;;   INSERT — keys type text; enter with i or a, leave with ESC.
+;; Press SPC in NORMAL state to open the leader (your command menu).
+(use-package meow
+  :ensure t
+  :demand t
+  :config
+  (defun my/meow-setup ()
+    "Meow's standard keybindings for a QWERTY keyboard."
+    (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+    ;; MOTION state: used in read-only buffers — j/k move, ESC does nothing.
+    (meow-motion-overwrite-define-key
+     '("j" . meow-next)
+     '("k" . meow-prev)
+     '("<escape>" . ignore))
+    ;; Leader (SPC) keys: 0-9 repeat a command, / explains a key, ? shows the cheatsheet.
+    (meow-leader-define-key
+     '("1" . meow-digit-argument)
+     '("2" . meow-digit-argument)
+     '("3" . meow-digit-argument)
+     '("4" . meow-digit-argument)
+     '("5" . meow-digit-argument)
+     '("6" . meow-digit-argument)
+     '("7" . meow-digit-argument)
+     '("8" . meow-digit-argument)
+     '("9" . meow-digit-argument)
+     '("0" . meow-digit-argument)
+     '("/" . meow-keypad-describe-key)
+     '("?" . meow-cheatsheet))
+    ;; NORMAL state: every key is an editing command (i/a to start typing).
+    (meow-normal-define-key
+     '("0" . meow-expand-0)
+     '("9" . meow-expand-9)
+     '("8" . meow-expand-8)
+     '("7" . meow-expand-7)
+     '("6" . meow-expand-6)
+     '("5" . meow-expand-5)
+     '("4" . meow-expand-4)
+     '("3" . meow-expand-3)
+     '("2" . meow-expand-2)
+     '("1" . meow-expand-1)
+     '("-" . negative-argument)
+     '(";" . meow-reverse)
+     '("," . meow-inner-of-thing)
+     '("." . meow-bounds-of-thing)
+     '("[" . meow-beginning-of-thing)
+     '("]" . meow-end-of-thing)
+     '("a" . meow-append)
+     '("A" . meow-open-below)
+     '("b" . meow-back-word)
+     '("B" . meow-back-symbol)
+     '("c" . meow-change)
+     '("d" . meow-delete)
+     '("D" . meow-backward-delete)
+     '("e" . meow-next-word)
+     '("E" . meow-next-symbol)
+     '("f" . meow-find)
+     '("g" . meow-cancel-selection)
+     '("G" . meow-grab)
+     '("h" . meow-left)
+     '("H" . meow-left-expand)
+     '("i" . meow-insert)
+     '("I" . meow-open-above)
+     '("j" . meow-next)
+     '("J" . meow-next-expand)
+     '("k" . meow-prev)
+     '("K" . meow-prev-expand)
+     '("l" . meow-right)
+     '("L" . meow-right-expand)
+     '("m" . meow-join)
+     '("n" . meow-search)
+     '("o" . meow-block)
+     '("O" . meow-to-block)
+     '("p" . meow-yank)
+     '("q" . meow-quit)
+     '("Q" . meow-goto-line)
+     '("r" . meow-replace)
+     '("R" . meow-swap-grab)
+     '("s" . meow-kill)
+     '("t" . meow-till)
+     '("u" . meow-undo)
+     '("U" . meow-undo-in-selection)
+     '("v" . meow-visit)
+     '("w" . meow-mark-word)
+     '("W" . meow-mark-symbol)
+     '("x" . meow-line)
+     '("X" . meow-goto-line)
+     '("y" . meow-save)
+     '("Y" . meow-sync-grab)
+     '("z" . meow-pop-selection)
+     '("'" . repeat)
+     '("<escape>" . ignore)))
+  (my/meow-setup)
+  ;; M-SPC opens the leader even while typing (INSERT state).
+  (keymap-global-set "M-SPC" #'meow-keypad)
+  (meow-global-mode 1))
 
 ;;; End NonGNU ELPA
