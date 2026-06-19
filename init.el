@@ -48,6 +48,12 @@
   :custom 
   (recentf-max-saved-items 200))
 
+(use-package eglot
+  :ensure nil
+  :hook (prog-mode . eglot-ensure)
+  :custom
+  (eglot-autoshutdown t))
+
 ;;; End Built-in
 
 ;;; GNU ELPA
@@ -150,6 +156,9 @@
   :init
   (global-corfu-mode 1)
   (corfu-popupinfo-mode 1)
+  (corfu-history-mode 1)
+  :config
+  (add-to-list 'savehist-additional-variables 'corfu-history)
   :bind
   (:map corfu-map
         ("SPC" . corfu-insert-separator)
@@ -160,7 +169,15 @@
   :ensure t
   :init
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file))
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-keyword)
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (setq-local completion-at-point-functions
+                          (list (cape-capf-super #'eglot-completion-at-point
+                                                 #'cape-dabbrev)
+                                #'cape-file
+                                #'cape-keyword)))))
 
 (use-package vundo
   :ensure t
@@ -170,6 +187,12 @@
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
+(use-package eat
+  :ensure t
+  :hook
+  (eshell-load . eat-eshell-mode)
+  (eshell-load . eat-eshell-visual-command-mode))
+
 (use-package multiple-cursors
   :ensure t
   :bind
