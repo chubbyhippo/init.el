@@ -11,7 +11,6 @@
   (pixel-scroll-precision-mode 1)
   (savehist-mode 1)
   (save-place-mode 1)
-  (cua-mode 1)              ; C-c/C-x/C-v copy/cut/paste (region-aware); includes delete-selection-mode
   (electric-pair-mode 1)
   (when (fboundp 'global-completion-preview-mode)
     (global-completion-preview-mode 1)) ; Emacs 30 ghost-text suggestion; coexists with corfu
@@ -21,7 +20,6 @@
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
-  ;; These C-c keys double as leader shortcuts: SPC f, SPC s, SPC k (see Meow below).
   (windmove-default-keybindings)
   (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
   :custom
