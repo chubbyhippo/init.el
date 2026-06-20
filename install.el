@@ -5,4 +5,5 @@
        (dir  (expand-file-name "~/.config/emacs/")))
   (make-directory dir t)
   (dolist (file '("early-init.el" "init.el"))
-    (url-copy-file (concat base file) (expand-file-name file dir) t)))
+    (url-copy-file (concat base file) (expand-file-name file dir) t)
+    (message "Installed %s -> %s" file dir)))
