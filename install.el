@@ -1,4 +1,5 @@
 (require 'url)
+(setq url-show-status nil)
 
 (let* ((base "https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/")
        (dir  (expand-file-name "~/.config/emacs/")))
