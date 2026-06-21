@@ -57,6 +57,8 @@
 ;;; GNU ELPA
 (use-package avy
   :ensure t
+  :custom
+  (avy-timeout-seconds 0.25)
   :bind (
 	 ("M-o"     . avy-goto-char-timer)
 	 ("M-g g"   . avy-goto-line)
