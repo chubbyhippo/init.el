@@ -1,4 +1,4 @@
 * init.el
 #+begin_src shell
-emacs --batch --eval "$(curl -fsSL https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/install.el)"
+emacs --batch --eval "(require 'url) (with-current-buffer (url-retrieve-synchronously \"https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/install.el\") (goto-char url-http-end-of-headers) (forward-char) (eval-region (point) (point-max)))"
 #+end_src
