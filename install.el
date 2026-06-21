@@ -6,4 +6,4 @@
     (dolist (file '("early-init.el" "init.el"))
       (let ((inhibit-message t))
         (url-copy-file (concat base file) (expand-file-name file dir) t))
-      (princ (format "Installed %s -> %s\n" file dir)))))
+      (message "Installed %s -> %s" file dir))))
