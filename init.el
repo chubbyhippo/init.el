@@ -217,6 +217,18 @@
   :custom
   (wgrep-auto-save-buffer t))
 
+(use-package magit
+  :ensure t
+  :bind (("C-x g"   . magit-status)
+         ("C-x M-g" . magit-dispatch)
+         ("C-c M-g" . magit-file-dispatch))
+  :config
+  ;; Keep magit's read-only buffers in meow MOTION state — NORMAL would shadow its
+  ;; single-key commands (s stage, c commit, p push, f fetch, l log, d diff…).
+  (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
+                  magit-revision-mode magit-stash-mode magit-process-mode))
+    (add-to-list 'meow-mode-state-list (cons mode 'motion))))
+
 ;; Meow brings Vim-style modal editing. You're always in one of two main states:
 ;;   NORMAL — keys run commands (move, select, edit); you start here.
 ;;   INSERT — keys type text; enter with i or a, leave with ESC.
