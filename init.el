@@ -225,9 +225,10 @@
   :config
   ;; Keep magit's read-only buffers in meow MOTION state — NORMAL would shadow its
   ;; single-key commands (s stage, c commit, p push, f fetch, l log, d diff…).
-  (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
-                  magit-revision-mode magit-stash-mode magit-process-mode))
-    (add-to-list 'meow-mode-state-list (cons mode 'motion))))
+  (with-eval-after-load 'meow
+    (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
+                    magit-revision-mode magit-stash-mode magit-process-mode))
+      (add-to-list 'meow-mode-state-list (cons mode 'motion)))))
 
 ;; Meow brings Vim-style modal editing. You're always in one of two main states:
 ;;   NORMAL — keys run commands (move, select, edit); you start here.
