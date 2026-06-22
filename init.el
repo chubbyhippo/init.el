@@ -206,7 +206,14 @@
   :ensure t
   :hook
   (eshell-load . eat-eshell-mode)
-  (eshell-load . eat-eshell-visual-command-mode))
+  (eshell-load . eat-eshell-visual-command-mode)
+  :config
+  ;; Eshell visual commands (less, htop, top…) spawn a dedicated eat-mode
+  ;; terminal. Put it in meow INSERT so every key passes straight through —
+  ;; otherwise meow guesses MOTION and steals SPC/j/k (a pager's page- and
+  ;; scroll-keys). ESC still exits to NORMAL, but visual commands quit with q.
+  (with-eval-after-load 'meow
+    (add-to-list 'meow-mode-state-list '(eat-mode . insert))))
 
 (use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
   :ensure t
@@ -217,7 +224,18 @@
 (use-package wgrep ;; consult-ripgrep → embark-export → C-c C-p → edit matches in place
   :ensure t
   :custom
-  (wgrep-auto-save-buffer t))
+  (wgrep-auto-save-buffer t)
+  :config
+  ;; The grep buffer is read-only, so meow leaves it in MOTION. C-c C-p makes it
+  ;; editable but only swaps the local keymap (major mode stays grep-mode), so
+  ;; meow-mode-state-list can't catch it. Hop to NORMAL on edit (i to type — in
+  ;; MOTION meow would eat SPC/j/k out of your edits) and back to MOTION when you
+  ;; finish or abort. Mirrors meow's own `occur-edit-mode' . normal default.
+  (with-eval-after-load 'meow
+    (advice-add 'wgrep-change-to-wgrep-mode :after
+                (lambda (&rest _) (meow--switch-state 'normal)))
+    (advice-add 'wgrep-to-original-mode :after
+                (lambda (&rest _) (meow--switch-state 'motion)))))
 
 (use-package magit
   :ensure t
