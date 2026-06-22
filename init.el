@@ -52,6 +52,20 @@
   :custom
   (eglot-autoshutdown t))
 
+(use-package org
+  :ensure nil
+  :hook (org-mode . visual-line-mode)         ; soft-wrap prose instead of truncating
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c l" . org-store-link))
+  :custom
+  (org-directory "~/org")
+  (org-agenda-files (list org-directory))
+  (org-startup-indented t)                    ; virtual indent under headlines (enables org-indent-mode)
+  (org-return-follows-link t)                 ; RET opens the link at point
+  (org-hide-emphasis-markers t)               ; render *bold*/=code= without the markers
+  (org-catch-invisible-edits 'show-and-error)) ; never silently edit inside folded text
+
 ;;; End Built-in
 
 ;;; GNU ELPA
@@ -103,7 +117,6 @@
   :bind (
          ("C-c b" . consult-buffer)
          ("C-c r" . consult-ripgrep)
-         ("C-c l" . consult-line)
          ;; Drop-in replacements
          ("C-x b" . consult-buffer)
          ("M-y"   . consult-yank-pop)
