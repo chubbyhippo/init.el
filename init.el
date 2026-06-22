@@ -133,6 +133,8 @@
          ("M-s l" . consult-line)
          ("M-s L" . consult-line-multi))
   :config
+  ;; Recenter after any consult jump so the target line isn't at the edge.
+  (add-hook 'consult-after-jump-hook #'recenter)
   ;; Narrowing lets you restrict results to certain groups of candidates
   (setq consult-narrow-key "<")
   (setq xref-show-xrefs-function #'consult-xref
@@ -259,7 +261,11 @@
      '("9" . meow-digit-argument)
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
-     '("?" . meow-cheatsheet))
+     '("?" . meow-cheatsheet)
+     ;; Consult shortcuts — explicit so keypad translation doesn't lose the rebinds.
+     '("b"   . consult-buffer)
+     '("s"   . consult-line)
+     '("x b" . consult-buffer))
     ;; NORMAL state: every key is an editing command (i/a to start typing).
     (meow-normal-define-key
      '("0" . meow-expand-0)
