@@ -392,14 +392,20 @@
   "b" #'balance-windows
   "," #'winner-undo               ; step back through window-layout history
   "." #'winner-redo               ; step forward (after a winner-undo)
+  "u" #'my/text-scale-reset       ; reset zoom  ("undo" zoom — home alias of 0)
+  "i" #'text-scale-increase       ; zoom in     (home alias of =)
+  "o" #'text-scale-decrease       ; zoom out    (home alias of -)
   "=" #'text-scale-increase       ; zoom in
   "-" #'text-scale-decrease       ; zoom out
   "0" #'my/text-scale-reset)      ; reset zoom
 (keymap-set global-map "C-c w" my/window-map)
 
-;; repeat-mode is on, so after the first zoom just keep tapping =/-/0
+;; repeat-mode is on, so after the first zoom just keep tapping i/o/u (or =/-/0)
 (defvar-keymap my/text-scale-repeat-map
   :repeat t
+  "i" #'text-scale-increase
+  "o" #'text-scale-decrease
+  "u" #'my/text-scale-reset
   "=" #'text-scale-increase
   "-" #'text-scale-decrease
   "0" #'my/text-scale-reset)
