@@ -203,7 +203,7 @@
 
 (use-package ace-window
   :ensure t
-  :bind ([remap other-window] . ace-window)   ; label each window, jump by key (also powers C-c w o)
+  :bind ([remap other-window] . ace-window)   ; label each window, jump by key (also powers C-c w w)
   :custom
   (aw-scope 'frame)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
@@ -378,7 +378,7 @@
   "s" #'split-window-below        ; one stacked on the other
   "d" #'delete-window             ; close this window  (old C-x 0)
   "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
-  "o" #'other-window              ; ace-window remaps this once it's loaded
+  "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
   "h" #'windmove-left
   "j" #'windmove-down
   "k" #'windmove-up
