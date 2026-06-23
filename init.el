@@ -118,8 +118,9 @@
          ("C-c b" . consult-buffer)
          ("C-c r" . consult-ripgrep)
          ;; replacements for the stock bindings
-         ("C-x b" . consult-buffer)
-         ("M-y"   . consult-yank-pop)
+         ("C-x b"   . consult-buffer)
+         ("C-x C-b" . consult-buffer)   ; ditch the clunky buffer list for the good switcher
+         ("M-y"     . consult-yank-pop)
          ;; search
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
@@ -199,6 +200,13 @@
   :bind ("C-x u" . vundo)
   :custom
   (vundo-glyph-alist vundo-unicode-symbols))
+
+(use-package ace-window
+  :ensure t
+  :bind ([remap other-window] . ace-window)   ; label each window, jump by key (also powers C-c w o)
+  :custom
+  (aw-scope 'frame)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
@@ -356,3 +364,36 @@
   (meow-global-mode 1))
 
 ;;; End NonGNU ELPA
+
+;;; Window management
+;; mnemonic submenu on C-c w (meow: SPC w), which-key spells out the whole menu
+(defun my/text-scale-reset ()
+  "Reset this buffer's text size back to the default."
+  (interactive)
+  (text-scale-set 0))
+
+(defvar-keymap my/window-map
+  :doc "window commands"
+  "v" #'split-window-right        ; two side by side
+  "s" #'split-window-below        ; one stacked on the other
+  "d" #'delete-window             ; close this window  (old C-x 0)
+  "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
+  "o" #'other-window              ; ace-window remaps this once it's loaded
+  "h" #'windmove-left
+  "j" #'windmove-down
+  "k" #'windmove-up
+  "l" #'windmove-right
+  "b" #'balance-windows
+  "u" #'winner-undo
+  "r" #'winner-redo
+  "=" #'text-scale-increase       ; zoom in
+  "-" #'text-scale-decrease       ; zoom out
+  "0" #'my/text-scale-reset)      ; reset zoom
+(keymap-set global-map "C-c w" my/window-map)
+
+;; repeat-mode is on, so after the first zoom just keep tapping =/-/0
+(defvar-keymap my/text-scale-repeat-map
+  :repeat t
+  "=" #'text-scale-increase
+  "-" #'text-scale-decrease
+  "0" #'my/text-scale-reset)
