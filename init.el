@@ -383,6 +383,10 @@
   "j" #'windmove-down
   "k" #'windmove-up
   "l" #'windmove-right
+  "H" #'windmove-swap-states-left   ; swap this window's buffer with the neighbour
+  "J" #'windmove-swap-states-down   ; (capitals mirror the h/j/k/l move keys)
+  "K" #'windmove-swap-states-up
+  "L" #'windmove-swap-states-right
   "b" #'balance-windows
   "u" #'winner-undo
   "r" #'winner-redo
