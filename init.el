@@ -390,8 +390,8 @@
   "K" #'windmove-swap-states-up
   "L" #'windmove-swap-states-right
   "b" #'balance-windows
-  "u" #'winner-undo
-  "r" #'winner-redo
+  "," #'winner-undo               ; step back through window-layout history
+  "." #'winner-redo               ; step forward (after a winner-undo)
   "=" #'text-scale-increase       ; zoom in
   "-" #'text-scale-decrease       ; zoom out
   "0" #'my/text-scale-reset)      ; reset zoom
