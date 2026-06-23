@@ -403,3 +403,9 @@
   "=" #'text-scale-increase
   "-" #'text-scale-decrease
   "0" #'my/text-scale-reset)
+
+;; after the first winner step, keep tapping ,/. to walk window-layout history
+(defvar-keymap my/winner-repeat-map
+  :repeat t
+  "," #'winner-undo
+  "." #'winner-redo)
