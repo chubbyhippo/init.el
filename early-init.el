@@ -1,25 +1,24 @@
-;; Raise the GC ceiling during startup so it doesn't collect mid-load.
-;; It is lowered again after startup in init.el (emacs-startup-hook).
+;; no GC while we're starting up. init.el puts it back to normal afterwards.
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; Don't resize the frame when the menu bar / font changes — saves startup time.
+;; don't reflow the frame when the menu bar or font changes, it just slows startup
 (setq frame-inhibit-implied-resize t)
 
-;; Prefer a newer .el to a stale .elc.
+;; load a fresh .el over a stale .elc
 (setq load-prefer-newer t)
 
-;; Don't let X resources override the config.
+;; leave my config alone, ignore X resources
 (setq inhibit-x-resources t)
 
-;; Skip the splash screen.
+;; no splash screen
 (setq inhibit-startup-screen t
       inhibit-startup-echo-area-message user-login-name)
 
-;; Drop UI chrome BEFORE the first frame is drawn (no flicker).
+;; strip the toolbar/scrollbar/menubar before the first frame paints, otherwise it flickers
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 
-;; Quieter, eager native compilation.
+;; keep native-comp quiet and compile packages when they install
 (setq native-comp-async-report-warnings-errors 'silent
       package-native-compile t)

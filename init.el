@@ -1,6 +1,6 @@
-;; Lower the GC ceiling raised in early-init.el once startup is done.
+;; startup's over, so drop the GC ceiling back down (early-init.el cranked it up)
 (add-hook 'emacs-startup-hook
-          (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16 MB
+          (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16mb
 
 ;;; Built-in
 (use-package emacs
@@ -13,7 +13,7 @@
   (save-place-mode 1)
   (electric-pair-mode 1)
   (when (fboundp 'global-completion-preview-mode)
-    (global-completion-preview-mode 1)) ; Emacs 30 ghost-text suggestion; coexists with corfu
+    (global-completion-preview-mode 1)) ; emacs 30 ghost text, happy alongside corfu
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
@@ -21,7 +21,7 @@
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
   (windmove-default-keybindings)
-  (winner-mode 1) ; C-c <left>/<right> = undo/redo window layout — pairs with windmove
+  (winner-mode 1) ; C-c left/right undoes/redoes window layouts, goes with windmove
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -54,17 +54,17 @@
 
 (use-package org
   :ensure nil
-  :hook (org-mode . visual-line-mode)         ; soft-wrap prose instead of truncating
+  :hook (org-mode . visual-line-mode)         ; wrap long lines instead of chopping them off
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c l" . org-store-link))
   :custom
   (org-directory "~/org")
   (org-agenda-files (list org-directory))
-  (org-startup-indented t)                    ; virtual indent under headlines (enables org-indent-mode)
-  (org-return-follows-link t)                 ; RET opens the link at point
-  (org-hide-emphasis-markers t)               ; render *bold*/=code= without the markers
-  (org-catch-invisible-edits 'show-and-error)) ; never silently edit inside folded text
+  (org-startup-indented t)                    ; fake indent under headlines (this is what turns on org-indent-mode)
+  (org-return-follows-link t)                 ; RET follows the link under point
+  (org-hide-emphasis-markers t)               ; hide the *bold* and =code= markers
+  (org-catch-invisible-edits 'show-and-error)) ; warn me before I edit inside folded text
 
 ;;; End Built-in
 
@@ -84,8 +84,8 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-r" . expreg-expand)      ; base-layer key; M- still works in emacs -nw (ESC prefix)
-	 ("M-R" . expreg-contract)))  ; M-S-r contracts one step (re-press M-r to expand more)
+	 ("M-r" . expreg-expand)      ; M- still reachable in the terminal via the ESC prefix
+	 ("M-R" . expreg-contract)))  ; M-S-r shrinks a step; mash M-r to grow again
 
 (use-package orderless
   :ensure t
@@ -99,7 +99,7 @@
   :init
   (vertico-mode 1))
 
-(use-package vertico-directory ;; ships inside the vertico package
+(use-package vertico-directory ;; bundled with vertico
   :ensure nil
   :after vertico
   :bind (:map vertico-map
@@ -117,25 +117,25 @@
   :bind (
          ("C-c b" . consult-buffer)
          ("C-c r" . consult-ripgrep)
-         ;; Drop-in replacements
+         ;; replacements for the stock bindings
          ("C-x b" . consult-buffer)
          ("M-y"   . consult-yank-pop)
-         ;; Searching
+         ;; search
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
          ("M-s s" . consult-line)
          ("M-s L" . consult-line-multi)
          ("M-s o" . consult-outline)
-         ;; Isearch integration
+         ;; isearch
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)
          ("M-s e" . consult-isearch-history)
          ("M-s l" . consult-line)
          ("M-s L" . consult-line-multi))
   :config
-  ;; Recenter after any consult jump so the target line isn't at the edge.
+  ;; recenter after a consult jump, otherwise the hit lands at the screen edge
   (add-hook 'consult-after-jump-hook #'recenter)
-  ;; Narrowing lets you restrict results to certain groups of candidates
+  ;; type < then a key to narrow results down to one group
   (setq consult-narrow-key "<")
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
@@ -208,29 +208,29 @@
   (eshell-load . eat-eshell-mode)
   (eshell-load . eat-eshell-visual-command-mode)
   :config
-  ;; Eshell visual commands (less, htop, top…) spawn a dedicated eat-mode
-  ;; terminal. Put it in meow INSERT so every key passes straight through —
-  ;; otherwise meow guesses MOTION and steals SPC/j/k (a pager's page- and
-  ;; scroll-keys). ESC still exits to NORMAL, but visual commands quit with q.
+  ;; visual commands in eshell (less, htop, top...) get their own eat-mode
+  ;; terminal. shove it into meow INSERT so every key passes straight through,
+  ;; otherwise meow assumes MOTION and grabs the SPC/j/k a pager needs to page
+  ;; and scroll. ESC still drops you to NORMAL, but you quit these with q.
   (with-eval-after-load 'meow
     (add-to-list 'meow-mode-state-list '(eat-mode . insert))))
 
-(use-package corfu-terminal ;; corfu popups in emacs -nw (Emacs 30 has no tty child frames)
+(use-package corfu-terminal ;; gives corfu popups in the terminal (emacs 30 can't do tty child frames)
   :ensure t
   :init
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
 
-(use-package wgrep ;; consult-ripgrep → embark-export → C-c C-p → edit matches in place
+(use-package wgrep ;; consult-ripgrep, embark-export, then C-c C-p to edit the matches in place
   :ensure t
   :custom
   (wgrep-auto-save-buffer t)
   :config
-  ;; The grep buffer is read-only, so meow leaves it in MOTION. C-c C-p makes it
-  ;; editable but only swaps the local keymap (major mode stays grep-mode), so
-  ;; meow-mode-state-list can't catch it. Hop to NORMAL on edit (i to type — in
-  ;; MOTION meow would eat SPC/j/k out of your edits) and back to MOTION when you
-  ;; finish or abort. Mirrors meow's own `occur-edit-mode' . normal default.
+  ;; grep buffers are read-only so meow parks them in MOTION. C-c C-p makes them
+  ;; editable but only swaps the local keymap (still grep-mode underneath), so
+  ;; meow-mode-state-list never catches it. jump to NORMAL on edit (you need i to
+  ;; type, and MOTION would eat SPC/j/k mid-edit) and back to MOTION when you're
+  ;; done or bail out. same trick meow uses for its own `occur-edit-mode' . normal.
   (with-eval-after-load 'meow
     (advice-add 'wgrep-change-to-wgrep-mode :after
                 (lambda (&rest _) (meow--switch-state 'normal)))
@@ -243,17 +243,17 @@
          ("C-x M-g" . magit-dispatch)
          ("C-c M-g" . magit-file-dispatch))
   :config
-  ;; Keep magit's read-only buffers in meow MOTION state — NORMAL would shadow its
-  ;; single-key commands (s stage, c commit, p push, f fetch, l log, d diff…).
+  ;; keep magit's read-only buffers in MOTION; NORMAL would stomp on its
+  ;; single-key commands (s stage, c commit, p push, f fetch, l log, d diff).
   (with-eval-after-load 'meow
     (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
                     magit-revision-mode magit-stash-mode magit-process-mode))
       (add-to-list 'meow-mode-state-list (cons mode 'motion)))))
 
-;; Meow brings Vim-style modal editing. You're always in one of two main states:
-;;   NORMAL — keys run commands (move, select, edit); you start here.
-;;   INSERT — keys type text; enter with i or a, leave with ESC.
-;; Press SPC in NORMAL state to open the leader (your command menu).
+;; meow is vim-flavored modal editing. mostly two states:
+;;   NORMAL: keys run commands (move, select, edit). you start here.
+;;   INSERT: keys type text. i or a to get in, ESC to get out.
+;; hit SPC in NORMAL to pop the leader (the command menu).
 (use-package meow
   :ensure t
   :demand t
@@ -261,12 +261,12 @@
   (defun my/meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    ;; MOTION state: used in read-only buffers — j/k move, ESC does nothing.
+    ;; MOTION: for read-only buffers. j/k move, ESC does nothing.
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
      '("k" . meow-prev)
      '("<escape>" . ignore))
-    ;; Leader (SPC) keys: 0-9 repeat a command, / explains a key, ? shows the cheatsheet.
+    ;; leader (SPC): 0-9 give a count, / explains a key, ? brings up the cheatsheet.
     (meow-leader-define-key
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
@@ -280,11 +280,11 @@
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
-     ;; Consult shortcuts — explicit so keypad translation doesn't lose the rebinds.
+     ;; consult shortcuts, spelled out so keypad translation doesn't drop them
      '("b"   . consult-buffer)
      '("s"   . consult-line)
      '("x b" . consult-buffer))
-    ;; NORMAL state: every key is an editing command (i/a to start typing).
+    ;; NORMAL: every key edits (i/a when you actually want to type).
     (meow-normal-define-key
      '("0" . meow-expand-0)
      '("9" . meow-expand-9)
@@ -351,7 +351,7 @@
      '("'" . repeat)
      '("<escape>" . ignore)))
   (my/meow-setup)
-  ;; M-SPC opens the leader even while typing (INSERT state).
+  ;; M-SPC reaches the leader even from INSERT
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 
