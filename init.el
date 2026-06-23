@@ -377,6 +377,7 @@
   "v" #'split-window-right        ; two side by side
   "s" #'split-window-below        ; one stacked on the other
   "d" #'delete-window             ; close this window  (old C-x 0)
+  "D" #'delete-other-windows      ; delete the OTHERS — keep this one (also on `m`)
   "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
   "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
   "W" #'ace-swap-window           ; swap two windows by ace label (W = swap, w = jump)
