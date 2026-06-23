@@ -379,6 +379,7 @@
   "d" #'delete-window             ; close this window  (old C-x 0)
   "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
   "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
+  "W" #'ace-swap-window           ; swap two windows by ace label (W = swap, w = jump)
   "h" #'windmove-left
   "j" #'windmove-down
   "k" #'windmove-up
