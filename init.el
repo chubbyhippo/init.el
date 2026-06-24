@@ -22,6 +22,7 @@
   (keymap-global-set "C-S-z" #'undo-redo)
   (windmove-default-keybindings)
   (winner-mode 1) ; C-c left/right undoes/redoes window layouts, goes with windmove
+  (setq read-process-output-max (* 1024 1024)) ; 1MB pipe reads (default 64KB) → snappier LSP
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -50,7 +51,8 @@
   :ensure nil
   :hook (prog-mode . eglot-ensure)
   :custom
-  (eglot-autoshutdown t))
+  (eglot-autoshutdown t)
+  (eglot-events-buffer-config '(:size 0 :format full))) ; stop logging every LSP event (perf)
 
 (use-package org
   :ensure nil
