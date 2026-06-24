@@ -94,7 +94,13 @@
   (defvar-keymap expreg-repeat-map
     :repeat t
     "." #'expreg-expand
-    "," #'expreg-contract))
+    "," #'expreg-contract)
+  ;; we enter with r / e (M-r, C-c e, M-R), none of which are keys in the map above.
+  ;; repeat-check-key defaults to t and refuses to arm the map unless the *invoking*
+  ;; key is itself one of the repeat keys — so . / , would never start repeating.
+  ;; skip that check for these two commands.
+  (put 'expreg-expand   'repeat-check-key 'no)
+  (put 'expreg-contract 'repeat-check-key 'no))
 
 (use-package orderless
   :ensure t
