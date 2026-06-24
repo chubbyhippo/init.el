@@ -224,6 +224,22 @@
   :custom
   (aw-scope 'frame)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+
+(use-package diff-hl
+  :ensure t
+  :demand t                                          ; :hook defers; force eager so the global mode turns on at startup
+  :hook
+  (dired-mode         . diff-hl-dired-mode)          ; VCS status in Dired
+  (magit-post-refresh . diff-hl-magit-post-refresh)  ; refresh the gutter after magit stages/commits (pre-refresh is obsolete)
+  :custom
+  (diff-hl-update-async t)                            ; diff off the main thread — no UI stalls in big repos
+  :config
+  ;; navigation lives on C-x v (] / [ next/prev hunk, n revert, * show, S stage) and is
+  ;; already repeat-mode-aware: C-x v ] then keep tapping ] / [ to walk hunks.
+  (global-diff-hl-mode 1)
+  (diff-hl-flydiff-mode 1)                            ; update the gutter live, before you save
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode 1)))                         ; no fringe in a terminal -> draw in the margin
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
