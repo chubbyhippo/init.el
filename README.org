@@ -1,4 +1,4 @@
 * init.el
 #+begin_src shell
-emacs --batch --eval "(require 'url)" --eval "(let*((b(url-retrieve-synchronously \"https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/install.el\"))(s(with-current-buffer b(goto-char url-http-end-of-headers)(forward-char)(buffer-substring-no-properties(point)(point-max)))))(kill-buffer b)(eval(read s)))"
+emacs --batch --eval "(require 'url)" --eval "(let*((url-show-status nil)(b(url-retrieve-synchronously \"https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/install.el\"))(s(with-current-buffer b(goto-char url-http-end-of-headers)(forward-char)(buffer-substring-no-properties(point)(point-max)))))(kill-buffer b)(eval(read s)))"
 #+end_src

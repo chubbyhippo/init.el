@@ -1,6 +1,7 @@
 (progn
   (require 'url)
-  (let* ((base "https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/")
+  (let* ((url-show-status nil)        ; silence url.el's "Contacting host: ..." progress line
+         (base "https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/")
          (dir  (expand-file-name "~/.config/emacs/")))
     (make-directory dir t)
     (dolist (file '("early-init.el" "init.el"))
