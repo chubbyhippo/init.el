@@ -84,8 +84,17 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-r" . expreg-expand)      ; M- still reachable in the terminal via the ESC prefix
-	 ("M-R" . expreg-contract)))  ; M-S-r shrinks a step; mash M-r to grow again
+	 ("M-r"   . expreg-expand)    ; M- stays reachable in the terminal via the ESC prefix
+	 ("C-c e" . expreg-expand)    ; e = expand; alternate entry (also M-m e via key-translation-map)
+	 ("M-R"   . expreg-contract)) ; M-S-r shrinks a step; mash M-r (or tap . below) to grow again
+  :config
+  ;; repeat-mode: after any expreg command, tap . to grow or , to shrink
+  ;; (unshifted </> — same magnitude mnemonic, no shift to press). transient, so it
+  ;; never clashes with meow's , / . (inner/bounds-of-thing) — any other key ends the run.
+  (defvar-keymap expreg-repeat-map
+    :repeat t
+    "." #'expreg-expand
+    "," #'expreg-contract))
 
 (use-package orderless
   :ensure t
