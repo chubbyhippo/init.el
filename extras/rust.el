@@ -9,7 +9,7 @@
 ;;   - rust-analyzer (rustup component add rust-analyzer) — eglot launches it
 ;;     automatically for completion / xref / refactors / formatting once it's
 ;;     on PATH
-;;   - the CodeLLDB adapter (`codelldb') — driven here by dape for
+;;   - LLVM's lldb-dap (or lldb-vscode) — driven here by dape for
 ;;     breakpoints/stepping
 ;;   - the tree-sitter grammar (M-x treesit-install-language-grammar RET rust) —
 ;;     until then .rs isn't auto-detected
@@ -40,9 +40,9 @@
 
 ;;; GNU ELPA
 ;; DAP-based debugging that pairs with eglot (no lsp-mode needed). To debug:
-;; M-x dape, choose the `codelldb-rust' config (it uses the CodeLLDB adapter, so
-;; codelldb must be installed). Set breakpoints with `dape-breakpoint-toggle';
-;; n / c step once a session stops.
+;; M-x dape, choose `lldb-dap' (or `lldb-vscode') — it debugs the built binary
+;; via LLDB, so the LLVM lldb tools must be installed. Set breakpoints with
+;; `dape-breakpoint-toggle'; n / c step once a session stops.
 (use-package dape
   :ensure t
   :commands (dape dape-breakpoint-toggle)

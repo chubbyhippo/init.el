@@ -11,8 +11,8 @@
 ;; supply the external tools:
 ;;   - clangd — eglot launches it automatically for every C/C++ buffer once it's
 ;;     on PATH; the one server handles both, reading compile_commands.json
-;;   - the CodeLLDB adapter (`codelldb') — driven here by dape for
-;;     breakpoints/stepping
+;;   - a native debugger for dape — GDB 14.1+ (native DAP), LLVM's lldb-dap, or
+;;     the cpptools adapter — for breakpoints/stepping
 ;;   - the tree-sitter grammars (M-x treesit-install-language-grammar RET c,
 ;;     then again for cpp) — until then C/C++ files open in the classic cc-mode
 ;;
@@ -45,9 +45,9 @@
 
 ;;; GNU ELPA
 ;; DAP-based debugging that pairs with eglot (no lsp-mode needed). To debug:
-;; M-x dape, choose the `codelldb-cc' config (it uses the CodeLLDB adapter, so
-;; codelldb must be installed). Set breakpoints with `dape-breakpoint-toggle';
-;; n / c step once a session stops.
+;; M-x dape and pick a config for your debugger — `gdb' (GDB 14.1+, native DAP),
+;; `lldb-dap', `lldb-vscode', or `cpptools'; install the matching tool. Set
+;; breakpoints with `dape-breakpoint-toggle'; n / c step once a session stops.
 (use-package dape
   :ensure t
   :commands (dape dape-breakpoint-toggle)

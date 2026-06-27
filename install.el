@@ -9,6 +9,7 @@
                     "extras/cpp.el"
                     "extras/go.el"
                     "extras/java.el"
+                    "extras/php.el"
                     "extras/python.el"
                     "extras/rust.el"
                     "extras/typescript.el"))
