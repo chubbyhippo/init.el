@@ -12,7 +12,8 @@
                     "extras/php.el"
                     "extras/python.el"
                     "extras/rust.el"
-                    "extras/typescript.el"))
+                    "extras/typescript.el"
+                    "extras/zig.el"))
       (let ((dest (expand-file-name file dir)))
         (make-directory (file-name-directory dest) t)  ; create dir / extras/ as needed
         (let ((inhibit-message t))
