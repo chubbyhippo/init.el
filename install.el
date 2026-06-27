@@ -3,8 +3,16 @@
   (let* ((url-show-status nil)        ; silence url.el's "Contacting host: ..." progress line
          (base "https://raw.githubusercontent.com/chubbyhippo/init.el/refs/heads/main/")
          (dir  (expand-file-name "~/.config/emacs/")))
-    (make-directory dir t)
-    (dolist (file '("early-init.el" "init.el"))
-      (let ((inhibit-message t))
-        (url-copy-file (concat base file) (expand-file-name file dir) t))
-      (message "Installed %s -> %s" file dir))))
+    (dolist (file '("early-init.el"
+                    "init.el"
+                    "extras/clojure.el"
+                    "extras/go.el"
+                    "extras/java.el"
+                    "extras/python.el"
+                    "extras/rust.el"
+                    "extras/typescript.el"))
+      (let ((dest (expand-file-name file dir)))
+        (make-directory (file-name-directory dest) t)  ; create dir / extras/ as needed
+        (let ((inhibit-message t))
+          (url-copy-file (concat base file) dest t))
+        (message "Installed %s" dest)))))
