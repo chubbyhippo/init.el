@@ -453,6 +453,7 @@
 ;; Per-language / experimental modules live in extras/. Each file is
 ;; self-contained and only installs its packages once loaded — uncomment a
 ;; line to enable it.
-;; (load (expand-file-name "extras/clojure.el" user-emacs-directory) :noerror :nomessage)
-;; (load (expand-file-name "extras/java.el"    user-emacs-directory) :noerror :nomessage)
-;; (load (expand-file-name "extras/python.el"  user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/clojure.el"    user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/java.el"       user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/python.el"     user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/typescript.el" user-emacs-directory) :noerror :nomessage)
