@@ -6,6 +6,7 @@
     (dolist (file '("early-init.el"
                     "init.el"
                     "extras/clojure.el"
+                    "extras/cpp.el"
                     "extras/go.el"
                     "extras/java.el"
                     "extras/python.el"
