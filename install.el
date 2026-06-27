@@ -7,6 +7,8 @@
                     "init.el"
                     "extras/clojure.el"
                     "extras/cpp.el"
+                    "extras/elixir.el"
+                    "extras/erlang.el"
                     "extras/go.el"
                     "extras/java.el"
                     "extras/php.el"
