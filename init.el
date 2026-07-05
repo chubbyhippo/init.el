@@ -47,9 +47,18 @@
   :custom 
   (recentf-max-saved-items 200))
 
+;; hooking eglot-ensure straight onto prog-mode nags "Cannot find suitable
+;; server" in every elisp buffer (this file included) — skip the lisp modes,
+;; which have no LSP here. emacs-lisp-mode and friends all derive from
+;; lisp-data-mode.
+(defun my/eglot-ensure ()
+  "Run `eglot-ensure', except in lisp modes with no language server."
+  (unless (derived-mode-p 'lisp-data-mode)
+    (eglot-ensure)))
+
 (use-package eglot
   :ensure nil
-  :hook (prog-mode . eglot-ensure)
+  :hook (prog-mode . my/eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full))) ; stop logging every LSP event (perf)
