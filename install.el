@@ -7,8 +7,6 @@
                     "init.el"
                     "extras/clojure.el"
                     "extras/cpp.el"
-                    "extras/elixir.el"
-                    "extras/erlang.el"
                     "extras/go.el"
                     "extras/haskell.el"
                     "extras/python.el"

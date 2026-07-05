@@ -455,8 +455,6 @@
 ;; line to enable it.
 ;; (load (expand-file-name "extras/clojure.el"    user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/cpp.el"        user-emacs-directory) :noerror :nomessage)
-;; (load (expand-file-name "extras/elixir.el"     user-emacs-directory) :noerror :nomessage)
-;; (load (expand-file-name "extras/erlang.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/go.el"         user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/haskell.el"    user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/python.el"     user-emacs-directory) :noerror :nomessage)
