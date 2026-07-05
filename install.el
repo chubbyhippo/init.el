@@ -8,6 +8,7 @@
                     "extras/clojure.el"
                     "extras/cpp.el"
                     "extras/go.el"
+                    "extras/java.el"
                     "extras/python.el"
                     "extras/rust.el"
                     "extras/typescript.el"
