@@ -11,7 +11,6 @@
                     "extras/erlang.el"
                     "extras/go.el"
                     "extras/haskell.el"
-                    "extras/java.el"
                     "extras/php.el"
                     "extras/python.el"
                     "extras/rust.el"
