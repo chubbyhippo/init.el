@@ -1,0 +1,9 @@
+# Default: let Git normalize text files to LF in the repository.
+* text=auto
+
+# Shell scripts must stay LF even when checked out on Windows
+# (they're fetched and piped straight to `sh`).
+*.sh text eol=lf
+
+# Emacs Lisp is LF everywhere.
+*.el text eol=lf
