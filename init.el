@@ -23,6 +23,12 @@
   (windmove-default-keybindings)
   (winner-mode 1) ; C-c left/right undoes/redoes window layouts, goes with windmove
   (setq read-process-output-max (* 1024 1024)) ; 1MB pipe reads (default 64KB) → snappier LSP
+  ;; keep M-x customize saves out of this hand-curated file
+  (setq custom-file (locate-user-emacs-file "custom.el"))
+  (load custom-file 'noerror)
+  ;; cursor-intangible in minibuffer-prompt-properties (below) is inert
+  ;; without the mode that honors the property
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -117,8 +123,9 @@
   :ensure t
   :custom
   (completion-styles '(orderless basic))
-  (completion-category-overrides '((file (styles partial-completion))))
-  (completion-pcm-leading-wildcard t))
+  (completion-category-overrides '((file (styles partial-completion)))))
+;; Emacs 31 will add completion-pcm-leading-wildcard — the variable does
+;; not exist in 30.x, so re-add it here only after upgrading.
 
 (use-package vertico
   :ensure t
@@ -185,7 +192,10 @@
                  (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
-  :ensure t)
+  :ensure t
+  ;; :after keeps this glue lazy — a bare declaration would require it at
+  ;; startup and drag embark AND consult in with it
+  :after (embark consult))
 
 (use-package corfu
   :ensure t
