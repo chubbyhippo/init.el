@@ -1,0 +1,59 @@
+;;; scheme.el --- Scheme development extras (SICP)  -*- lexical-binding: t; -*-
+
+;; Optional Scheme layer for init.el, aimed at working through SICP. Disabled by
+;; default — uncomment the matching loader at the bottom of init.el to enable
+;; it. Every package here is on NonGNU ELPA, so it installs through the same
+;; `package' / `use-package' setup as the rest of the config (no MELPA needed).
+;;
+;;   scheme-mode  the major mode — BUILT IN (Emacs already maps .scm to it), so
+;;                nothing to install just to edit
+;;   geiser       the interactive layer: REPL, eval-in-buffer, autodoc,
+;;                completion, jump-to-def — the "develop Scheme" piece
+;;   geiser-chez  the Chez Scheme backend
+;;   paredit      keep the parens balanced while you edit
+;;
+;; You supply the interpreter: Chez Scheme — `sudo apt install chezscheme'. The
+;; Ubuntu package installs the binary as `chezscheme', which is why
+;; `geiser-chez-binary' is set to it below. Start a REPL with C-c C-z; eval a
+;; defun with C-M-x, the last sexp with C-x C-e.
+;;
+;; SICP on Chez: its REPL runs most of the book (mutable pairs and top-level
+;; redefinition are allowed). The ch.2.2.4 picture language and a few MIT-isms
+;; (`cons-stream', `true'/`false'/`nil') need small shims — or use MIT/GNU
+;; Scheme (geiser-mit) or Racket's `#lang sicp' (geiser-racket), both NonGNU
+;; ELPA: install the backend and change the two geiser vars below.
+
+;;; NonGNU ELPA
+(use-package geiser
+  :ensure t
+  :hook (scheme-mode . geiser-mode)          ; load + light up geiser in .scm buffers
+  :custom
+  (geiser-default-implementation 'chez)
+  (geiser-active-implementations '(chez)))
+
+(use-package geiser-chez
+  :ensure t
+  :defer t
+  :custom
+  (geiser-chez-binary "chezscheme"))         ; the Ubuntu chezscheme package binary
+
+(use-package paredit
+  :ensure t
+  :hook ((scheme-mode      . enable-paredit-mode)
+         (geiser-repl-mode . enable-paredit-mode)))
+;;; End NonGNU ELPA
+
+;; scheme-mode is a `prog-mode' child, so init.el's global `my/eglot-ensure'
+;; hook would fire and nag "no suitable server" — there is no Scheme LSP (geiser
+;; provides eval / autodoc / completion). Opt Scheme buffers out of it via
+;; advice, without editing init.el; guarded so load order doesn't matter.
+(when (fboundp 'my/eglot-ensure)
+  (advice-add 'my/eglot-ensure :before-while
+              (lambda () (not (derived-mode-p 'scheme-mode)))
+              '((name . my/scheme--skip-eglot))))
+
+;; No `(provide 'scheme)' — the feature/library name `scheme' belongs to the
+;; built-in scheme.el (it defines scheme-mode); this file is loaded by path from
+;; init.el, so providing it would shadow the built-in. (Same reason cpp.el /
+;; python.el / go.el / erlang.el skip their provides.)
+;;; scheme.el ends here
