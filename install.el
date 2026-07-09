@@ -13,6 +13,7 @@
                     "extras/java.el"
                     "extras/python.el"
                     "extras/rust.el"
+                    "extras/scheme.el"
                     "extras/typescript.el"
                     "extras/zig.el"))
       (let ((dest (expand-file-name file dir)))
