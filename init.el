@@ -79,7 +79,27 @@
   :ensure nil
   ;; not preloaded and its nav commands carry no autoload cookie — the
   ;; SPC , e / SPC . e leader keys (meow block) need them resolvable anywhere
-  :commands (flymake-goto-next-error flymake-goto-prev-error))
+  :commands (flymake-goto-next-error flymake-goto-prev-error)
+  ;; eglot turns flymake on in LSP buffers, but elisp buffers get no eglot
+  ;; (my/eglot-ensure skips lisps) and so no live diagnostics at all. Enable
+  ;; the built-in byte-compile backend there — a typo'd symbol in this very
+  ;; file gets flagged as you type instead of at the next restart. checkdoc
+  ;; stays off: docstring-style nagging is noise in a personal config.
+  :preface
+  (defun my/elisp-flymake ()
+    "Flymake for elisp buffers: byte-compile diagnostics, no checkdoc."
+    ;; drop checkdoc BEFORE enabling: flymake's initial pass collects backends
+    ;; the moment the mode turns on, and a backend that reports once and is
+    ;; then removed never runs again to clear its stale diagnostics
+    (remove-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc t)
+    (flymake-mode 1))
+  :hook (emacs-lisp-mode . my/elisp-flymake)
+  ;; Emacs 30 gates the byte-compile backend behind `trusted-content'
+  ;; (compiling runs macro code). init.el itself is always trusted
+  ;; (trusted-content-p special-cases user-init-file) but early-init.el and
+  ;; extras/*.el are not — trust the whole config dir so they lint too.
+  :custom
+  (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory)))))
 
 (use-package org
   :ensure nil
