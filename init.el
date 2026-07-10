@@ -18,6 +18,7 @@
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
+  (keymap-global-set "C-c b m" #'bookmark-set)   ; bookmark prefix: m = make/set (jump is C-c b j → consult-bookmark)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
   (windmove-default-keybindings)
@@ -148,7 +149,7 @@
 (use-package consult
   :ensure t
   :bind (
-         ("C-c b" . consult-buffer)
+         ("C-c b j" . consult-bookmark)   ; bookmark prefix: j = jump (set is C-c b m); buffers stay on C-x b / C-x C-b
          ("C-c r" . consult-ripgrep)
          ;; replacements for the stock bindings
          ("C-x b"   . consult-buffer)
