@@ -75,6 +75,12 @@
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full))) ; stop logging every LSP event (perf)
 
+(use-package flymake
+  :ensure nil
+  ;; not preloaded and its nav commands carry no autoload cookie — the
+  ;; SPC , e / SPC . e leader keys (meow block) need them resolvable anywhere
+  :commands (flymake-goto-next-error flymake-goto-prev-error))
+
 (use-package org
   :ensure nil
   :hook (org-mode . visual-line-mode)         ; wrap long lines instead of chopping them off
@@ -354,7 +360,15 @@
      ;; (b m set / b j jump / b b buffers).
      '("s"   . consult-line)
      '("x b" . consult-buffer)
-     '("b b" . consult-buffer))
+     '("b b" . consult-buffer)
+     ;; SPC , / SPC . — previous/next groups, matching the ports (c = change/
+     ;; hunk, e = error; the ports' d = diff-window nav has no global Emacs
+     ;; analog). In org buffers org's own C-c , / C-c . still win (priority /
+     ;; timestamp): the keypad resolves through the local map like any C-c key.
+     '(", c" . diff-hl-previous-hunk)
+     '(", e" . flymake-goto-prev-error)
+     '(". c" . diff-hl-next-hunk)
+     '(". e" . flymake-goto-next-error))
     ;; NORMAL: every key edits (i/a when you actually want to type).
     (meow-normal-define-key
      '("0" . meow-expand-0)
