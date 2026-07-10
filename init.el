@@ -49,10 +49,15 @@
 
 (use-package recentf
   :ensure nil
-  :init 
+  :init
   (recentf-mode 1)
-  :custom 
+  :custom
   (recentf-max-saved-items 200))
+
+(use-package bookmark
+  :ensure nil
+  :custom
+  (bookmark-save-flag 1)) ; write bookmarks to disk as they're set, not only at exit
 
 ;; hooking eglot-ensure straight onto prog-mode nags "Cannot find suitable
 ;; server" in every elisp buffer (this file included) — skip the lisp modes,
@@ -154,6 +159,7 @@
          ;; replacements for the stock bindings
          ("C-x b"   . consult-buffer)
          ("C-x C-b" . consult-buffer)   ; ditch the clunky buffer list for the good switcher
+         ("C-x r b" . consult-bookmark) ; stock bookmark-jump key, now with preview
          ("M-y"     . consult-yank-pop)
          ;; search
          ("M-s r" . consult-ripgrep)
@@ -341,10 +347,14 @@
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
-     ;; consult shortcuts, spelled out so keypad translation doesn't drop them
-     '("b"   . consult-buffer)
+     ;; consult shortcuts, spelled out so keypad translation doesn't drop them.
+     ;; NOTE: the leader IS mode-specific-map (the C-c map, meow-helpers.el) —
+     ;; a bare "b" here would clobber the C-c b bookmark prefix above. b b
+     ;; keeps buffers one key deeper, matching the ports' SPC b group
+     ;; (b m set / b j jump / b b buffers).
      '("s"   . consult-line)
-     '("x b" . consult-buffer))
+     '("x b" . consult-buffer)
+     '("b b" . consult-buffer))
     ;; NORMAL: every key edits (i/a when you actually want to type).
     (meow-normal-define-key
      '("0" . meow-expand-0)
