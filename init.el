@@ -99,7 +99,18 @@
   ;; (trusted-content-p special-cases user-init-file) but early-init.el and
   ;; extras/*.el are not — trust the whole config dir so they lint too.
   :custom
-  (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory)))))
+  (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
+  (flymake-show-diagnostics-at-end-of-line 'short) ; IDE-style inline text, most severe only
+  :config
+  ;; repeat-mode: after one error jump (SPC . e / SPC , e), keep tapping . / ,
+  ;; — the leader group's own mnemonic. The entry keys aren't in the map, so
+  ;; repeat-check-key must be off (same trick as the expreg map below).
+  (defvar-keymap my/flymake-repeat-map
+    :repeat t
+    "." #'flymake-goto-next-error
+    "," #'flymake-goto-prev-error)
+  (put 'flymake-goto-next-error 'repeat-check-key 'no)
+  (put 'flymake-goto-prev-error 'repeat-check-key 'no))
 
 (use-package org
   :ensure nil
@@ -288,6 +299,13 @@
   :config
   ;; navigation lives on C-x v (] / [ next/prev hunk, n revert, * show, S stage) and is
   ;; already repeat-mode-aware: C-x v ] then keep tapping ] / [ to walk hunks.
+  ;; the SPC . c / SPC , c leader jumps repeat the same way — , / . added to
+  ;; the map (matching the flymake repeat map), and check-key off because the
+  ;; keypad's final key `c' isn't a map member (expreg precedent).
+  (define-key diff-hl-command-map "." #'diff-hl-next-hunk)
+  (define-key diff-hl-command-map "," #'diff-hl-previous-hunk)
+  (put 'diff-hl-next-hunk 'repeat-check-key 'no)
+  (put 'diff-hl-previous-hunk 'repeat-check-key 'no)
   (global-diff-hl-mode 1)
   (diff-hl-flydiff-mode 1)                            ; update the gutter live, before you save
   (unless (display-graphic-p)
@@ -373,13 +391,15 @@
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
-     ;; consult shortcuts, spelled out so keypad translation doesn't drop them.
+     ;; consult shortcut, spelled out so keypad translation doesn't drop it
+     ;; (no "x b" entry: x is a keypad START key, so SPC x b already reaches
+     ;; consult-buffer through the C-x C-b translation — a leader entry there
+     ;; is dead weight that only binds an unused C-c x b).
      ;; NOTE: the leader IS mode-specific-map (the C-c map, meow-helpers.el) —
      ;; a bare "b" here would clobber the C-c b bookmark prefix above. b b
      ;; keeps buffers one key deeper, matching the ports' SPC b group
      ;; (b m set / b j jump / b b buffers).
      '("s"   . consult-line)
-     '("x b" . consult-buffer)
      '("b b" . consult-buffer)
      ;; SPC , / SPC . — previous/next groups, matching the ports (c = change/
      ;; hunk, e = error; the ports' d = diff-window nav has no global Emacs
