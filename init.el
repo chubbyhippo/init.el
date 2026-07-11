@@ -397,13 +397,12 @@
      ;; is dead weight that only binds an unused C-c x b).
      ;; NOTE: the leader IS mode-specific-map (the C-c map, meow-helpers.el) —
      ;; a bare "b" here would clobber the C-c b bookmark prefix above. b b
-     ;; keeps buffers one key deeper, matching the ports' SPC b group
+     ;; keeps buffers one key deeper, completing the SPC b group
      ;; (b m set / b j jump / b b buffers).
      '("s"   . consult-line)
      '("b b" . consult-buffer)
-     ;; SPC , / SPC . — previous/next groups, matching the ports (c = change/
-     ;; hunk, e = error; the ports' d = diff-window nav has no global Emacs
-     ;; analog). In org buffers org's own C-c , / C-c . still win (priority /
+     ;; SPC , / SPC . — previous/next groups (c = change/hunk, e = error).
+     ;; In org buffers org's own C-c , / C-c . still win (priority /
      ;; timestamp): the keypad resolves through the local map like any C-c key.
      '(", c" . diff-hl-previous-hunk)
      '(", e" . flymake-goto-prev-error)
