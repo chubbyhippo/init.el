@@ -1,4 +1,4 @@
-;; no GC while we're starting up. init.el puts it back to normal afterwards.
+;; no GC while we're starting up. init.el puts it back to normal afterwards.  -*- lexical-binding: t; -*-
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;; don't reflow the frame when the menu bar or font changes, it just slows startup

@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t; -*-
 (progn
   (require 'url)
   (let* ((url-show-status nil)        ; silence url.el's "Contacting host: ..." progress line

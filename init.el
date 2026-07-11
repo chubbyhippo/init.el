@@ -1,4 +1,4 @@
-;; startup's over, so drop the GC ceiling back down (early-init.el cranked it up)
+;; startup's over, so drop the GC ceiling back down (early-init.el cranked it up)  -*- lexical-binding: t; -*-
 (add-hook 'emacs-startup-hook
           (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16mb
 
@@ -151,7 +151,7 @@
   ;; repeat-mode: after any expreg command, tap . to grow or , to shrink
   ;; (unshifted </> — same magnitude mnemonic, no shift to press). transient, so it
   ;; never clashes with meow's , / . (inner/bounds-of-thing) — any other key ends the run.
-  (defvar-keymap expreg-repeat-map
+  (defvar-keymap my/expreg-repeat-map
     :repeat t
     "." #'expreg-expand
     "," #'expreg-contract)
