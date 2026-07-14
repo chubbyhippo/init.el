@@ -37,10 +37,8 @@
 
 (use-package paredit
   :ensure t
-  :hook ((clojure-mode         . enable-paredit-mode)
-         (cider-repl-mode       . enable-paredit-mode)
-         (emacs-lisp-mode       . enable-paredit-mode)
-         (lisp-interaction-mode . enable-paredit-mode)))
+  :hook ((clojure-mode    . enable-paredit-mode)
+         (cider-repl-mode . enable-paredit-mode)))
 
 ;; Also on NonGNU ELPA if you want them — uncomment to enable:
 ;; (use-package flymake-kondor   ; clj-kondo linting via flymake (needs the clj-kondo binary)
