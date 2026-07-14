@@ -302,8 +302,8 @@
   ;; the SPC . c / SPC , c leader jumps repeat the same way — , / . added to
   ;; the map (matching the flymake repeat map), and check-key off because the
   ;; keypad's final key `c' isn't a map member (expreg precedent).
-  (define-key diff-hl-command-map "." #'diff-hl-next-hunk)
-  (define-key diff-hl-command-map "," #'diff-hl-previous-hunk)
+  (keymap-set diff-hl-command-map "." #'diff-hl-next-hunk)
+  (keymap-set diff-hl-command-map "," #'diff-hl-previous-hunk)
   (put 'diff-hl-next-hunk 'repeat-check-key 'no)
   (put 'diff-hl-previous-hunk 'repeat-check-key 'no)
   (global-diff-hl-mode 1)
