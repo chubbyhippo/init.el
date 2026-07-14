@@ -16,7 +16,6 @@
     (global-completion-preview-mode 1)) ; emacs 30 ghost text, happy alongside corfu
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
-  (keymap-global-set "C-c s" #'save-buffer)
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-c b m" #'bookmark-set)   ; bookmark prefix: m = make/set (jump is C-c b j → consult-bookmark)
   (keymap-global-set "C-z"   #'undo-only)
@@ -267,13 +266,20 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-keyword)
-  (add-hook 'eglot-managed-mode-hook
-            (lambda ()
-              (setq-local completion-at-point-functions
-                          (list (cape-capf-super #'eglot-completion-at-point
-                                                 #'cape-dabbrev)
-                                #'cape-file
-                                #'cape-keyword)))))
+  ;; eglot-managed-mode-hook runs on disable too (minor-mode hooks fire both
+  ;; ways), so branch on the state: merged capfs while managed, and drop the
+  ;; buffer-local list on the way out — otherwise a serverless
+  ;; eglot-completion-at-point is left behind and errors on the next complete.
+  (defun my/eglot-capfs ()
+    "Merge eglot's capf with cape's while managed; restore the globals after."
+    (if (eglot-managed-p)
+        (setq-local completion-at-point-functions
+                    (list (cape-capf-super #'eglot-completion-at-point
+                                           #'cape-dabbrev)
+                          #'cape-file
+                          #'cape-keyword))
+      (kill-local-variable 'completion-at-point-functions)))
+  (add-hook 'eglot-managed-mode-hook #'my/eglot-capfs))
 
 (use-package vundo
   :ensure t
@@ -316,7 +322,6 @@
 (use-package eat
   :ensure t
   :hook
-  (eshell-load . eat-eshell-mode)
   (eshell-load . eat-eshell-visual-command-mode)
   :config
   ;; visual commands in eshell (less, htop, top...) get their own eat-mode
