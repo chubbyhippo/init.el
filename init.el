@@ -12,6 +12,7 @@
   (savehist-mode 1)
   (save-place-mode 1)
   (electric-pair-mode 1)
+  (global-so-long-mode 1) ; stop files with pathologically long lines (minified, logs) from wedging Emacs
   (when (fboundp 'global-completion-preview-mode)
     (global-completion-preview-mode 1)) ; emacs 30 ghost text, happy alongside corfu
   (keymap-set key-translation-map "M-m" "C-c")
@@ -33,6 +34,7 @@
   (context-menu-mode t)
   (tab-always-indent 'complete)
   (enable-recursive-minibuffers t)
+  (use-short-answers t)
   (read-extended-command-predicate #'command-completion-default-include-p)
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt)))
