@@ -12,8 +12,10 @@
 ;;     — eglot launches it automatically for js/jsx/ts/tsx once it's on PATH; the
 ;;     one server handles both JavaScript and TypeScript
 ;;   - the vscode-js-debug adapter — driven here by dape for breakpoints/stepping
-;;   - the tree-sitter grammars (M-x treesit-install-language-grammar RET
-;;     javascript / typescript / tsx) — until then .js falls back to js-mode and
+;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET
+;;     javascript' (then `typescript', `tsx') — the repo URLs (incl. the
+;;     typescript/src and tsx/src subdirs) are pre-registered in :init, so
+;;     there's no URL prompt; until installed, .js falls back to js-mode and
 ;;     .ts/.tsx aren't auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
@@ -24,10 +26,14 @@
 (use-package js
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'javascript))
-    (dolist (m '(js-mode javascript-mode js-jsx-mode))
-      (add-to-list 'major-mode-remap-alist (cons m 'js-ts-mode))))
+  ;; Register the grammar source (no URL prompt on install); remap the js majors
+  ;; to js-ts-mode once the grammar exists.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(javascript "https://github.com/tree-sitter/tree-sitter-javascript"))
+    (when (treesit-language-available-p 'javascript)
+      (dolist (m '(js-mode javascript-mode js-jsx-mode))
+        (add-to-list 'major-mode-remap-alist (cons m 'js-ts-mode)))))
   :custom
   (js-indent-level 2))
 
@@ -37,12 +43,19 @@
 (use-package typescript-ts-mode
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'typescript))
-    (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'tsx))
-    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode)))
+  ;; Both grammars live in ONE repo, under typescript/src and tsx/src — encode
+  ;; those subdirs so install needs no URL. Bind the ts-modes once built.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(typescript "https://github.com/tree-sitter/tree-sitter-typescript"
+                              nil "typescript/src"))
+    (add-to-list 'treesit-language-source-alist
+                 '(tsx "https://github.com/tree-sitter/tree-sitter-typescript"
+                       nil "tsx/src"))
+    (when (treesit-language-available-p 'typescript)
+      (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
+    (when (treesit-language-available-p 'tsx)
+      (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))))
   :custom
   (typescript-ts-mode-indent-offset 2))
 ;;; End Built-in
