@@ -12,11 +12,11 @@
 ;;     — eglot launches it automatically for js/jsx/ts/tsx once it's on PATH; the
 ;;     one server handles both JavaScript and TypeScript
 ;;   - the vscode-js-debug adapter — driven here by dape for breakpoints/stepping
-;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET
-;;     javascript' (then `typescript', `tsx') — the repo URLs (incl. the
-;;     typescript/src and tsx/src subdirs) are pre-registered in :init, so
-;;     there's no URL prompt; until installed, .js falls back to js-mode and
-;;     .ts/.tsx aren't auto-detected
+;;   - the tree-sitter grammars (javascript, typescript, tsx) — AUTO-INSTALLED
+;;     on first load from the sources registered in :init (which encode the
+;;     typescript/src and tsx/src subdirs; needs git + a C compiler on PATH);
+;;     until they build, .js falls back to js-mode and .ts/.tsx aren't
+;;     auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (typescript-mode / tide / lsp-* are MELPA-only, so they're not used here.)
@@ -31,6 +31,9 @@
   (when (and (require 'treesit nil t) (treesit-available-p))
     (add-to-list 'treesit-language-source-alist
                  '(javascript "https://github.com/tree-sitter/tree-sitter-javascript"))
+    ;; auto-install the grammar on first load (needs git + a C compiler).
+    (unless (treesit-language-available-p 'javascript)
+      (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'javascript)))
     (when (treesit-language-available-p 'javascript)
       (dolist (m '(js-mode javascript-mode js-jsx-mode))
         (add-to-list 'major-mode-remap-alist (cons m 'js-ts-mode)))))
@@ -52,6 +55,10 @@
     (add-to-list 'treesit-language-source-alist
                  '(tsx "https://github.com/tree-sitter/tree-sitter-typescript"
                        nil "tsx/src"))
+    ;; auto-install missing grammars on first load (needs git + a C compiler).
+    (dolist (lang '(typescript tsx))
+      (unless (treesit-language-available-p lang)
+        (with-demoted-errors "treesit: %S" (treesit-install-language-grammar lang))))
     (when (treesit-language-available-p 'typescript)
       (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
     (when (treesit-language-available-p 'tsx)
