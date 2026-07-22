@@ -13,9 +13,9 @@
 ;;     on PATH; the one server handles both, reading compile_commands.json
 ;;   - a native debugger for dape — GDB 14.1+ (native DAP), LLVM's lldb-dap, or
 ;;     the cpptools adapter — for breakpoints/stepping
-;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET c'
-;;     (then `cpp') — the repo URLs are pre-registered in :init, so there's no
-;;     URL prompt; until installed, C/C++ files open in the classic cc-mode
+;;   - the tree-sitter grammars (c, cpp) — AUTO-INSTALLED on first load from the
+;;     sources registered in :init (needs git + a C compiler on PATH); until
+;;     they build, C/C++ files open in the classic cc-mode
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; Formatting is left to clangd / your project's .clang-format (no format-on-
@@ -35,6 +35,10 @@
                  '(c "https://github.com/tree-sitter/tree-sitter-c"))
     (add-to-list 'treesit-language-source-alist
                  '(cpp "https://github.com/tree-sitter/tree-sitter-cpp"))
+    ;; auto-install missing grammars on first load (needs git + a C compiler).
+    (dolist (lang '(c cpp))
+      (unless (treesit-language-available-p lang)
+        (with-demoted-errors "treesit: %S" (treesit-install-language-grammar lang))))
     (when (treesit-language-available-p 'c)
       (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode)))
     (when (treesit-language-available-p 'cpp)
