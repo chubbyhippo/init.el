@@ -11,8 +11,9 @@
 ;;     on PATH
 ;;   - Delve (go install github.com/go-delve/delve/cmd/dlv@latest) — driven here
 ;;     by dape for breakpoints/stepping
-;;   - the tree-sitter grammars (M-x treesit-install-language-grammar RET go,
-;;     then again for gomod) — until then .go / go.mod aren't auto-detected
+;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET go'
+;;     (then `gomod') — the repo URLs are pre-registered in :init, so there's no
+;;     URL prompt; until installed, .go / go.mod aren't auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (go-mode is MELPA-only, so it's not used here.)
@@ -33,12 +34,17 @@
 (use-package go-ts-mode
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'go))
-    (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode)))
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'gomod))
-    (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode)))
+  ;; Register the grammar sources so `M-x treesit-install-language-grammar RET
+  ;; go' (then `gomod') needs no URL; bind the ts-modes once the grammars exist.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(go "https://github.com/tree-sitter/tree-sitter-go"))
+    (add-to-list 'treesit-language-source-alist
+                 '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
+    (when (treesit-language-available-p 'go)
+      (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode)))
+    (when (treesit-language-available-p 'gomod)
+      (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))))
   :hook (go-ts-mode . my/go--format-on-save)
   :custom
   (go-ts-mode-indent-offset 4))
