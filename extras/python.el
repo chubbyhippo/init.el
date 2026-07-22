@@ -23,6 +23,9 @@
   (when (and (require 'treesit nil t) (treesit-available-p))
     (add-to-list 'treesit-language-source-alist
                  '(python "https://github.com/tree-sitter/tree-sitter-python"))
+    ;; auto-install the grammar on first load (needs git + a C compiler).
+    (unless (treesit-language-available-p 'python)
+      (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'python)))
     (when (treesit-language-available-p 'python)
       (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
   :custom
