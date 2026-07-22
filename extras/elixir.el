@@ -13,9 +13,9 @@
 ;;     prefer that server.)
 ;;   - ElixirLS's `debug_adapter.sh' (same release) — driven here by dape for
 ;;     breakpoints / stepping through a mix task; see the dape config below
-;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET elixir'
-;;     (then `heex') — the repo URLs are pre-registered in :init, so there's no
-;;     URL prompt; until installed, .ex/.exs/.heex aren't auto-detected
+;;   - the tree-sitter grammars (elixir, heex) — AUTO-INSTALLED on first load
+;;     from the sources registered in :init (needs git + a C compiler on PATH);
+;;     until they build, .ex/.exs/.heex aren't auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (elixir-mode lives on NonGNU ELPA but is unneeded now that elixir-ts-mode is
@@ -41,6 +41,10 @@
                  '(elixir "https://github.com/elixir-lang/tree-sitter-elixir"))
     (add-to-list 'treesit-language-source-alist
                  '(heex "https://github.com/phoenixframework/tree-sitter-heex"))
+    ;; auto-install missing grammars on first load (needs git + a C compiler).
+    (dolist (lang '(elixir heex))
+      (unless (treesit-language-available-p lang)
+        (with-demoted-errors "treesit: %S" (treesit-install-language-grammar lang))))
     (when (treesit-language-available-p 'elixir)
       (add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode)))
     (when (treesit-language-available-p 'heex)
