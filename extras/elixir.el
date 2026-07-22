@@ -13,8 +13,9 @@
 ;;     prefer that server.)
 ;;   - ElixirLS's `debug_adapter.sh' (same release) — driven here by dape for
 ;;     breakpoints / stepping through a mix task; see the dape config below
-;;   - the tree-sitter grammars (M-x treesit-install-language-grammar RET elixir,
-;;     then again for heex) — until then .ex/.exs/.heex aren't auto-detected
+;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET elixir'
+;;     (then `heex') — the repo URLs are pre-registered in :init, so there's no
+;;     URL prompt; until installed, .ex/.exs/.heex aren't auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (elixir-mode lives on NonGNU ELPA but is unneeded now that elixir-ts-mode is
@@ -33,12 +34,17 @@
 (use-package elixir-ts-mode
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'elixir))
-    (add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode)))
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'heex))
-    (add-to-list 'auto-mode-alist '("\\.heex\\'" . heex-ts-mode)))
+  ;; Register the grammar sources (no URL prompt on install); bind the ts-modes
+  ;; once the grammars exist.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(elixir "https://github.com/elixir-lang/tree-sitter-elixir"))
+    (add-to-list 'treesit-language-source-alist
+                 '(heex "https://github.com/phoenixframework/tree-sitter-heex"))
+    (when (treesit-language-available-p 'elixir)
+      (add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode)))
+    (when (treesit-language-available-p 'heex)
+      (add-to-list 'auto-mode-alist '("\\.heex\\'" . heex-ts-mode))))
   :hook (elixir-ts-mode . my/elixir--format-on-save))
 ;;; End Built-in
 
