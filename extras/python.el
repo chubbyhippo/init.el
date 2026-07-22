@@ -18,9 +18,13 @@
 (use-package python
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'python))
-    (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode)))
+  ;; Register the grammar source (no URL prompt on install); prefer
+  ;; python-ts-mode once the grammar exists.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(python "https://github.com/tree-sitter/tree-sitter-python"))
+    (when (treesit-language-available-p 'python)
+      (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))))
   :custom
   (python-indent-guess-indent-offset-verbose nil)) ; quiet the indent-guess warning
 ;;; End Built-in
