@@ -29,10 +29,10 @@
 ;; already serves them type-aware; only your own templates are ported here.
 
 ;;; Built-in
-;; .java opens in the classic cc-mode `java-mode'. If the tree-sitter Java
-;; grammar is installed (`M-x treesit-install-language-grammar RET java' — the
-;; repo URL is pre-registered in :init, so there's no URL prompt), prefer the
-;; faster `java-ts-mode'. eglot attaches to either one.
+;; .java opens in the classic cc-mode `java-mode'. The tree-sitter Java grammar
+;; is AUTO-INSTALLED on first load from the source registered in :init (needs
+;; git + a C compiler on PATH); once built, `java-ts-mode' is preferred. eglot
+;; attaches to either one.
 (use-package java-ts-mode
   :ensure nil
   :init
@@ -41,6 +41,9 @@
   (when (and (require 'treesit nil t) (treesit-available-p))
     (add-to-list 'treesit-language-source-alist
                  '(java "https://github.com/tree-sitter/tree-sitter-java"))
+    ;; auto-install the grammar on first load (needs git + a C compiler).
+    (unless (treesit-language-available-p 'java)
+      (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'java)))
     (when (treesit-language-available-p 'java)
       (add-to-list 'major-mode-remap-alist '(java-mode . java-ts-mode))))
   :custom
