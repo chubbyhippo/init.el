@@ -13,8 +13,9 @@
 ;;     on PATH; the one server handles both, reading compile_commands.json
 ;;   - a native debugger for dape — GDB 14.1+ (native DAP), LLVM's lldb-dap, or
 ;;     the cpptools adapter — for breakpoints/stepping
-;;   - the tree-sitter grammars (M-x treesit-install-language-grammar RET c,
-;;     then again for cpp) — until then C/C++ files open in the classic cc-mode
+;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET c'
+;;     (then `cpp') — the repo URLs are pre-registered in :init, so there's no
+;;     URL prompt; until installed, C/C++ files open in the classic cc-mode
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; Formatting is left to clangd / your project's .clang-format (no format-on-
@@ -27,18 +28,22 @@
 (use-package c-ts-mode
   :ensure nil
   :init
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'c))
-    (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode)))
-  (when (and (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'cpp))
-    (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode)))
-  ;; .h files: let the content-guessing mode pick C vs C++ (needs both grammars)
-  (when (and (fboundp 'c-or-c++-ts-mode)
-             (fboundp 'treesit-language-available-p)
-             (treesit-language-available-p 'c)
-             (treesit-language-available-p 'cpp))
-    (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode)))
+  ;; Register the grammar sources (no URL prompt on install); remap the cc-mode
+  ;; majors to their tree-sitter equivalents once the grammars exist.
+  (when (and (require 'treesit nil t) (treesit-available-p))
+    (add-to-list 'treesit-language-source-alist
+                 '(c "https://github.com/tree-sitter/tree-sitter-c"))
+    (add-to-list 'treesit-language-source-alist
+                 '(cpp "https://github.com/tree-sitter/tree-sitter-cpp"))
+    (when (treesit-language-available-p 'c)
+      (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode)))
+    (when (treesit-language-available-p 'cpp)
+      (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode)))
+    ;; .h files: let the content-guessing mode pick C vs C++ (needs both grammars)
+    (when (and (fboundp 'c-or-c++-ts-mode)
+               (treesit-language-available-p 'c)
+               (treesit-language-available-p 'cpp))
+      (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))))
   :custom
   (c-ts-mode-indent-offset 4))
 ;;; End Built-in
