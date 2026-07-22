@@ -11,9 +11,9 @@
 ;;     on PATH
 ;;   - LLVM's lldb-dap (or lldb-vscode) — driven here by dape for
 ;;     breakpoints/stepping
-;;   - the tree-sitter grammar: `M-x treesit-install-language-grammar RET rust'
-;;     — the repo URL is pre-registered in :init, so there's no URL prompt;
-;;     until installed, .rs isn't auto-detected
+;;   - the tree-sitter grammar (rust) — AUTO-INSTALLED on first load from the
+;;     source registered in :init (needs git + a C compiler on PATH); until it
+;;     builds, .rs isn't auto-detected
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major mode and eglot are built in.
 ;; (rust-mode / rustic are MELPA-only, so they're not used here.) Cargo commands
@@ -36,6 +36,9 @@
   (when (and (require 'treesit nil t) (treesit-available-p))
     (add-to-list 'treesit-language-source-alist
                  '(rust "https://github.com/tree-sitter/tree-sitter-rust"))
+    ;; auto-install the grammar on first load (needs git + a C compiler).
+    (unless (treesit-language-available-p 'rust)
+      (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'rust)))
     (when (treesit-language-available-p 'rust)
       (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))))
   :hook (rust-ts-mode . my/rust--format-on-save)
