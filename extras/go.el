@@ -11,9 +11,9 @@
 ;;     on PATH
 ;;   - Delve (go install github.com/go-delve/delve/cmd/dlv@latest) — driven here
 ;;     by dape for breakpoints/stepping
-;;   - the tree-sitter grammars: `M-x treesit-install-language-grammar RET go'
-;;     (then `gomod') — the repo URLs are pre-registered in :init, so there's no
-;;     URL prompt; until installed, .go / go.mod aren't auto-detected
+;;   - the tree-sitter grammars (go, gomod) — AUTO-INSTALLED on first load from
+;;     the sources registered in :init (needs git + a C compiler on PATH; a
+;;     failed build warns rather than aborting)
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (go-mode is MELPA-only, so it's not used here.)
@@ -41,6 +41,10 @@
                  '(go "https://github.com/tree-sitter/tree-sitter-go"))
     (add-to-list 'treesit-language-source-alist
                  '(gomod "https://github.com/camdencheek/tree-sitter-go-mod"))
+    ;; auto-install missing grammars on first load (needs git + a C compiler).
+    (dolist (lang '(go gomod))
+      (unless (treesit-language-available-p lang)
+        (with-demoted-errors "treesit: %S" (treesit-install-language-grammar lang))))
     (when (treesit-language-available-p 'go)
       (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode)))
     (when (treesit-language-available-p 'gomod)
