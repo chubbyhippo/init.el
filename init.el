@@ -495,6 +495,24 @@
   (interactive)
   (text-scale-set 0))
 
+(defvar-keymap my/window-resize-map
+  :doc "Resize the selected window; any other key exits."
+  "l" #'enlarge-window-horizontally  "<right>" #'enlarge-window-horizontally  ; wider
+  "h" #'shrink-window-horizontally   "<left>"  #'shrink-window-horizontally   ; narrower
+  "j" #'enlarge-window               "<down>"  #'enlarge-window               ; taller
+  "k" #'shrink-window                "<up>"    #'shrink-window)               ; shorter
+
+(defun my/window-resize ()
+  "Pick a window with ace-window, then resize it with h/l/j/k or the arrows.
+Any other key exits (`set-transient-map' KEEP-PRED keeps the map alive only
+while its own keys are used)."
+  (interactive)
+  (require 'ace-window)
+  (aw-select " Ace - Resize"
+             (lambda (win)
+               (aw-switch-to-window win)
+               (set-transient-map my/window-resize-map t nil "Resize %k"))))
+
 (defvar-keymap my/window-map
   :doc "window commands"
   "v" #'split-window-right        ; two side by side
@@ -504,6 +522,7 @@
   "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
   "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
   "W" #'ace-swap-window           ; swap two windows by ace label (W = swap, w = jump)
+  "r" #'my/window-resize          ; pick a window, then h/l/j/k or arrows resize it
   "h" #'windmove-left
   "j" #'windmove-down
   "k" #'windmove-up
