@@ -21,7 +21,7 @@
 
 ;;; Built-in
 ;; rustfmt on save, via rust-analyzer (only fires when eglot is up).
-(defun my/rust--format-on-save ()
+(defun my-rust--format-on-save ()
   "Arrange for rust-analyzer to rustfmt the buffer before each save."
   (add-hook 'before-save-hook
             (lambda () (when (eglot-managed-p) (eglot-format-buffer)))
@@ -41,7 +41,7 @@
       (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'rust)))
     (when (treesit-language-available-p 'rust)
       (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))))
-  :hook (rust-ts-mode . my/rust--format-on-save)
+  :hook (rust-ts-mode . my-rust--format-on-save)
   :custom
   (rust-ts-mode-indent-offset 4))
 ;;; End Built-in

@@ -20,7 +20,7 @@
 ;; Rebar3 / erlang.mk builds run through M-x project-compile.
 
 ;;; Erlang/OTP-bundled erlang-mode  (not ELPA — see header)
-(defun my/erlang--otp-emacs-dir ()
+(defun my-erlang--otp-emacs-dir ()
   "Return OTP's bundled emacs/ directory (home of erlang.el), or nil.
 Ask `erl' for the `tools' application lib dir and append emacs/."
   (when (executable-find "erl")
@@ -36,7 +36,7 @@ Ask `erl' for the `tools' application lib dir and append emacs/."
 ;; OTP's copy, never to this file. If auto-detect misses (unusual OTP layout),
 ;; hardcode it:  (add-to-list 'load-path "/path/to/otp/lib/tools-<ver>/emacs")
 (unless (require 'erlang nil t)
-  (when-let* ((dir (my/erlang--otp-emacs-dir)))
+  (when-let* ((dir (my-erlang--otp-emacs-dir)))
     (add-to-list 'load-path dir)
     (require 'erlang nil t)))
 

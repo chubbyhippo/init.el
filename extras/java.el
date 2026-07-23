@@ -60,25 +60,25 @@
 ;; yasnippet cannot infer types. Ported nuances: `className()' becomes the
 ;; file's basename; IntelliJ smart-var functions (suggestVariableName,
 ;; variableOfType, …) downgrade to plain fields; the JUnit `test' method name
-;; mirrors its @DisplayName via `my/java-camelcase'. `yas-indent-line' is set to
+;; mirrors its @DisplayName via `my-java-camelcase'. `yas-indent-line' is set to
 ;; `fixed' so the multi-line blocks keep their own formatting on expansion.
-(defun my/java-class-name ()
+(defun my-java-class-name ()
   "The enclosing file's class name (its basename), for className()-style snippets."
   (if (buffer-file-name) (file-name-base (buffer-file-name)) "Main"))
 
-(defun my/java-camelcase (s)
+(defun my-java-camelcase (s)
   "Convert a display-name sentence S to a camelCase identifier."
   (let ((words (split-string (downcase s) "[^[:alnum:]]+" t)))
     (if words (concat (car words) (mapconcat #'capitalize (cdr words) "")) "")))
 
-(defun my/java-yas-fixed-indent ()
+(defun my-java-yas-fixed-indent ()
   "Keep the bundled multi-line templates' own indentation on expansion."
   (setq-local yas-indent-line 'fixed))
 
 (use-package yasnippet
   :ensure t
   :hook (((java-mode java-ts-mode) . yas-minor-mode)
-         ((java-mode java-ts-mode) . my/java-yas-fixed-indent))
+         ((java-mode java-ts-mode) . my-java-yas-fixed-indent))
   :config
   ;; java-ts-mode does not derive from java-mode, so register for both.
   (dolist (mode '(java-mode java-ts-mode))
@@ -86,13 +86,13 @@
      mode
      '(
        ;; ── Java ── files · HTTP client · sockets · loggers · concurrency
-       ("log" "private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(`(my/java-class-name)`.class);"
+       ("log" "private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(`(my-java-class-name)`.class);"
         "SLF4J logger" nil "Java")
 
        ("random" "java.util.concurrent.ThreadLocalRandom.current()"
         "ThreadLocalRandom.current()" nil "Java")
 
-       ("utilClass" "private `(my/java-class-name)`() {
+       ("utilClass" "private `(my-java-class-name)`() {
     throw new java.lang.IllegalStateException(\"Utility class\");
 }"
         "Util class private constructor" nil "Java")
@@ -557,10 +557,10 @@ System.out.println(\"password = \" + password);
 "
         "Console reader using Console example" nil "Java")
 
-       ("loggerUtil" "private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(`(my/java-class-name)`.class.getName());"
+       ("loggerUtil" "private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(`(my-java-class-name)`.class.getName());"
         "Java util logger" nil "Java")
 
-       ("loggerPlatform" "private static final System.Logger logger = System.getLogger(`(my/java-class-name)`.class.getName());"
+       ("loggerPlatform" "private static final System.Logger logger = System.getLogger(`(my-java-class-name)`.class.getName());"
         "Java platform logger" nil "Java")
 
        ("httpGETBypassTLSSSL" "java.lang.String url = \"https://jsonplaceholder.typicode.com/posts/1\";
@@ -632,7 +632,7 @@ System.out.println(\"password = \" + password);
        ("utilTest" "@org.junit.jupiter.api.Test
 @org.junit.jupiter.api.DisplayName(\"should throw illegal state exception when initialized\")
 void shouldThrowIllegalStateExceptionWhenInitialized() {
-    var constructor = `(let ((c (my/java-class-name))) (if (string-suffix-p \"Test\" c) (substring c 0 -4) c))`.class.getDeclaredConstructors()[0];
+    var constructor = `(let ((c (my-java-class-name))) (if (string-suffix-p \"Test\" c) (substring c 0 -4) c))`.class.getDeclaredConstructors()[0];
     constructor.setAccessible(true);
     try {
         constructor.newInstance();
@@ -647,7 +647,7 @@ void shouldThrowIllegalStateExceptionWhenInitialized() {
 
        ("test" "@org.junit.jupiter.api.Test
 @org.junit.jupiter.api.DisplayName(\"${1:Display name for the test method}\")
-void ${1:$(my/java-camelcase yas-text)}() {
+void ${1:$(my-java-camelcase yas-text)}() {
     $0
     ${2:org.junit.jupiter.api.Assertions.fail(\"Not implemented\");}
 }"
@@ -927,15 +927,15 @@ return new org.springframework.web.client.RestTemplate();"
 ;; bundle is loaded through initializationOptions. init-el-extras.sh downloads
 ;; the jar from Maven Central; this hands it to jdtls. Until the jar exists
 ;; it's a harmless no-op (`:bundles []') and ordinary LSP still works.
-(defvar my/java-debug-bundle-directory
+(defvar my-java-debug-bundle-directory
   (expand-file-name "~/.local/share/java-debug/")
   "Directory holding the `com.microsoft.java.debug.plugin-*.jar' bundle.")
 
-(defun my/java--jdtls-initialization-options (&optional _server)
+(defun my-java--jdtls-initialization-options (&optional _server)
   "jdtls initializationOptions that load the java-debug bundle(s)."
   (let ((jars (file-expand-wildcards
                (expand-file-name "com.microsoft.java.debug.plugin-*.jar"
-                                 my/java-debug-bundle-directory))))
+                                 my-java-debug-bundle-directory))))
     `(:bundles ,(vconcat jars)
       :extendedClientCapabilities (:classFileContentsSupport t))))
 
@@ -944,7 +944,7 @@ return new org.springframework.web.client.RestTemplate();"
   (add-to-list 'eglot-server-programs
                '((java-mode java-ts-mode)
                  . ("jdtls" :initializationOptions
-                    my/java--jdtls-initialization-options))))
+                    my-java--jdtls-initialization-options))))
 
 (provide 'java)
 ;;; java.el ends here

@@ -23,7 +23,7 @@
 
 ;;; Built-in
 ;; `mix format' on save, via the language server (only fires when eglot is up).
-(defun my/elixir--format-on-save ()
+(defun my-elixir--format-on-save ()
   "Arrange for the language server to format the buffer before each save."
   (add-hook 'before-save-hook
             (lambda () (when (eglot-managed-p) (eglot-format-buffer)))
@@ -49,7 +49,7 @@
       (add-to-list 'auto-mode-alist '("\\.exs?\\'" . elixir-ts-mode)))
     (when (treesit-language-available-p 'heex)
       (add-to-list 'auto-mode-alist '("\\.heex\\'" . heex-ts-mode))))
-  :hook (elixir-ts-mode . my/elixir--format-on-save))
+  :hook (elixir-ts-mode . my-elixir--format-on-save))
 ;;; End Built-in
 
 ;;; GNU ELPA

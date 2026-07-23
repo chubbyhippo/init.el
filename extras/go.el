@@ -20,7 +20,7 @@
 
 ;;; Built-in
 ;; gofmt + organize-imports on save, via gopls (only fires when eglot is up).
-(defun my/go--format-on-save ()
+(defun my-go--format-on-save ()
   "Arrange for gopls to gofmt and organize imports before each save."
   (add-hook 'before-save-hook
             (lambda ()
@@ -49,7 +49,7 @@
       (add-to-list 'auto-mode-alist '("\\.go\\'" . go-ts-mode)))
     (when (treesit-language-available-p 'gomod)
       (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))))
-  :hook (go-ts-mode . my/go--format-on-save)
+  :hook (go-ts-mode . my-go--format-on-save)
   :custom
   (go-ts-mode-indent-offset 4))
 ;;; End Built-in

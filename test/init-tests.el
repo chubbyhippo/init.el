@@ -83,15 +83,15 @@
   (seq-some (lambda (f) (init-test--subform-p needle f)) init-test--init-forms))
 
 ;;; ---------------------------------------------- bring the units to life
-;; Evaluating the meow use-package block defines and calls my/meow-setup, which
+;; Evaluating the meow use-package block defines and calls my-meow-setup, which
 ;; populates meow's normal/motion state keymaps and the leader map
 ;; (mode-specific-map), and sets M-SPC globally.  The window/zoom keymaps and
 ;; the custom window commands are plain top-level forms.
 (init-test--eval-def 'use-package 'meow)
-(dolist (km '(my/window-map my/window-resize-map
-              my/text-scale-repeat-map my/winner-repeat-map))
+(dolist (km '(my-window-map my-window-resize-map
+              my-text-scale-repeat-map my-winner-repeat-map))
   (init-test--eval-def 'defvar-keymap km))
-(dolist (fn '(my/text-scale-reset my/window-resize))
+(dolist (fn '(my-text-scale-reset my-window-resize))
   (init-test--eval-def 'defun fn))
 
 (defun init-test--normal (key) (keymap-lookup meow-normal-state-keymap key))
@@ -168,66 +168,66 @@
 ;;; ================================================= C-c w window map
 (ert-deftest init-test/given-the-window-map-then-w-switches-and-W-swaps ()
   "w = jump (ace-window remaps it live), W = swap by label."
-  (should (eq (keymap-lookup my/window-map "w") 'other-window))
-  (should (eq (keymap-lookup my/window-map "W") 'ace-swap-window)))
+  (should (eq (keymap-lookup my-window-map "w") 'other-window))
+  (should (eq (keymap-lookup my-window-map "W") 'ace-swap-window)))
 
 (ert-deftest init-test/given-the-window-map-then-hjkl-move-and-HJKL-swap-window-states ()
-  (should (eq (keymap-lookup my/window-map "h") 'windmove-left))
-  (should (eq (keymap-lookup my/window-map "j") 'windmove-down))
-  (should (eq (keymap-lookup my/window-map "k") 'windmove-up))
-  (should (eq (keymap-lookup my/window-map "l") 'windmove-right))
-  (should (eq (keymap-lookup my/window-map "H") 'windmove-swap-states-left))
-  (should (eq (keymap-lookup my/window-map "J") 'windmove-swap-states-down))
-  (should (eq (keymap-lookup my/window-map "K") 'windmove-swap-states-up))
-  (should (eq (keymap-lookup my/window-map "L") 'windmove-swap-states-right)))
+  (should (eq (keymap-lookup my-window-map "h") 'windmove-left))
+  (should (eq (keymap-lookup my-window-map "j") 'windmove-down))
+  (should (eq (keymap-lookup my-window-map "k") 'windmove-up))
+  (should (eq (keymap-lookup my-window-map "l") 'windmove-right))
+  (should (eq (keymap-lookup my-window-map "H") 'windmove-swap-states-left))
+  (should (eq (keymap-lookup my-window-map "J") 'windmove-swap-states-down))
+  (should (eq (keymap-lookup my-window-map "K") 'windmove-swap-states-up))
+  (should (eq (keymap-lookup my-window-map "L") 'windmove-swap-states-right)))
 
 (ert-deftest init-test/given-the-window-map-then-r-resizes-via-my-window-resize ()
-  (should (eq (keymap-lookup my/window-map "r") 'my/window-resize)))
+  (should (eq (keymap-lookup my-window-map "r") 'my-window-resize)))
 
 (ert-deftest init-test/given-the-window-map-then-b-balances-and-comma-dot-walk-winner ()
-  (should (eq (keymap-lookup my/window-map "b") 'balance-windows))
-  (should (eq (keymap-lookup my/window-map ",") 'winner-undo))
-  (should (eq (keymap-lookup my/window-map ".") 'winner-redo)))
+  (should (eq (keymap-lookup my-window-map "b") 'balance-windows))
+  (should (eq (keymap-lookup my-window-map ",") 'winner-undo))
+  (should (eq (keymap-lookup my-window-map ".") 'winner-redo)))
 
 (ert-deftest init-test/given-the-window-map-then-zoom-keys-scale-and-reset-text ()
   "i/= zoom in, o/- zoom out, u/0 reset (home aliases of the symbol keys)."
-  (should (eq (keymap-lookup my/window-map "i") 'text-scale-increase))
-  (should (eq (keymap-lookup my/window-map "=") 'text-scale-increase))
-  (should (eq (keymap-lookup my/window-map "o") 'text-scale-decrease))
-  (should (eq (keymap-lookup my/window-map "-") 'text-scale-decrease))
-  (should (eq (keymap-lookup my/window-map "u") 'my/text-scale-reset))
-  (should (eq (keymap-lookup my/window-map "0") 'my/text-scale-reset)))
+  (should (eq (keymap-lookup my-window-map "i") 'text-scale-increase))
+  (should (eq (keymap-lookup my-window-map "=") 'text-scale-increase))
+  (should (eq (keymap-lookup my-window-map "o") 'text-scale-decrease))
+  (should (eq (keymap-lookup my-window-map "-") 'text-scale-decrease))
+  (should (eq (keymap-lookup my-window-map "u") 'my-text-scale-reset))
+  (should (eq (keymap-lookup my-window-map "0") 'my-text-scale-reset)))
 
 (ert-deftest init-test/given-the-resize-map-then-hjkl-and-arrows-resize-the-window ()
-  (should (eq (keymap-lookup my/window-resize-map "l") 'enlarge-window-horizontally))
-  (should (eq (keymap-lookup my/window-resize-map "<right>") 'enlarge-window-horizontally))
-  (should (eq (keymap-lookup my/window-resize-map "h") 'shrink-window-horizontally))
-  (should (eq (keymap-lookup my/window-resize-map "<left>") 'shrink-window-horizontally))
-  (should (eq (keymap-lookup my/window-resize-map "j") 'enlarge-window))
-  (should (eq (keymap-lookup my/window-resize-map "<down>") 'enlarge-window))
-  (should (eq (keymap-lookup my/window-resize-map "k") 'shrink-window))
-  (should (eq (keymap-lookup my/window-resize-map "<up>") 'shrink-window)))
+  (should (eq (keymap-lookup my-window-resize-map "l") 'enlarge-window-horizontally))
+  (should (eq (keymap-lookup my-window-resize-map "<right>") 'enlarge-window-horizontally))
+  (should (eq (keymap-lookup my-window-resize-map "h") 'shrink-window-horizontally))
+  (should (eq (keymap-lookup my-window-resize-map "<left>") 'shrink-window-horizontally))
+  (should (eq (keymap-lookup my-window-resize-map "j") 'enlarge-window))
+  (should (eq (keymap-lookup my-window-resize-map "<down>") 'enlarge-window))
+  (should (eq (keymap-lookup my-window-resize-map "k") 'shrink-window))
+  (should (eq (keymap-lookup my-window-resize-map "<up>") 'shrink-window)))
 
 ;;; ================================================= repeat maps
 (ert-deftest init-test/given-the-text-scale-repeat-map-then-zoom-keys-repeat ()
-  (should (keymapp my/text-scale-repeat-map))
-  (should (eq (keymap-lookup my/text-scale-repeat-map "i") 'text-scale-increase))
-  (should (eq (keymap-lookup my/text-scale-repeat-map "o") 'text-scale-decrease))
-  (should (eq (keymap-lookup my/text-scale-repeat-map "u") 'my/text-scale-reset))
-  (should (eq (get 'text-scale-increase 'repeat-map) 'my/text-scale-repeat-map)))
+  (should (keymapp my-text-scale-repeat-map))
+  (should (eq (keymap-lookup my-text-scale-repeat-map "i") 'text-scale-increase))
+  (should (eq (keymap-lookup my-text-scale-repeat-map "o") 'text-scale-decrease))
+  (should (eq (keymap-lookup my-text-scale-repeat-map "u") 'my-text-scale-reset))
+  (should (eq (get 'text-scale-increase 'repeat-map) 'my-text-scale-repeat-map)))
 
 (ert-deftest init-test/given-the-winner-repeat-map-then-comma-dot-repeat-window-history ()
-  (should (keymapp my/winner-repeat-map))
-  (should (eq (keymap-lookup my/winner-repeat-map ",") 'winner-undo))
-  (should (eq (keymap-lookup my/winner-repeat-map ".") 'winner-redo))
-  (should (eq (get 'winner-undo 'repeat-map) 'my/winner-repeat-map)))
+  (should (keymapp my-winner-repeat-map))
+  (should (eq (keymap-lookup my-winner-repeat-map ",") 'winner-undo))
+  (should (eq (keymap-lookup my-winner-repeat-map ".") 'winner-redo))
+  (should (eq (get 'winner-undo 'repeat-map) 'my-winner-repeat-map)))
 
 ;;; ================================================= custom commands
 (ert-deftest init-test/given-my-text-scale-reset-then-it-is-an-interactive-command ()
-  (should (commandp 'my/text-scale-reset)))
+  (should (commandp 'my-text-scale-reset)))
 
 (ert-deftest init-test/given-my-window-resize-then-it-is-an-interactive-command ()
-  (should (commandp 'my/window-resize)))
+  (should (commandp 'my-window-resize)))
 
 ;;; ================================================= config invariants
 (ert-deftest init-test/given-the-config-then-M-m-translates-to-C-c ()

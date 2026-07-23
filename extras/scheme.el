@@ -60,14 +60,14 @@
          (geiser-repl-mode . enable-paredit-mode)))
 ;;; End NonGNU ELPA
 
-;; scheme-mode is a `prog-mode' child, so init.el's global `my/eglot-ensure'
+;; scheme-mode is a `prog-mode' child, so init.el's global `my-eglot-ensure'
 ;; hook would fire and nag "no suitable server" — there is no Scheme LSP (geiser
 ;; provides eval / autodoc / completion). Opt Scheme buffers out of it via
 ;; advice, without editing init.el; guarded so load order doesn't matter.
-(when (fboundp 'my/eglot-ensure)
-  (advice-add 'my/eglot-ensure :before-while
+(when (fboundp 'my-eglot-ensure)
+  (advice-add 'my-eglot-ensure :before-while
               (lambda () (not (derived-mode-p 'scheme-mode)))
-              '((name . my/scheme--skip-eglot))))
+              '((name . my-scheme--skip-eglot))))
 
 ;; No `(provide 'scheme)' — the feature/library name `scheme' belongs to the
 ;; built-in scheme.el (it defines scheme-mode); this file is loaded by path from

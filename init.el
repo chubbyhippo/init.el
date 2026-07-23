@@ -64,14 +64,14 @@
 ;; server" in every elisp buffer (this file included) — skip the lisp modes,
 ;; which have no LSP here. emacs-lisp-mode and friends all derive from
 ;; lisp-data-mode.
-(defun my/eglot-ensure ()
+(defun my-eglot-ensure ()
   "Run `eglot-ensure', except in lisp modes with no language server."
   (unless (derived-mode-p 'lisp-data-mode)
     (eglot-ensure)))
 
 (use-package eglot
   :ensure nil
-  :hook (prog-mode . my/eglot-ensure)
+  :hook (prog-mode . my-eglot-ensure)
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full))) ; stop logging every LSP event (perf)
@@ -82,19 +82,19 @@
   ;; SPC , e / SPC . e leader keys (meow block) need them resolvable anywhere
   :commands (flymake-goto-next-error flymake-goto-prev-error)
   ;; eglot turns flymake on in LSP buffers, but elisp buffers get no eglot
-  ;; (my/eglot-ensure skips lisps) and so no live diagnostics at all. Enable
+  ;; (my-eglot-ensure skips lisps) and so no live diagnostics at all. Enable
   ;; the built-in byte-compile backend there — a typo'd symbol in this very
   ;; file gets flagged as you type instead of at the next restart. checkdoc
   ;; stays off: docstring-style nagging is noise in a personal config.
   :preface
-  (defun my/elisp-flymake ()
+  (defun my-elisp-flymake ()
     "Flymake for elisp buffers: byte-compile diagnostics, no checkdoc."
     ;; drop checkdoc BEFORE enabling: flymake's initial pass collects backends
     ;; the moment the mode turns on, and a backend that reports once and is
     ;; then removed never runs again to clear its stale diagnostics
     (remove-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc t)
     (flymake-mode 1))
-  :hook (emacs-lisp-mode . my/elisp-flymake)
+  :hook (emacs-lisp-mode . my-elisp-flymake)
   ;; Emacs 30 gates the byte-compile backend behind `trusted-content'
   ;; (compiling runs macro code). init.el itself is always trusted
   ;; (trusted-content-p special-cases user-init-file) but early-init.el and
@@ -106,7 +106,7 @@
   ;; repeat-mode: after one error jump (SPC . e / SPC , e), keep tapping . / ,
   ;; — the leader group's own mnemonic. The entry keys aren't in the map, so
   ;; repeat-check-key must be off (same trick as the expreg map below).
-  (defvar-keymap my/flymake-repeat-map
+  (defvar-keymap my-flymake-repeat-map
     :repeat t
     "." #'flymake-goto-next-error
     "," #'flymake-goto-prev-error)
@@ -152,7 +152,7 @@
   ;; repeat-mode: after any expreg command, tap . to grow or , to shrink
   ;; (unshifted </> — same magnitude mnemonic, no shift to press). transient, so it
   ;; never clashes with meow's , / . (inner/bounds-of-thing) — any other key ends the run.
-  (defvar-keymap my/expreg-repeat-map
+  (defvar-keymap my-expreg-repeat-map
     :repeat t
     "." #'expreg-expand
     "," #'expreg-contract)
@@ -272,7 +272,7 @@
   ;; ways), so branch on the state: merged capfs while managed, and drop the
   ;; buffer-local list on the way out — otherwise a serverless
   ;; eglot-completion-at-point is left behind and errors on the next complete.
-  (defun my/eglot-capfs ()
+  (defun my-eglot-capfs ()
     "Merge eglot's capf with cape's while managed; restore the globals after."
     (if (eglot-managed-p)
         (setq-local completion-at-point-functions
@@ -281,7 +281,7 @@
                           #'cape-file
                           #'cape-keyword))
       (kill-local-variable 'completion-at-point-functions)))
-  (add-hook 'eglot-managed-mode-hook #'my/eglot-capfs))
+  (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs))
 
 (use-package vundo
   :ensure t
@@ -376,7 +376,7 @@
   :ensure t
   :demand t
   :config
-  (defun my/meow-setup ()
+  (defun my-meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     ;; MOTION: for read-only buffers. j/k move, ESC does nothing.
@@ -481,7 +481,7 @@
      '("z" . meow-pop-selection)
      '("'" . repeat)
      '("<escape>" . ignore)))
-  (my/meow-setup)
+  (my-meow-setup)
   ;; M-SPC reaches the leader even from INSERT
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
@@ -490,19 +490,19 @@
 
 ;;; Window management
 ;; mnemonic submenu on C-c w (meow: SPC w), which-key spells out the whole menu
-(defun my/text-scale-reset ()
+(defun my-text-scale-reset ()
   "Reset this buffer's text size back to the default."
   (interactive)
   (text-scale-set 0))
 
-(defvar-keymap my/window-resize-map
+(defvar-keymap my-window-resize-map
   :doc "Resize the selected window; any other key exits."
   "l" #'enlarge-window-horizontally  "<right>" #'enlarge-window-horizontally  ; wider
   "h" #'shrink-window-horizontally   "<left>"  #'shrink-window-horizontally   ; narrower
   "j" #'enlarge-window               "<down>"  #'enlarge-window               ; taller
   "k" #'shrink-window                "<up>"    #'shrink-window)               ; shorter
 
-(defun my/window-resize ()
+(defun my-window-resize ()
   "Resize a window with h/l/j/k or the arrows; any other key exits.
 With 3+ windows, pick which one with ace-window first.  With two windows the
 divider is unambiguous, so resize the current window without moving focus;
@@ -510,13 +510,13 @@ ace-window would otherwise jump to the other window."
   (interactive)
   (require 'ace-window)
   (if (<= (length (window-list)) 2)
-      (set-transient-map my/window-resize-map t nil "Resize %k")
+      (set-transient-map my-window-resize-map t nil "Resize %k")
     (aw-select " Ace - Resize"
                (lambda (win)
                  (aw-switch-to-window win)
-                 (set-transient-map my/window-resize-map t nil "Resize %k")))))
+                 (set-transient-map my-window-resize-map t nil "Resize %k")))))
 
-(defvar-keymap my/window-map
+(defvar-keymap my-window-map
   :doc "window commands"
   "v" #'split-window-right        ; two side by side
   "s" #'split-window-below        ; one stacked on the other
@@ -525,7 +525,7 @@ ace-window would otherwise jump to the other window."
   "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
   "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
   "W" #'ace-swap-window           ; swap two windows by ace label (W = swap, w = jump)
-  "r" #'my/window-resize          ; pick a window, then h/l/j/k or arrows resize it
+  "r" #'my-window-resize          ; pick a window, then h/l/j/k or arrows resize it
   "h" #'windmove-left
   "j" #'windmove-down
   "k" #'windmove-up
@@ -537,26 +537,26 @@ ace-window would otherwise jump to the other window."
   "b" #'balance-windows
   "," #'winner-undo               ; step back through window-layout history
   "." #'winner-redo               ; step forward (after a winner-undo)
-  "u" #'my/text-scale-reset       ; reset zoom  ("undo" zoom — home alias of 0)
+  "u" #'my-text-scale-reset       ; reset zoom  ("undo" zoom — home alias of 0)
   "i" #'text-scale-increase       ; zoom in     (home alias of =)
   "o" #'text-scale-decrease       ; zoom out    (home alias of -)
   "=" #'text-scale-increase       ; zoom in
   "-" #'text-scale-decrease       ; zoom out
-  "0" #'my/text-scale-reset)      ; reset zoom
-(keymap-set global-map "C-c w" my/window-map)
+  "0" #'my-text-scale-reset)      ; reset zoom
+(keymap-set global-map "C-c w" my-window-map)
 
 ;; repeat-mode is on, so after the first zoom just keep tapping i/o/u (or =/-/0)
-(defvar-keymap my/text-scale-repeat-map
+(defvar-keymap my-text-scale-repeat-map
   :repeat t
   "i" #'text-scale-increase
   "o" #'text-scale-decrease
-  "u" #'my/text-scale-reset
+  "u" #'my-text-scale-reset
   "=" #'text-scale-increase
   "-" #'text-scale-decrease
-  "0" #'my/text-scale-reset)
+  "0" #'my-text-scale-reset)
 
 ;; after the first winner step, keep tapping ,/. to walk window-layout history
-(defvar-keymap my/winner-repeat-map
+(defvar-keymap my-winner-repeat-map
   :repeat t
   "," #'winner-undo
   "." #'winner-redo)
