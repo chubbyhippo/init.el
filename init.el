@@ -505,8 +505,8 @@
 (defun my/window-resize ()
   "Resize a window with h/l/j/k or the arrows; any other key exits.
 With 3+ windows, pick which one with ace-window first.  With two windows the
-divider is unambiguous, so resize the current window without moving focus
-\(ace-window would otherwise jump to the other window)."
+divider is unambiguous, so resize the current window without moving focus;
+ace-window would otherwise jump to the other window."
   (interactive)
   (require 'ace-window)
   (if (<= (length (window-list)) 2)
