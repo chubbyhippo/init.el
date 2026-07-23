@@ -503,15 +503,18 @@
   "k" #'shrink-window                "<up>"    #'shrink-window)               ; shorter
 
 (defun my/window-resize ()
-  "Pick a window with ace-window, then resize it with h/l/j/k or the arrows.
-Any other key exits (`set-transient-map' KEEP-PRED keeps the map alive only
-while its own keys are used)."
+  "Resize a window with h/l/j/k or the arrows; any other key exits.
+With 3+ windows, pick which one with ace-window first.  With two windows the
+divider is unambiguous, so resize the current window without moving focus
+\(ace-window would otherwise jump to the other window)."
   (interactive)
   (require 'ace-window)
-  (aw-select " Ace - Resize"
-             (lambda (win)
-               (aw-switch-to-window win)
-               (set-transient-map my/window-resize-map t nil "Resize %k"))))
+  (if (<= (length (window-list)) 2)
+      (set-transient-map my/window-resize-map t nil "Resize %k")
+    (aw-select " Ace - Resize"
+               (lambda (win)
+                 (aw-switch-to-window win)
+                 (set-transient-map my/window-resize-map t nil "Resize %k")))))
 
 (defvar-keymap my/window-map
   :doc "window commands"
