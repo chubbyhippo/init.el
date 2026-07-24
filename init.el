@@ -1,6 +1,6 @@
-;; startup's over, so drop the GC ceiling back down (early-init.el cranked it up)  -*- lexical-binding: t; -*-
+;;; init.el --- personal GNU Emacs 30 config  -*- lexical-binding: t; -*-
 (add-hook 'emacs-startup-hook
-          (lambda () (setq gc-cons-threshold (* 16 1024 1024)))) ; 16mb
+          (lambda () (setq gc-cons-threshold (* 16 1024 1024))))
 
 ;;; Built-in
 (use-package emacs
@@ -12,23 +12,20 @@
   (savehist-mode 1)
   (save-place-mode 1)
   (electric-pair-mode 1)
-  (global-so-long-mode 1) ; stop files with pathologically long lines (minified, logs) from wedging Emacs
+  (global-so-long-mode 1)
   (when (fboundp 'global-completion-preview-mode)
-    (global-completion-preview-mode 1)) ; emacs 30 ghost text, happy alongside corfu
+    (global-completion-preview-mode 1))
   (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c k" #'kill-current-buffer)
-  (keymap-global-set "C-c b m" #'bookmark-set)   ; bookmark prefix: m = make/set (jump is C-c b j → consult-bookmark)
+  (keymap-global-set "C-c b m" #'bookmark-set)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
   (windmove-default-keybindings)
-  (winner-mode 1) ; C-c left/right undoes/redoes window layouts, goes with windmove
-  (setq read-process-output-max (* 1024 1024)) ; 1MB pipe reads (default 64KB) → snappier LSP
-  ;; keep M-x customize saves out of this hand-curated file
+  (winner-mode 1)
+  (setq read-process-output-max (* 1024 1024))
   (setq custom-file (locate-user-emacs-file "custom.el"))
   (load custom-file 'noerror)
-  ;; cursor-intangible in minibuffer-prompt-properties (below) is inert
-  ;; without the mode that honors the property
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   :custom
   (context-menu-mode t)
@@ -58,12 +55,8 @@
 (use-package bookmark
   :ensure nil
   :custom
-  (bookmark-save-flag 1)) ; write bookmarks to disk as they're set, not only at exit
+  (bookmark-save-flag 1))
 
-;; hooking eglot-ensure straight onto prog-mode nags "Cannot find suitable
-;; server" in every elisp buffer (this file included) — skip the lisp modes,
-;; which have no LSP here. emacs-lisp-mode and friends all derive from
-;; lisp-data-mode.
 (defun my-eglot-ensure ()
   "Run `eglot-ensure', except in lisp modes with no language server."
   (unless (derived-mode-p 'lisp-data-mode)
@@ -74,38 +67,21 @@
   :hook (prog-mode . my-eglot-ensure)
   :custom
   (eglot-autoshutdown t)
-  (eglot-events-buffer-config '(:size 0 :format full))) ; stop logging every LSP event (perf)
+  (eglot-events-buffer-config '(:size 0 :format full)))
 
 (use-package flymake
   :ensure nil
-  ;; not preloaded and its nav commands carry no autoload cookie — the
-  ;; SPC , e / SPC . e leader keys (meow block) need them resolvable anywhere
   :commands (flymake-goto-next-error flymake-goto-prev-error)
-  ;; eglot turns flymake on in LSP buffers, but elisp buffers get no eglot
-  ;; (my-eglot-ensure skips lisps) and so no live diagnostics at all. Enable
-  ;; the built-in byte-compile backend there — a typo'd symbol in this very
-  ;; file gets flagged as you type instead of at the next restart. checkdoc
-  ;; stays off: docstring-style nagging is noise in a personal config.
   :preface
   (defun my-elisp-flymake ()
     "Flymake for elisp buffers: byte-compile diagnostics, no checkdoc."
-    ;; drop checkdoc BEFORE enabling: flymake's initial pass collects backends
-    ;; the moment the mode turns on, and a backend that reports once and is
-    ;; then removed never runs again to clear its stale diagnostics
     (remove-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc t)
     (flymake-mode 1))
   :hook (emacs-lisp-mode . my-elisp-flymake)
-  ;; Emacs 30 gates the byte-compile backend behind `trusted-content'
-  ;; (compiling runs macro code). init.el itself is always trusted
-  ;; (trusted-content-p special-cases user-init-file) but early-init.el and
-  ;; extras/*.el are not — trust the whole config dir so they lint too.
   :custom
   (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
-  (flymake-show-diagnostics-at-end-of-line 'short) ; IDE-style inline text, most severe only
+  (flymake-show-diagnostics-at-end-of-line 'short)
   :config
-  ;; repeat-mode: after one error jump (SPC . e / SPC , e), keep tapping . / ,
-  ;; — the leader group's own mnemonic. The entry keys aren't in the map, so
-  ;; repeat-check-key must be off (same trick as the expreg map below).
   (defvar-keymap my-flymake-repeat-map
     :repeat t
     "." #'flymake-goto-next-error
@@ -115,17 +91,17 @@
 
 (use-package org
   :ensure nil
-  :hook (org-mode . visual-line-mode)         ; wrap long lines instead of chopping them off
+  :hook (org-mode . visual-line-mode)
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c l" . org-store-link))
   :custom
   (org-directory "~/org")
   (org-agenda-files (list org-directory))
-  (org-startup-indented t)                    ; fake indent under headlines (this is what turns on org-indent-mode)
-  (org-return-follows-link t)                 ; RET follows the link under point
-  (org-hide-emphasis-markers t)               ; hide the *bold* and =code= markers
-  (org-catch-invisible-edits 'show-and-error)) ; warn me before I edit inside folded text
+  (org-startup-indented t)
+  (org-return-follows-link t)
+  (org-hide-emphasis-markers t)
+  (org-catch-invisible-edits 'show-and-error))
 
 ;;; End Built-in
 
@@ -145,21 +121,14 @@
 (use-package expreg
   :ensure t
   :bind (
-	 ("M-r"   . expreg-expand)    ; M- stays reachable in the terminal via the ESC prefix
-	 ("C-c e" . expreg-expand)    ; e = expand; alternate entry (also M-m e via key-translation-map)
-	 ("M-R"   . expreg-contract)) ; M-S-r shrinks a step; mash M-r (or tap . below) to grow again
+	 ("M-r"   . expreg-expand)
+	 ("C-c e" . expreg-expand)
+	 ("M-R"   . expreg-contract))
   :config
-  ;; repeat-mode: after any expreg command, tap . to grow or , to shrink
-  ;; (unshifted </> — same magnitude mnemonic, no shift to press). transient, so it
-  ;; never clashes with meow's , / . (inner/bounds-of-thing) — any other key ends the run.
   (defvar-keymap my-expreg-repeat-map
     :repeat t
     "." #'expreg-expand
     "," #'expreg-contract)
-  ;; we enter with r / e (M-r, C-c e, M-R), none of which are keys in the map above.
-  ;; repeat-check-key defaults to t and refuses to arm the map unless the *invoking*
-  ;; key is itself one of the repeat keys — so . / , would never start repeating.
-  ;; skip that check for these two commands.
   (put 'expreg-expand   'repeat-check-key 'no)
   (put 'expreg-contract 'repeat-check-key 'no))
 
@@ -168,15 +137,13 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles partial-completion)))))
-;; Emacs 31 will add completion-pcm-leading-wildcard — the variable does
-;; not exist in 30.x, so re-add it here only after upgrading.
 
 (use-package vertico
   :ensure t
   :init
   (vertico-mode 1))
 
-(use-package vertico-directory ;; bundled with vertico
+(use-package vertico-directory
   :ensure nil
   :after vertico
   :bind (:map vertico-map
@@ -192,29 +159,24 @@
 (use-package consult
   :ensure t
   :bind (
-         ("C-c b j" . consult-bookmark)   ; bookmark prefix: j = jump (set is C-c b m); buffers stay on C-x b / C-x C-b
+         ("C-c b j" . consult-bookmark)
          ("C-c r" . consult-ripgrep)
-         ;; replacements for the stock bindings
          ("C-x b"   . consult-buffer)
-         ("C-x C-b" . consult-buffer)   ; ditch the clunky buffer list for the good switcher
-         ("C-x r b" . consult-bookmark) ; stock bookmark-jump key, now with preview
+         ("C-x C-b" . consult-buffer)
+         ("C-x r b" . consult-bookmark)
          ("M-y"     . consult-yank-pop)
-         ;; search
          ("M-s r" . consult-ripgrep)
          ("M-s l" . consult-line)
          ("M-s s" . consult-line)
          ("M-s L" . consult-line-multi)
          ("M-s o" . consult-outline)
-         ;; isearch
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)
          ("M-s e" . consult-isearch-history)
          ("M-s l" . consult-line)
          ("M-s L" . consult-line-multi))
   :config
-  ;; recenter after a consult jump, otherwise the hit lands at the screen edge
   (add-hook 'consult-after-jump-hook #'recenter)
-  ;; type < then a key to narrow results down to one group
   (setq consult-narrow-key "<")
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
@@ -238,8 +200,6 @@
 
 (use-package embark-consult
   :ensure t
-  ;; :after keeps this glue lazy — a bare declaration would require it at
-  ;; startup and drag embark AND consult in with it
   :after (embark consult))
 
 (use-package corfu
@@ -268,10 +228,6 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-keyword)
-  ;; eglot-managed-mode-hook runs on disable too (minor-mode hooks fire both
-  ;; ways), so branch on the state: merged capfs while managed, and drop the
-  ;; buffer-local list on the way out — otherwise a serverless
-  ;; eglot-completion-at-point is left behind and errors on the next complete.
   (defun my-eglot-capfs ()
     "Merge eglot's capf with cape's while managed; restore the globals after."
     (if (eglot-managed-p)
@@ -291,33 +247,28 @@
 
 (use-package ace-window
   :ensure t
-  :bind ([remap other-window] . ace-window)   ; label each window, jump by key (also powers C-c w w)
+  :bind ([remap other-window] . ace-window)
   :custom
   (aw-scope 'frame)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 (use-package diff-hl
   :ensure t
-  :demand t                                          ; :hook defers; force eager so the global mode turns on at startup
+  :demand t
   :hook
-  (dired-mode         . diff-hl-dired-mode)          ; VCS status in Dired
-  (magit-post-refresh . diff-hl-magit-post-refresh)  ; refresh the gutter after magit stages/commits (pre-refresh is obsolete)
+  (dired-mode         . diff-hl-dired-mode)
+  (magit-post-refresh . diff-hl-magit-post-refresh)
   :custom
-  (diff-hl-update-async t)                            ; diff off the main thread — no UI stalls in big repos
+  (diff-hl-update-async t)
   :config
-  ;; navigation lives on C-x v (] / [ next/prev hunk, n revert, * show, S stage) and is
-  ;; already repeat-mode-aware: C-x v ] then keep tapping ] / [ to walk hunks.
-  ;; the SPC . c / SPC , c leader jumps repeat the same way — , / . added to
-  ;; the map (matching the flymake repeat map), and check-key off because the
-  ;; keypad's final key `c' isn't a map member (expreg precedent).
   (keymap-set diff-hl-command-map "." #'diff-hl-next-hunk)
   (keymap-set diff-hl-command-map "," #'diff-hl-previous-hunk)
   (put 'diff-hl-next-hunk 'repeat-check-key 'no)
   (put 'diff-hl-previous-hunk 'repeat-check-key 'no)
   (global-diff-hl-mode 1)
-  (diff-hl-flydiff-mode 1)                            ; update the gutter live, before you save
+  (diff-hl-flydiff-mode 1)
   (unless (display-graphic-p)
-    (diff-hl-margin-mode 1)))                         ; no fringe in a terminal -> draw in the margin
+    (diff-hl-margin-mode 1)))
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
@@ -326,29 +277,20 @@
   :hook
   (eshell-load . eat-eshell-visual-command-mode)
   :config
-  ;; visual commands in eshell (less, htop, top...) get their own eat-mode
-  ;; terminal. shove it into meow INSERT so every key passes straight through,
-  ;; otherwise meow assumes MOTION and grabs the SPC/j/k a pager needs to page
-  ;; and scroll. ESC still drops you to NORMAL, but you quit these with q.
   (with-eval-after-load 'meow
     (add-to-list 'meow-mode-state-list '(eat-mode . insert))))
 
-(use-package corfu-terminal ;; gives corfu popups in the terminal (emacs 30 can't do tty child frames)
+(use-package corfu-terminal
   :ensure t
   :init
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
 
-(use-package wgrep ;; consult-ripgrep, embark-export, then C-c C-p to edit the matches in place
+(use-package wgrep
   :ensure t
   :custom
   (wgrep-auto-save-buffer t)
   :config
-  ;; grep buffers are read-only so meow parks them in MOTION. C-c C-p makes them
-  ;; editable but only swaps the local keymap (still grep-mode underneath), so
-  ;; meow-mode-state-list never catches it. jump to NORMAL on edit (you need i to
-  ;; type, and MOTION would eat SPC/j/k mid-edit) and back to MOTION when you're
-  ;; done or bail out. same trick meow uses for its own `occur-edit-mode' . normal.
   (with-eval-after-load 'meow
     (advice-add 'wgrep-change-to-wgrep-mode :after
                 (lambda (&rest _) (meow--switch-state 'normal)))
@@ -361,17 +303,11 @@
          ("C-x M-g" . magit-dispatch)
          ("C-c M-g" . magit-file-dispatch))
   :config
-  ;; keep magit's read-only buffers in MOTION; NORMAL would stomp on its
-  ;; single-key commands (s stage, c commit, p push, f fetch, l log, d diff).
   (with-eval-after-load 'meow
     (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
                     magit-revision-mode magit-stash-mode magit-process-mode))
       (add-to-list 'meow-mode-state-list (cons mode 'motion)))))
 
-;; meow is vim-flavored modal editing. mostly two states:
-;;   NORMAL: keys run commands (move, select, edit). you start here.
-;;   INSERT: keys type text. i or a to get in, ESC to get out.
-;; hit SPC in NORMAL to pop the leader (the command menu).
 (use-package meow
   :ensure t
   :demand t
@@ -379,12 +315,10 @@
   (defun my-meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-    ;; MOTION: for read-only buffers. j/k move, ESC does nothing.
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
      '("k" . meow-prev)
      '("<escape>" . ignore))
-    ;; leader (SPC): 0-9 give a count, / explains a key, ? brings up the cheatsheet.
     (meow-leader-define-key
      '("1" . meow-digit-argument)
      '("2" . meow-digit-argument)
@@ -398,24 +332,12 @@
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
-     ;; consult shortcut, spelled out so keypad translation doesn't drop it
-     ;; (no "x b" entry: x is a keypad START key, so SPC x b already reaches
-     ;; consult-buffer through the C-x C-b translation — a leader entry there
-     ;; is dead weight that only binds an unused C-c x b).
-     ;; NOTE: the leader IS mode-specific-map (the C-c map, meow-helpers.el) —
-     ;; a bare "b" here would clobber the C-c b bookmark prefix above. b b
-     ;; keeps buffers one key deeper, completing the SPC b group
-     ;; (b m set / b j jump / b b buffers).
      '("s"   . consult-line)
      '("b b" . consult-buffer)
-     ;; SPC , / SPC . — previous/next groups (c = change/hunk, e = error).
-     ;; In org buffers org's own C-c , / C-c . still win (priority /
-     ;; timestamp): the keypad resolves through the local map like any C-c key.
      '(", c" . diff-hl-previous-hunk)
      '(", e" . flymake-goto-prev-error)
      '(". c" . diff-hl-next-hunk)
      '(". e" . flymake-goto-next-error))
-    ;; NORMAL: every key edits (i/a when you actually want to type).
     (meow-normal-define-key
      '("0" . meow-expand-0)
      '("9" . meow-expand-9)
@@ -482,14 +404,12 @@
      '("'" . repeat)
      '("<escape>" . ignore)))
   (my-meow-setup)
-  ;; M-SPC reaches the leader even from INSERT
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 
 ;;; End NonGNU ELPA
 
 ;;; Window management
-;; mnemonic submenu on C-c w (meow: SPC w), which-key spells out the whole menu
 (defun my-text-scale-reset ()
   "Reset this buffer's text size back to the default."
   (interactive)
@@ -497,10 +417,10 @@
 
 (defvar-keymap my-window-resize-map
   :doc "Resize the selected window; any other key exits."
-  "l" #'enlarge-window-horizontally  "<right>" #'enlarge-window-horizontally  ; wider
-  "h" #'shrink-window-horizontally   "<left>"  #'shrink-window-horizontally   ; narrower
-  "j" #'enlarge-window               "<down>"  #'enlarge-window               ; taller
-  "k" #'shrink-window                "<up>"    #'shrink-window)               ; shorter
+  "l" #'enlarge-window-horizontally  "<right>" #'enlarge-window-horizontally
+  "h" #'shrink-window-horizontally   "<left>"  #'shrink-window-horizontally
+  "j" #'enlarge-window               "<down>"  #'enlarge-window
+  "k" #'shrink-window                "<up>"    #'shrink-window)
 
 (defun my-window-resize ()
   "Resize a window with h/l/j/k or the arrows; any other key exits.
@@ -518,34 +438,33 @@ ace-window would otherwise jump to the other window."
 
 (defvar-keymap my-window-map
   :doc "window commands"
-  "v" #'split-window-right        ; two side by side
-  "s" #'split-window-below        ; one stacked on the other
-  "d" #'delete-window             ; close this window  (old C-x 0)
-  "D" #'delete-other-windows      ; delete the OTHERS — keep this one (also on `m`)
-  "m" #'delete-other-windows      ; maximize this one  (old C-x 1)
-  "w" #'other-window              ; ace-window remaps this once it's loaded (SPC w w)
-  "W" #'ace-swap-window           ; swap two windows by ace label (W = swap, w = jump)
-  "r" #'my-window-resize          ; pick a window, then h/l/j/k or arrows resize it
+  "v" #'split-window-right
+  "s" #'split-window-below
+  "d" #'delete-window
+  "D" #'delete-other-windows
+  "m" #'delete-other-windows
+  "w" #'other-window
+  "W" #'ace-swap-window
+  "r" #'my-window-resize
   "h" #'windmove-left
   "j" #'windmove-down
   "k" #'windmove-up
   "l" #'windmove-right
-  "H" #'windmove-swap-states-left   ; swap this window's buffer with the neighbour
-  "J" #'windmove-swap-states-down   ; (capitals mirror the h/j/k/l move keys)
+  "H" #'windmove-swap-states-left
+  "J" #'windmove-swap-states-down
   "K" #'windmove-swap-states-up
   "L" #'windmove-swap-states-right
   "b" #'balance-windows
-  "," #'winner-undo               ; step back through window-layout history
-  "." #'winner-redo               ; step forward (after a winner-undo)
-  "u" #'my-text-scale-reset       ; reset zoom  ("undo" zoom — home alias of 0)
-  "i" #'text-scale-increase       ; zoom in     (home alias of =)
-  "o" #'text-scale-decrease       ; zoom out    (home alias of -)
-  "=" #'text-scale-increase       ; zoom in
-  "-" #'text-scale-decrease       ; zoom out
-  "0" #'my-text-scale-reset)      ; reset zoom
+  "," #'winner-undo
+  "." #'winner-redo
+  "u" #'my-text-scale-reset
+  "i" #'text-scale-increase
+  "o" #'text-scale-decrease
+  "=" #'text-scale-increase
+  "-" #'text-scale-decrease
+  "0" #'my-text-scale-reset)
 (keymap-set global-map "C-c w" my-window-map)
 
-;; repeat-mode is on, so after the first zoom just keep tapping i/o/u (or =/-/0)
 (defvar-keymap my-text-scale-repeat-map
   :repeat t
   "i" #'text-scale-increase
@@ -555,16 +474,12 @@ ace-window would otherwise jump to the other window."
   "-" #'text-scale-decrease
   "0" #'my-text-scale-reset)
 
-;; after the first winner step, keep tapping ,/. to walk window-layout history
 (defvar-keymap my-winner-repeat-map
   :repeat t
   "," #'winner-undo
   "." #'winner-redo)
 
 ;;; Extras (optional, disabled by default)
-;; Per-language / experimental modules live in extras/. Each file is
-;; self-contained and only installs its packages once loaded — uncomment a
-;; line to enable it.
 ;; (load (expand-file-name "extras/clojure.el"    user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/cpp.el"        user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/elixir.el"     user-emacs-directory) :noerror :nomessage)
