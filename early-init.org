@@ -1,0 +1,109 @@
+#+title: early-init.el — study notes
+#+options: toc:2 num:nil
+
+Companion study guide for =early-init.el=.  The =.el= file is the source of
+truth; this describes what each form does and *why*, section by section.
+
+* What early-init.el is for
+
+Emacs loads =early-init.el= *before* the package system starts and *before*
+the first frame is painted.  That makes it the right place for two kinds of
+thing: settings that must be in effect before startup does its work (GC,
+frame behaviour), and UI chrome that would otherwise flicker onto the screen
+and then vanish once =init.el= turned it off.  Everything here is a plain
+global assignment — no packages, no keybindings.
+
+* Startup performance
+
+#+begin_src elisp
+(setq gc-cons-threshold most-positive-fixnum)
+#+end_src
+
+Raise the garbage-collection ceiling as high as it goes so *no* GC happens
+while Emacs is starting up — collecting mid-startup just slows it down.  This
+is deliberately paired with =init.el=, which drops the threshold back to a
+sane 16 MB on =emacs-startup-hook= once startup is over.  Leaving it at
+=most-positive-fixnum= forever would mean Emacs almost never collects and
+grows huge, so the two files must be read together.
+
+#+begin_src elisp
+(setq frame-inhibit-implied-resize t)
+#+end_src
+
+When the menu bar, tool bar, or font changes, Emacs normally resizes the
+frame to compensate.  During startup that reflow happens several times and
+just wastes time; this suppresses it.
+
+* Load hygiene
+
+#+begin_src elisp
+(setq load-prefer-newer t)
+#+end_src
+
+If both =foo.el= and a stale =foo.elc= exist, load the newer one.  Without
+this you can edit a =.el=, forget to recompile, and keep running the old
+byte-compiled version.
+
+#+begin_src elisp
+(setq inhibit-x-resources t)
+#+end_src
+
+Ignore X resources (=~/.Xresources= etc.).  The config sets its own theme and
+faces; merging in X resources would let the environment override them.
+
+* Quiet startup UI
+
+#+begin_src elisp
+(setq inhibit-startup-screen t)
+#+end_src
+
+No splash / "Welcome to GNU Emacs" screen — go straight to the scratch buffer.
+
+#+begin_src elisp
+(fset 'display-startup-echo-area-message #'ignore)
+#+end_src
+
+This kills the "For information about GNU Emacs and the GNU system…" line
+that prints in the echo area at startup.  The *obvious* way to silence it,
+=inhibit-startup-echo-area-message=, does **not** work here: an anti-spoofing
+check in =startup.el= only honours that variable if =init.el= *literally*
+contains =(setq inhibit-startup-echo-area-message "<login>")= with your login
+name, or you set it through Customize — assigning =user-login-name= matches
+neither, and =early-init.el= is not even scanned for it.  So instead of
+trying to set the flag, we neuter the *function* that prints the message by
+aliasing it to =ignore=.
+
+* No-flicker first frame
+
+#+begin_src elisp
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(push '(menu-bar-lines . 0) default-frame-alist)
+#+end_src
+
+Strip the tool bar, scroll bars, and menu bar by putting the settings into
+=default-frame-alist= *before the first frame is created*.  If you disabled
+these later (in =init.el=, via =tool-bar-mode -1= and friends) the bars would
+paint with the first frame and then disappear — a visible flicker.  Setting
+them in the frame defaults means the very first frame is already bare.
+
+Note the scroll-bar entry is a bare =(vertical-scroll-bars)= with no value:
+that means "no scroll bar", the same as =(vertical-scroll-bars . nil)=.
+
+* Native compilation
+
+#+begin_src elisp
+(setq native-comp-async-report-warnings-errors 'silent
+      package-native-compile t)
+#+end_src
+
+- =…-warnings-errors 'silent= keeps native-comp's warning buffer from popping
+  up constantly — the warnings go to a log instead of interrupting you.
+- =package-native-compile t= native-compiles packages when they are
+  installed, so they run at full speed from the first session rather than
+  being compiled lazily later.
+
+* See also
+
+- =init.org= — the study guide for the main config.
+- =test/early-init-tests.el= — the ERT suite that pins every fact above.

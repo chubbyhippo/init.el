@@ -1,0 +1,592 @@
+#+title: init.el — study notes
+#+options: toc:3 num:nil
+
+Companion study guide for =init.el=.  The =.el= file is the source of truth;
+this walks through it section by section, restoring the *why* behind each
+choice.  Code blocks are quoted for reading — they are not tangled, so
+editing this file never changes =init.el=.
+
+Three rules shape the whole config: *built-ins first*, *GNU/NonGNU ELPA only —
+never MELPA*, and *meow is the modal model*.  This config is also the
+canonical source of the cross-editor meow conventions that the sibling
+editor plugins port.
+
+* Prelude — hand the GC ceiling back
+
+#+begin_src elisp
+(add-hook 'emacs-startup-hook
+          (lambda () (setq gc-cons-threshold (* 16 1024 1024))))
+#+end_src
+
+=early-init.el= cranked =gc-cons-threshold= to =most-positive-fixnum= so no
+garbage collection would slow startup.  Startup is now over, so drop it back
+to a normal 16 MB — otherwise Emacs would almost never collect and balloon in
+memory.  Read this together with =early-init.org='s "Startup performance".
+
+* Built-in
+
+Everything Emacs already ships.  A single =(use-package emacs …)= block
+collects the global modes, keys, and settings; the rest are small
+=:ensure nil= blocks for built-in libraries.
+
+** Global modes and settings
+
+#+begin_src elisp
+(load-theme 'modus-operandi)
+(repeat-mode 1)
+(which-key-mode 1)
+(pixel-scroll-precision-mode 1)
+(savehist-mode 1)
+(save-place-mode 1)
+(electric-pair-mode 1)
+(global-so-long-mode 1)
+#+end_src
+
+- =modus-operandi= — a built-in high-contrast light theme (no external theme package).
+- =repeat-mode= — after certain commands you can repeat them with a single
+  key instead of the full chord.  Many maps below rely on this.
+- =which-key-mode= — pops a menu of what each prefix key can do next.
+- =pixel-scroll-precision-mode= — smooth pixel-wise scrolling.
+- =savehist= / =save-place= — remember minibuffer history and cursor position
+  across sessions.
+- =electric-pair-mode= — auto-insert matching brackets/quotes.
+- =global-so-long-mode= — files with *pathologically long lines* (minified
+  JS, single-line logs) can wedge Emacs; so-long detects them and disables
+  the expensive machinery so they open instantly.
+
+#+begin_src elisp
+(when (fboundp 'global-completion-preview-mode)
+  (global-completion-preview-mode 1))
+#+end_src
+
+Emacs 30's built-in "ghost text" completion preview.  Guarded with =fboundp=
+so the config still loads on older Emacs, and it coexists happily with corfu
+(configured later).
+
+** Keybindings set globally here
+
+#+begin_src elisp
+(keymap-set key-translation-map "M-m" "C-c")
+#+end_src
+
+*The one-handed C-c trick.*  =M-m= is translated to =C-c= at the input layer,
+so the entire personal =C-c= command map is reachable without stretching for
+=C-c=.  This is why the sibling plugins label their =SPC c= leader group
+"C-c · commands (= M-m)".
+
+#+begin_src elisp
+(keymap-global-set "C-c f" #'find-file)
+(keymap-global-set "C-c k" #'kill-current-buffer)
+(keymap-global-set "C-c b m" #'bookmark-set)
+(keymap-global-set "C-z"   #'undo-only)
+(keymap-global-set "C-S-z" #'undo-redo)
+#+end_src
+
+Note the bookmark split: =C-c b m= = *make/set* a bookmark; the *jump* half,
+=C-c b j= → =consult-bookmark=, is defined in the consult block.  =C-z= /
+=C-S-z= are a familiar undo/redo pair (=undo-only= never re-does, so it can't
+walk back *into* a redo branch by accident).
+
+#+begin_src elisp
+(windmove-default-keybindings)
+(winner-mode 1)
+#+end_src
+
+=windmove= gives =Shift+arrow= window navigation; =winner-mode= records
+window layouts so =C-c left/right= can undo/redo them.  They pair naturally.
+
+** Performance and cleanliness settings
+
+#+begin_src elisp
+(setq read-process-output-max (* 1024 1024))
+#+end_src
+
+Raise the process read buffer from the 64 KB default to 1 MB.  Large LSP
+responses then arrive in far fewer chunks — noticeably snappier eglot.
+
+#+begin_src elisp
+(setq custom-file (locate-user-emacs-file "custom.el"))
+(load custom-file 'noerror)
+#+end_src
+
+=M-x customize= writes its settings somewhere.  By default that "somewhere"
+is =init.el= itself — which would scribble machine-generated =(custom-set-…)=
+blocks into this hand-curated file.  Redirect those writes to a separate
+=custom.el= (loaded, but ignored if absent).
+
+#+begin_src elisp
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+#+end_src
+
+The =:custom= block sets =minibuffer-prompt-properties= to include
+=cursor-intangible= (so the cursor can't land *inside* the prompt text).  That
+property is inert unless the mode that honours it is on — this hook turns it
+on for every minibuffer.
+
+** :custom values worth knowing
+
+#+begin_src elisp
+(tab-always-indent 'complete)          ; TAB indents, or completes if already indented
+(enable-recursive-minibuffers t)       ; use the minibuffer while in the minibuffer
+(use-short-answers t)                  ; y/n instead of yes/no
+(read-extended-command-predicate #'command-completion-default-include-p)
+(minibuffer-prompt-properties
+ '(read-only t cursor-intangible t face minibuffer-prompt))
+#+end_src
+
+=read-extended-command-predicate= hides commands that don't apply to the
+current buffer/mode from =M-x=.
+
+** autorevert, recentf, bookmark
+
+#+begin_src elisp
+(auto-revert-avoid-polling t)   ; use file notifications, not a timer
+(auto-revert-check-vc-info t)   ; also refresh VC state (branch, etc.)
+(recentf-max-saved-items 200)
+(bookmark-save-flag 1)          ; write bookmarks to disk as they're set, not only at exit
+#+end_src
+
+* eglot and flymake — the elisp-vs-LSP dance
+
+The subtle part of the config.  Read the two together.
+
+** Skip LSP in lisp buffers
+
+#+begin_src elisp
+(defun my-eglot-ensure ()
+  "Run `eglot-ensure', except in lisp modes with no language server."
+  (unless (derived-mode-p 'lisp-data-mode)
+    (eglot-ensure)))
+
+(use-package eglot
+  :hook (prog-mode . my-eglot-ensure)
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-events-buffer-config '(:size 0 :format full)))
+#+end_src
+
+Hooking =eglot-ensure= straight onto =prog-mode= makes *every* elisp buffer —
+including =init.el= itself — nag "Cannot find suitable server", because there
+is no elisp language server here.  =my-eglot-ensure= skips the lisp modes
+(=emacs-lisp-mode= and friends all derive from =lisp-data-mode=).
+
+=eglot-events-buffer-config '(:size 0 …)= disables the per-event LSP log,
+which is a measurable performance drag.
+
+** Give elisp buffers flymake instead
+
+#+begin_src elisp
+(defun my-elisp-flymake ()
+  "Flymake for elisp buffers: byte-compile diagnostics, no checkdoc."
+  (remove-hook 'flymake-diagnostic-functions #'elisp-flymake-checkdoc t)
+  (flymake-mode 1))
+#+end_src
+
+Since elisp buffers get no eglot, they'd have no live diagnostics at all.  So
+turn on flymake's built-in *byte-compile* backend: a typo'd symbol in this
+very file gets flagged as you type, not at the next restart.
+
+The ordering is load-bearing: =elisp-flymake-checkdoc= (docstring-style
+nagging, just noise in a personal config) is removed *before* =flymake-mode=
+is enabled.  Flymake collects its backends the moment the mode turns on; a
+backend that reports once and is *then* removed never runs again to clear its
+stale report.  Remove first, enable second.
+
+** Emacs 30 trusts the config dir
+
+#+begin_src elisp
+(trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
+(flymake-show-diagnostics-at-end-of-line 'short)
+#+end_src
+
+Byte-compiling runs macro code, so Emacs 30 gates that backend behind
+=trusted-content=.  =user-init-file= is trusted automatically, but
+=early-init.el= and =extras/*.el= are not — so trust the *whole* config dir
+and they get linted too.  =…-at-end-of-line 'short= renders the most severe
+diagnostic as IDE-style inline text.
+
+** Repeatable error jumps
+
+#+begin_src elisp
+(defvar-keymap my-flymake-repeat-map
+  :repeat t
+  "." #'flymake-goto-next-error
+  "," #'flymake-goto-prev-error)
+(put 'flymake-goto-next-error 'repeat-check-key 'no)
+(put 'flymake-goto-prev-error 'repeat-check-key 'no)
+#+end_src
+
+After one leader jump (=SPC . e= / =SPC , e=) you can keep tapping =.= / =,=
+to walk errors — the group's own mnemonic.  The =repeat-check-key 'no= is
+required because the keys you *entered* with are not members of this map, and
+=repeat-mode= would otherwise refuse to arm it.  You'll see this exact trick
+three times (flymake here, expreg, diff-hl); see "The repeat-check-key trick"
+below.
+
+* GNU ELPA packages
+
+Installed from GNU ELPA (=:ensure t=).
+
+** avy — jump to visible text
+
+#+begin_src elisp
+(avy-timeout-seconds 0.25)
+;; M-o char-timer, M-g g line, plus a C-c j jump group
+#+end_src
+
+The signature deviation lives in the meow block, not here: in NORMAL state
+=S= is =avy-goto-char-timer= and =Q= is =avy-goto-line=.  The sibling plugins
+mirror that S/Q choice.
+
+** expreg — expand/contract the region
+
+#+begin_src elisp
+(:bind
+ ("M-r"   . expreg-expand)     ; M- is reachable in a terminal via the ESC prefix
+ ("C-c e" . expreg-expand)     ; also M-m e via the M-m→C-c translation
+ ("M-R"   . expreg-contract))
+(defvar-keymap my-expreg-repeat-map
+  :repeat t
+  "." #'expreg-expand
+  "," #'expreg-contract)
+(put 'expreg-expand   'repeat-check-key 'no)
+(put 'expreg-contract 'repeat-check-key 'no)
+#+end_src
+
+After any expreg command, tap =.= to grow or =,= to shrink (unshifted =</>=,
+same magnitude mnemonic, no shift needed).  It's transient, so it never
+clashes with meow's own =,= / =.= (inner/bounds-of-thing) — any other key
+ends the run.  Same =repeat-check-key= reasoning as flymake.
+
+** The completion stack
+
+The heart of the interactive experience — several small packages that layer:
+
+- *vertico* — vertical minibuffer completion UI.
+- *orderless* — match candidates by space-separated fragments in any order.
+  #+begin_src elisp
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
+  #+end_src
+  Files additionally use =partial-completion= so =/u/s/b= expands to
+  =/usr/share/bin=.
+- *marginalia* — rich annotations (docstrings, file sizes…) beside candidates.
+- *consult* — enhanced search/nav commands (=consult-line=, =consult-buffer=,
+  =consult-ripgrep=…).
+  #+begin_src elisp
+  (add-hook 'consult-after-jump-hook #'recenter)   ; jump target lands centred, not at the edge
+  (setq consult-narrow-key "<")                    ; type < then a key to narrow to one group
+  (setq xref-show-xrefs-function #'consult-xref    ; xref pickers use consult
+        xref-show-definitions-function #'consult-xref)
+  (advice-add #'register-preview :override #'consult-register-window)  ; nicer register preview
+  #+end_src
+- *embark* — act on the thing at point / the current candidate.
+  #+begin_src elisp
+  (setq prefix-help-command #'embark-prefix-help-command)  ; C-h after a prefix → searchable list
+  #+end_src
+- *embark-consult* — glue between the two.
+  #+begin_src elisp
+  :after (embark consult)   ; lazy: a bare declaration would drag both in at startup
+  #+end_src
+- *corfu* — in-buffer completion popup.
+  #+begin_src elisp
+  (add-to-list 'savehist-additional-variables 'corfu-history)  ; remember completion order across sessions
+  #+end_src
+- *cape* — extra completion-at-point functions (dabbrev, file, keyword) and
+  the eglot-merge below.
+
+** cape + eglot — merge the capfs safely
+
+#+begin_src elisp
+(defun my-eglot-capfs ()
+  "Merge eglot's capf with cape's while managed; restore the globals after."
+  (if (eglot-managed-p)
+      (setq-local completion-at-point-functions
+                  (list (cape-capf-super #'eglot-completion-at-point
+                                         #'cape-dabbrev)
+                        #'cape-file
+                        #'cape-keyword))
+    (kill-local-variable 'completion-at-point-functions)))
+(add-hook 'eglot-managed-mode-hook #'my-eglot-capfs)
+#+end_src
+
+While eglot manages a buffer we want *both* the server's completions and
+cape's (via =cape-capf-super=).  The catch: =eglot-managed-mode-hook= fires on
+*disable* too (all minor-mode hooks fire both ways), so the function branches
+on =eglot-managed-p=.  On the way out it *kills* the buffer-local list —
+otherwise a now-serverless =eglot-completion-at-point= is left behind and
+errors on the next completion.
+
+** ace-window, vundo, diff-hl
+
+#+begin_src elisp
+(use-package ace-window
+  :bind ([remap other-window] . ace-window)   ; label each window, jump by key (powers C-c w w)
+  :custom
+  (aw-scope 'frame)
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+#+end_src
+
+=vundo= is a visual undo tree on =C-x u=.  =diff-hl= shows VCS changes in the
+gutter:
+
+#+begin_src elisp
+(use-package diff-hl
+  :demand t                 ; :hook alone defers it; the global mode must turn on at startup
+  :hook
+  (dired-mode         . diff-hl-dired-mode)
+  (magit-post-refresh . diff-hl-magit-post-refresh)   ; refresh gutter after magit stages/commits
+  :custom
+  (diff-hl-update-async t)  ; diff off the main thread — no UI stalls in big repos
+  :config
+  (keymap-set diff-hl-command-map "." #'diff-hl-next-hunk)
+  (keymap-set diff-hl-command-map "," #'diff-hl-previous-hunk)
+  (put 'diff-hl-next-hunk 'repeat-check-key 'no)
+  (put 'diff-hl-previous-hunk 'repeat-check-key 'no)
+  (global-diff-hl-mode 1)
+  (diff-hl-flydiff-mode 1)  ; update the gutter live, before you save
+  (unless (display-graphic-p)
+    (diff-hl-margin-mode 1)))  ; a tty has no fringe → draw in the margin instead
+#+end_src
+
+The =SPC . c= / =SPC , c= leader jumps repeat on =.= / =,= just like flymake,
+via the same =repeat-check-key 'no=.  =:demand t= matters: with only =:hook=,
+diff-hl loads lazily and the *global* mode never comes on at startup.
+
+* NonGNU ELPA packages
+
+** eat, corfu-terminal, wgrep, magit — and their meow integrations
+
+Several of these need to tell meow which *state* their buffers should start
+in.  (See "meow states" below for what NORMAL/MOTION/INSERT mean.)
+
+#+begin_src elisp
+;; eat: visual eshell commands (less, htop, top…) get an eat-mode terminal.
+(add-to-list 'meow-mode-state-list '(eat-mode . insert))
+#+end_src
+
+A pager needs =SPC=/=j=/=k= to page and scroll.  meow would assume MOTION for
+a terminal buffer and grab those keys, so eat-mode is forced to INSERT — every
+key passes straight through.  =ESC= still drops you to NORMAL; you quit the
+pager with =q=.
+
+#+begin_src elisp
+;; corfu-terminal: corfu popups in a tty (Emacs 30 can't draw child frames there).
+(unless (display-graphic-p) (corfu-terminal-mode 1))
+#+end_src
+
+#+begin_src elisp
+;; wgrep: edit ripgrep results in place (consult-ripgrep → embark-export → C-c C-p).
+(advice-add 'wgrep-change-to-wgrep-mode :after
+            (lambda (&rest _) (meow--switch-state 'normal)))
+(advice-add 'wgrep-to-original-mode :after
+            (lambda (&rest _) (meow--switch-state 'motion)))
+#+end_src
+
+Grep buffers are read-only, so meow parks them in MOTION.  =C-c C-p= makes
+them editable but only swaps the *local keymap* (they're still grep-mode
+underneath), so =meow-mode-state-list= never notices.  The advice flips to
+NORMAL on edit (you need =i= to type, and MOTION would eat =SPC=/=j=/=k=
+mid-edit) and back to MOTION when you finish or bail.
+
+#+begin_src elisp
+;; magit: keep its read-only buffers in MOTION.
+(dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode
+                magit-revision-mode magit-stash-mode magit-process-mode))
+  (add-to-list 'meow-mode-state-list (cons mode 'motion)))
+#+end_src
+
+NORMAL would stomp magit's single-key commands (=s= stage, =c= commit,
+=p= push, =f= fetch, =l= log, =d= diff), so magit stays in MOTION.
+
+* meow — the modal model
+
+meow is vim-flavoured modal editing.  Mostly two states:
+
+- *NORMAL* — keys run commands (move, select, edit).  You start here.
+- *INSERT* — keys type text.  =i= or =a= to enter, =ESC= to leave.
+
+A third, *MOTION*, is for read-only buffers: only a few keys are bound
+(=j=/=k= move, =ESC= does nothing) so the buffer's own single-key commands
+still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
+
+** The leader is the C-c map
+
+#+begin_src elisp
+(meow-leader-define-key
+ '("1" . meow-digit-argument) … '("0" . meow-digit-argument)
+ '("/" . meow-keypad-describe-key)
+ '("?" . meow-cheatsheet)
+ '("s"   . consult-line)
+ '("b b" . consult-buffer)
+ '(", c" . diff-hl-previous-hunk)
+ '(", e" . flymake-goto-prev-error)
+ '(". c" . diff-hl-next-hunk)
+ '(". e" . flymake-goto-next-error))
+#+end_src
+
+Key facts to internalise:
+
+- *The leader IS =mode-specific-map=* (the =C-c= map — see meow-helpers.el).
+  So =SPC s= is literally =C-c s=.  This is why a bare =b= here would clobber
+  the =C-c b= bookmark prefix — so buffers live one key deeper at =b b=,
+  completing the =SPC b= group (=b m= set / =b j= jump / =b b= buffers).
+- =s= (=consult-line=) is *spelled out* so keypad translation doesn't drop it.
+- There is deliberately *no* =x b= entry: =x= is a keypad START key, so
+  =SPC x b= already reaches =consult-buffer= through the =C-x C-b=
+  translation — a leader entry there would be dead weight.
+- The =,= / =.= groups (=c= = change/hunk, =e= = error) resolve through the
+  local map like any =C-c= key, so in org buffers org's own =C-c ,= / =C-c .=
+  (priority / timestamp) still win.
+
+** NORMAL — this config's deviations from stock meow
+
+The NORMAL table is meow's suggested QWERTY layout *verbatim*, with these
+signature changes (the sibling plugins mirror them):
+
+#+begin_src elisp
+'("S" . avy-goto-char-timer)   ; jump to any visible char
+'("Q" . avy-goto-line)         ; jump to any visible line
+'("X" . meow-goto-line)        ; X keeps goto-line (S/Q took the avy jumps)
+'("'" . repeat)                ; repeat the last command
+'("<escape>" . ignore)
+#+end_src
+
+Otherwise: =h/j/k/l= are the directional motions, =i=/=a= insert/append,
+=x= marks the line, digits =0..9= expand the selection.
+
+** Reaching the leader from INSERT
+
+#+begin_src elisp
+(keymap-global-set "M-SPC" #'meow-keypad)
+#+end_src
+
+=M-SPC= pops the leader (keypad) even while you're in INSERT, so you don't
+have to =ESC= first for a one-off command.
+
+* Window management — C-c w
+
+A mnemonic submenu on =C-c w= (meow: =SPC w=); which-key spells out the whole
+menu.  This is what the sibling plugins' =SPC w= group mirrors.
+
+#+begin_src elisp
+(defvar-keymap my-window-map
+  :doc "window commands"
+  "v" #'split-window-right        ; two side by side
+  "s" #'split-window-below        ; one stacked on the other
+  "d" #'delete-window             ; close this window   (old C-x 0)
+  "D" #'delete-other-windows      ; keep this one, close the others
+  "m" #'delete-other-windows      ; maximize this one   (old C-x 1)
+  "w" #'other-window              ; ace-window remaps this once loaded → jump by label
+  "W" #'ace-swap-window           ; swap two windows by label (W = swap, w = jump)
+  "r" #'my-window-resize          ; pick a window, then h/l/j/k or arrows resize it
+  "h" #'windmove-left  "j" #'windmove-down  "k" #'windmove-up  "l" #'windmove-right
+  "H" #'windmove-swap-states-left    ; capitals mirror h/j/k/l but SWAP the buffers
+  "J" #'windmove-swap-states-down
+  "K" #'windmove-swap-states-up
+  "L" #'windmove-swap-states-right
+  "b" #'balance-windows
+  "," #'winner-undo   ; step back through window-layout history
+  "." #'winner-redo   ; step forward
+  "u" #'my-text-scale-reset   ; reset zoom ("undo" zoom — home alias of 0)
+  "i" #'text-scale-increase   ; zoom in    (home alias of =)
+  "o" #'text-scale-decrease   ; zoom out   (home alias of -)
+  "=" #'text-scale-increase
+  "-" #'text-scale-decrease
+  "0" #'my-text-scale-reset)
+#+end_src
+
+The =i/o/u= home-row aliases sit on top of the natural =+/-/0= symbol keys so
+zooming needs no reach.  =,= / =.= walk winner history.
+
+** The two custom window commands
+
+#+begin_src elisp
+(defun my-text-scale-reset () (interactive) (text-scale-set 0))
+#+end_src
+
+#+begin_src elisp
+(defun my-window-resize ()
+  "Resize a window with h/l/j/k or the arrows; any other key exits."
+  (interactive)
+  (require 'ace-window)
+  (if (<= (length (window-list)) 2)
+      (set-transient-map my-window-resize-map t nil "Resize %k")
+    (aw-select " Ace - Resize"
+               (lambda (win)
+                 (aw-switch-to-window win)
+                 (set-transient-map my-window-resize-map t nil "Resize %k")))))
+#+end_src
+
+The two-window case is special-cased: with only two windows the divider is
+unambiguous, so resize the current window *without moving focus* — otherwise
+ace-window would pointlessly jump you to the other window first.  With three
+or more windows you pick which one with ace-window, then a *transient map*
+lets =h/l/j/k= (or the arrows) resize until you press any other key.
+
+** repeat maps for zoom and winner
+
+#+begin_src elisp
+(defvar-keymap my-text-scale-repeat-map :repeat t
+  "i" #'text-scale-increase "o" #'text-scale-decrease "u" #'my-text-scale-reset
+  "=" #'text-scale-increase "-" #'text-scale-decrease "0" #'my-text-scale-reset)
+
+(defvar-keymap my-winner-repeat-map :repeat t
+  "," #'winner-undo "." #'winner-redo)
+#+end_src
+
+Unlike the flymake/expreg/diff-hl maps, these need *no* =repeat-check-key=
+override: their entry keys (=i/o/u=, =,/.=) are already members of their own
+repeat maps, so =repeat-mode= arms them normally.
+
+* Cross-cutting patterns
+
+** meow states, in one place
+
+| State  | For                     | Behaviour                                   |
+|--------+-------------------------+---------------------------------------------|
+| NORMAL | editing                 | keys run commands; =i=/=a= to type          |
+| INSERT | typing                  | keys insert text; =ESC= back to NORMAL      |
+| MOTION | read-only buffers       | only a few keys bound, so single-key        |
+|        | (magit, grep, pagers)   | commands in the buffer still work           |
+
+=meow-mode-state-list= maps a major mode to its starting state.  The tricky
+cases (eat → INSERT, magit → MOTION, wgrep's keymap-only switch) are handled
+in the NonGNU section.
+
+** The repeat-check-key trick
+
+Three maps (flymake, expreg, diff-hl) share one gotcha.  =repeat-mode=, by
+default, only *arms* a repeat map if the key you invoked the command with is
+itself a member of that map.  But here you *enter* via a leader/keypad or a
+=M-r=/=C-c e= chord — keys that are **not** in the repeat map — and you want
+to *then* repeat on =.= / =,=.  So each of those commands gets:
+
+#+begin_src elisp
+(put 'the-command 'repeat-check-key 'no)
+#+end_src
+
+which tells repeat-mode "arm regardless of the invoking key".  The zoom and
+winner maps don't need it because you *do* enter them on their own repeat keys.
+
+* Extras (optional, disabled by default)
+
+Per-language / experimental modules live in =extras/=.  Each file is
+self-contained and installs its packages only when loaded — uncomment a line
+at the bottom of =init.el= to enable one:
+
+#+begin_src elisp
+;; (load (expand-file-name "extras/rust.el" user-emacs-directory) :noerror :nomessage)
+#+end_src
+
+Most follow one pattern: a built-in tree-sitter major mode (guarded by
+=treesit-language-available-p=) + eglot (hooked globally from =init.el=) +
+dape for debugging.  The exceptions (clojure, erlang, scheme) and each file's
+external-binary requirements are documented in their own headers.
+
+* See also
+
+- =early-init.org= — study guide for the pre-startup file.
+- =test/init-tests.el= — the ERT suite that pins these conventions and WHYs;
+  every "why" above has a matching =given … then …= spec.
+- =README.org= — the curl-to-Emacs bootstrap.
