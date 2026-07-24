@@ -128,20 +128,18 @@
   :ensure t
   :custom
   (avy-timeout-seconds 0.25)
-  :bind (
-	 ("M-o"     . avy-goto-char-timer)
-	 ("M-g g"   . avy-goto-line)
-	 ("M-g M-g" . avy-goto-line)
-	 ("C-c j w" . avy-goto-char-2)
-	 ("C-c j l" . avy-goto-line)
-	 ("C-c j c" . avy-goto-char-timer)))
+  :bind (("M-o"     . avy-goto-char-timer)
+         ("M-g g"   . avy-goto-line)
+         ("M-g M-g" . avy-goto-line)
+         ("C-c j w" . avy-goto-char-2)
+         ("C-c j l" . avy-goto-line)
+         ("C-c j c" . avy-goto-char-timer)))
 
 (use-package expreg
   :ensure t
-  :bind (
-	 ("M-r"   . expreg-expand)
-	 ("C-c e" . expreg-expand)
-	 ("M-R"   . expreg-contract))
+  :bind (("M-r"   . expreg-expand)
+         ("C-c e" . expreg-expand)
+         ("M-R"   . expreg-contract))
   :config
   (defvar-keymap my-expreg-repeat-map
     :repeat t
