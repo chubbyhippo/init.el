@@ -15,5 +15,6 @@ elpa="${EMACS_ELPA:-$HOME/.config/emacs/elpa}"
 
 exec "$EMACS" -Q --batch \
   --eval "(setq package-user-dir \"$elpa\")" \
+  -l "$here/early-init-tests.el" \
   -l "$here/init-tests.el" \
   -f ert-run-tests-batch-and-exit
