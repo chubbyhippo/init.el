@@ -134,6 +134,12 @@
   "S/Q take the avy jumps; X keeps goto-line."
   (should (eq (init-test--normal "X") 'meow-goto-line)))
 
+(ert-deftest init-test/given-avy-then-its-lead-face-matches-ideameow-overlay-color ()
+  "Same #2ECC71/#ffffff as ideameow's .ideameowrc overlay-color/overlay-text-color."
+  (should (init-test--declares '(set-face-attribute 'avy-lead-face nil
+                                                     :background "#2ECC71"
+                                                     :foreground "#ffffff"))))
+
 (ert-deftest init-test/given-normal-state-then-i-and-a-enter-and-append-insert ()
   (should (eq (init-test--normal "i") 'meow-insert))
   (should (eq (init-test--normal "a") 'meow-append)))

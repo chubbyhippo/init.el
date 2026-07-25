@@ -128,6 +128,9 @@
   :ensure t
   :custom
   (avy-timeout-seconds 0.25)
+  :config
+  (set-face-attribute 'avy-lead-face nil :background "#2ECC71" :foreground "#ffffff")
+  (set-face-attribute 'avy-lead-face-0 nil :background "#2ECC71" :foreground "#ffffff")
   :bind (("M-o"     . avy-goto-char-timer)
          ("M-g g"   . avy-goto-line)
          ("M-g M-g" . avy-goto-line)
