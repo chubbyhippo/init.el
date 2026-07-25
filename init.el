@@ -331,6 +331,7 @@
   :ensure t
   :demand t
   :config
+  (set-face-attribute 'secondary-selection nil :background "#C0F0CD")
   (defun my-meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)

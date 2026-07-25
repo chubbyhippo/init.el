@@ -140,6 +140,13 @@
                                                      :background "#2ECC71"
                                                      :foreground "#ffffff"))))
 
+(ert-deftest init-test/given-meow-grab-then-secondary-selection-matches-ideameow-grab-color ()
+  "meow-grab uses Emacs's built-in secondary-selection face (meow-face.el reads
+its background directly); #C0F0CD is the light half of ideameow's theme-split
+grab-color default."
+  (should (init-test--declares '(set-face-attribute 'secondary-selection nil
+                                                     :background "#C0F0CD"))))
+
 (ert-deftest init-test/given-normal-state-then-i-and-a-enter-and-append-insert ()
   (should (eq (init-test--normal "i") 'meow-insert))
   (should (eq (init-test--normal "a") 'meow-append)))
