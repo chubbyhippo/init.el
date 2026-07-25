@@ -109,12 +109,12 @@ printing function itself is aliased to ignore."
   "Stripped via default-frame-alist so it never paints then vanishes."
   (should (equal (assq 'tool-bar-lines default-frame-alist) '(tool-bar-lines . 0))))
 
-(ert-deftest early-init-test/given-the-first-frame-then-the-menu-bar-is-off ()
-  (should (equal (assq 'menu-bar-lines default-frame-alist) '(menu-bar-lines . 0))))
-
 (ert-deftest early-init-test/given-the-first-frame-then-vertical-scroll-bars-are-off ()
   "Pushed as a bare (vertical-scroll-bars) entry -- no width means no bar."
   (should (member '(vertical-scroll-bars) default-frame-alist)))
+
+(ert-deftest early-init-test/given-the-first-frame-then-the-menu-bar-is-off ()
+  (should (equal (assq 'menu-bar-lines default-frame-alist) '(menu-bar-lines . 0))))
 
 ;;; ================================================= native compilation
 (ert-deftest early-init-test/given-native-comp-then-warnings-are-silenced ()
@@ -127,7 +127,7 @@ printing function itself is aliased to ignore."
 (ert-deftest early-init-test/given-early-init-then-it-strips-the-three-ui-bars ()
   "All three chrome bars are pushed onto default-frame-alist before first paint."
   (should (early-init-test--declares '(push '(tool-bar-lines . 0) default-frame-alist)))
-  (should (early-init-test--declares '(push '(menu-bar-lines . 0) default-frame-alist)))
-  (should (early-init-test--declares '(push '(vertical-scroll-bars) default-frame-alist))))
+  (should (early-init-test--declares '(push '(vertical-scroll-bars) default-frame-alist)))
+  (should (early-init-test--declares '(push '(menu-bar-lines . 0) default-frame-alist))))
 
 ;;; early-init-tests.el ends here

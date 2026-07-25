@@ -140,6 +140,9 @@
                                                      :background "#2ECC71"
                                                      :foreground "#ffffff"))))
 
+(ert-deftest init-test/given-normal-state-then-G-is-meow-grab ()
+  (should (eq (init-test--normal "G") 'meow-grab)))
+
 (ert-deftest init-test/given-meow-grab-then-secondary-selection-matches-ideameow-grab-color ()
   "meow-grab uses Emacs's built-in secondary-selection face (meow-face.el reads
 its background directly); #C0F0CD is the light half of ideameow's theme-split
