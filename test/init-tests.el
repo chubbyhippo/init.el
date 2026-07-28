@@ -275,10 +275,6 @@ grab-color default."
   (should (commandp 'my-window-resize)))
 
 ;;; ================================================= config invariants
-(ert-deftest init-test/given-the-config-then-M-m-translates-to-C-c ()
-  "The whole personal C-c map is reachable one-handed via M-m."
-  (should (init-test--declares '(keymap-set key-translation-map "M-m" "C-c"))))
-
 (ert-deftest init-test/given-the-config-then-M-SPC-reaches-the-leader-from-insert ()
   (should (eq (keymap-lookup (current-global-map) "M-SPC") 'meow-keypad)))
 

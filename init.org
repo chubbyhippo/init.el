@@ -66,15 +66,6 @@ so the config still loads on older Emacs, and it coexists happily with corfu
 ** Keybindings set globally here
 
 #+begin_src elisp
-(keymap-set key-translation-map "M-m" "C-c")
-#+end_src
-
-*The one-handed C-c trick.*  =M-m= is translated to =C-c= at the input layer,
-so the entire personal =C-c= command map is reachable without stretching for
-=C-c=.  This is why the sibling plugins label their =SPC c= leader group
-"C-c · commands (= M-m)".
-
-#+begin_src elisp
 (keymap-global-set "C-c f" #'find-file)
 (keymap-global-set "C-c k" #'kill-current-buffer)
 (keymap-global-set "C-c b m" #'bookmark-set)
@@ -243,7 +234,7 @@ mirror that S/Q choice.
 #+begin_src elisp
 (:bind
  ("M-r"   . expreg-expand)     ; M- is reachable in a terminal via the ESC prefix
- ("C-c e" . expreg-expand)     ; also M-m e via the M-m→C-c translation
+ ("C-c e" . expreg-expand)     ; also SPC c e via the meow leader
  ("M-R"   . expreg-contract))
 (defvar-keymap my-expreg-repeat-map
   :repeat t

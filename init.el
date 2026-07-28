@@ -33,7 +33,6 @@
   (global-so-long-mode 1)
   (when (fboundp 'global-completion-preview-mode)
     (global-completion-preview-mode 1))
-  (keymap-set key-translation-map "M-m" "C-c")
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-c b m" #'bookmark-set)
