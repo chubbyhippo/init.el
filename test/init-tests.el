@@ -140,13 +140,17 @@
                                                      :background "#2ECC71"
                                                      :foreground "#ffffff"))))
 
-(ert-deftest init-test/given-ace-window-then-its-hint-face-matches-avy ()
+(ert-deftest init-test/given-ace-window-then-its-hint-is-green-without-a-background ()
   "ace-window draws C-c w w and C-c w r hints with its own `aw-leading-char-face',
-which defaults to plain red and does not inherit any avy face, so it needs the
-same #2ECC71/#ffffff treatment or those two hints look unlike every other jump."
+which defaults to plain red and inherits nothing from avy — so it needs its own
+green.  It must stay FOREGROUND-only: `aw--lead-overlay' makes a one-character
+overlay and lands it on the newline when the window's top line is blank, and
+Emacs paints a background on a newline out to the window edge, which turns the
+hint into a full-width bar."
   (should (init-test--declares '(set-face-attribute 'aw-leading-char-face nil
-                                                     :background "#2ECC71"
-                                                     :foreground "#ffffff"))))
+                                                     :background 'unspecified
+                                                     :foreground "#2ECC71"
+                                                     :weight 'bold))))
 
 (ert-deftest init-test/given-normal-state-then-G-is-meow-grab ()
   (should (eq (init-test--normal "G") 'meow-grab)))

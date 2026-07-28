@@ -326,10 +326,11 @@ errors on the next completion.
   (aw-scope 'frame)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
-  ;; ace-window does NOT use avy's faces: its hint overlay is drawn with
-  ;; aw-leading-char-face, whose default is plain red.  Recolour it to the
-  ;; same green as avy so C-c w w and C-c w r match every other jump hint.
-  (set-face-attribute 'aw-leading-char-face nil :background "#2ECC71" :foreground "#ffffff"))
+  ;; ace-window does NOT use avy's faces: its hint is drawn with
+  ;; aw-leading-char-face, whose default is plain red.  Green, and
+  ;; FOREGROUND-only — see below for why a background is wrong here.
+  (set-face-attribute 'aw-leading-char-face nil
+                      :background 'unspecified :foreground "#2ECC71" :weight 'bold))
 #+end_src
 
 The faces are the subtle part.  =avy-lead-face= covers =S=, =Q= and the =C-c j=
@@ -338,6 +339,23 @@ separate face defaulting to red — so recolouring avy alone left =C-c w w= and
 =C-c w r= (which goes through =aw-select=) looking nothing like the rest.
 =aw-minibuffer-leading-char-face= inherits from it, so setting the parent is
 enough.
+
+Why foreground-only, when =avy-lead-face= is a white-on-green *badge*?  Because
+=aw--lead-overlay= builds a one-character overlay and hangs the letter off it as
+a =display= property:
+
+#+begin_src elisp
+(ol (make-overlay pt (1+ pt) (window-buffer wnd)))
+(overlay-put ol 'display (aw--overlay-str wnd pt path))
+(overlay-put ol 'face 'aw-leading-char-face)
+#+end_src
+
+It tries to avoid end-of-line, but when the window's top visible line is blank
+and there is nowhere better to go, the overlay lands on the *newline* — and
+Emacs paints a background on a newline all the way to the right window edge.
+A =:background= there stops being a badge and becomes a full-width green bar.
+avy never hits this because it decorates real characters.  Foreground-only is
+also how the face was designed: its defface sets =:foreground= and nothing else.
 
 =vundo= is a visual undo tree on =C-x u=.  =diff-hl= shows VCS changes in the
 gutter:

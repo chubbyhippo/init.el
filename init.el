@@ -271,7 +271,8 @@
   (aw-scope 'frame)
   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
   :config
-  (set-face-attribute 'aw-leading-char-face nil :background "#2ECC71" :foreground "#ffffff"))
+  (set-face-attribute 'aw-leading-char-face nil
+                      :background 'unspecified :foreground "#2ECC71" :weight 'bold))
 
 (use-package diff-hl
   :ensure t
