@@ -508,6 +508,7 @@ ace-window would otherwise jump to the other window."
 ;; (load (expand-file-name "extras/erlang.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/go.el"         user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/haskell.el"    user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/html.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/java.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/python.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/rust.el"       user-emacs-directory) :noerror :nomessage)
