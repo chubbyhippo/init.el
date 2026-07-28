@@ -140,6 +140,14 @@
                                                      :background "#2ECC71"
                                                      :foreground "#ffffff"))))
 
+(ert-deftest init-test/given-ace-window-then-its-hint-face-matches-avy ()
+  "ace-window draws C-c w w and C-c w r hints with its own `aw-leading-char-face',
+which defaults to plain red and does not inherit any avy face, so it needs the
+same #2ECC71/#ffffff treatment or those two hints look unlike every other jump."
+  (should (init-test--declares '(set-face-attribute 'aw-leading-char-face nil
+                                                     :background "#2ECC71"
+                                                     :foreground "#ffffff"))))
+
 (ert-deftest init-test/given-normal-state-then-G-is-meow-grab ()
   (should (eq (init-test--normal "G") 'meow-grab)))
 

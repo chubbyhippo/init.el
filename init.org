@@ -324,8 +324,20 @@ errors on the next completion.
   :bind ([remap other-window] . ace-window)   ; label each window, jump by key (powers C-c w w)
   :custom
   (aw-scope 'frame)
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :config
+  ;; ace-window does NOT use avy's faces: its hint overlay is drawn with
+  ;; aw-leading-char-face, whose default is plain red.  Recolour it to the
+  ;; same green as avy so C-c w w and C-c w r match every other jump hint.
+  (set-face-attribute 'aw-leading-char-face nil :background "#2ECC71" :foreground "#ffffff"))
 #+end_src
+
+The faces are the subtle part.  =avy-lead-face= covers =S=, =Q= and the =C-c j=
+jumps, but ace-window draws its own overlay with =aw-leading-char-face= — a
+separate face defaulting to red — so recolouring avy alone left =C-c w w= and
+=C-c w r= (which goes through =aw-select=) looking nothing like the rest.
+=aw-minibuffer-leading-char-face= inherits from it, so setting the parent is
+enough.
 
 =vundo= is a visual undo tree on =C-x u=.  =diff-hl= shows VCS changes in the
 gutter:

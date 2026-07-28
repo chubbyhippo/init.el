@@ -269,7 +269,9 @@
   :bind ([remap other-window] . ace-window)
   :custom
   (aw-scope 'frame)
-  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
+  (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  :config
+  (set-face-attribute 'aw-leading-char-face nil :background "#2ECC71" :foreground "#ffffff"))
 
 (use-package diff-hl
   :ensure t
