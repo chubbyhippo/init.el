@@ -617,8 +617,10 @@ at the bottom of =init.el= to enable one:
 
 Most follow one pattern: a built-in tree-sitter major mode (guarded by
 =treesit-language-available-p=) + eglot (hooked globally from =init.el=) +
-dape for debugging.  The exceptions (clojure, erlang, scheme) and each file's
-external-binary requirements are documented in their own headers.
+dape for debugging.  The exceptions (clojure, erlang, haskell, scheme) and each
+file's external-binary requirements are documented in their own headers —
+haskell is the one language with no built-in mode at all, so even the major
+mode comes from ELPA.
 
 * See also
 
