@@ -143,10 +143,10 @@
 (ert-deftest init-test/given-ace-window-then-its-hint-is-green-without-a-background ()
   "ace-window draws C-c w w and C-c w r hints with its own `aw-leading-char-face',
 which defaults to plain red and inherits nothing from avy — so it needs its own
-green.  It must stay FOREGROUND-only: `aw--lead-overlay' makes a one-character
-overlay and lands it on the newline when the window's top line is blank, and
-Emacs paints a background on a newline out to the window edge, which turns the
-hint into a full-width bar."
+green.  It must stay FOREGROUND-only: `aw--overlay-str' appends a newline when
+the hint lands at end of line, and a newline inside a display string makes Emacs
+pad the rest of the line with the face, turning any background into a
+full-width bar."
   (should (init-test--declares '(set-face-attribute 'aw-leading-char-face nil
                                                      :background 'unspecified
                                                      :foreground "#2ECC71"

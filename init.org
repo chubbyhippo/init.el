@@ -340,9 +340,8 @@ separate face defaulting to red — so recolouring avy alone left =C-c w w= and
 =aw-minibuffer-leading-char-face= inherits from it, so setting the parent is
 enough.
 
-Why foreground-only, when =avy-lead-face= is a white-on-green *badge*?  Because
-=aw--lead-overlay= builds a one-character overlay and hangs the letter off it as
-a =display= property:
+Why the badge is on the *string* and not on the face.  =aw--lead-overlay= builds
+a one-character overlay and hangs the letter off it as a =display= property:
 
 #+begin_src elisp
 (ol (make-overlay pt (1+ pt) (window-buffer wnd)))
@@ -350,12 +349,28 @@ a =display= property:
 (overlay-put ol 'face 'aw-leading-char-face)
 #+end_src
 
-It tries to avoid end-of-line, but when the window's top visible line is blank
-and there is nowhere better to go, the overlay lands on the *newline* — and
-Emacs paints a background on a newline all the way to the right window edge.
-A =:background= there stops being a badge and becomes a full-width green bar.
-avy never hits this because it decorates real characters.  Foreground-only is
-also how the face was designed: its defface sets =:foreground= and nothing else.
+and =aw--overlay-str= appends a newline when the hint lands at end of line —
+which it does whenever the window's top visible line is blank:
+
+#+begin_src elisp
+(cond ((string-equal old-str "\t") (make-string (1- tab-width) ?\ ))
+      ((string-equal old-str "\n") "\n")        ; ← the display string is "a\n"
+      (t (make-string (max 0 (1- (string-width old-str))) ?\ )))
+#+end_src
+
+A newline *inside a display string* makes Emacs pad the rest of the line with
+the face, so a =:background= on =aw-leading-char-face= renders as a full-width
+green bar rather than a badge.  Confirmed by reading the terminal output: the
+green run was the letter plus one space per remaining column.  (=:extend nil=
+does *not* help — the rendering is byte-identical with and without it.)
+
+So the hint here is a green *letter*, not avy's white-on-green *badge*.  A badge
+is achievable — put the face on the display string's first character instead of
+on the overlay, so the trailing newline cannot inherit the background — but that
+needs an advice on =aw--overlay-str=, an internal function, and the badge was
+judged not worth that coupling.  Foreground-only is also how the face was
+designed: its defface sets =:foreground= and nothing else.  avy never needs any
+of this because it decorates real characters.
 
 =vundo= is a visual undo tree on =C-x u=.  =diff-hl= shows VCS changes in the
 gutter:
