@@ -617,12 +617,20 @@ at the bottom of =init.el= to enable one:
 
 Most follow one pattern: a built-in tree-sitter major mode (guarded by
 =treesit-language-available-p=) + eglot (hooked globally from =init.el=) +
-dape for debugging.  The exceptions (clojure, erlang, haskell, html, scheme)
-and each file's external-binary requirements are documented in their own
-headers — haskell is the one language with no built-in mode at all, so even the
-major mode comes from ELPA, and html is the opposite extreme: every mode is
-built in, and the layer exists only because the HTML modes derive from
+dape for debugging.  The exceptions (clojure, cobol, erlang, haskell, html,
+scheme) and each file's external-binary requirements are documented in their own
+headers — haskell and cobol are the languages with no built-in mode at all, so
+even the major mode comes from ELPA, and html is the opposite extreme: every
+mode is built in, and the layer exists only because the HTML modes derive from
 =text-mode=, so the prog-mode eglot hook above never reaches them.
+
+The eglot hook is the seam those last two pull on from opposite sides.  html
+adds the hook the mode never gets; cobol *withholds* it — =cobol-mode= is a
+prog-mode child, so the hook fires whether or not a server exists, and an
+absent one warns on every file opened.  So =extras/cobol.el= advises
+=my-eglot-ensure= to stand down in COBOL buffers until =superbol-free= is on
+PATH, the same lever =extras/scheme.el= pulls unconditionally for a language
+that has no server at all.
 
 * See also
 

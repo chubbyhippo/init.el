@@ -503,6 +503,7 @@ ace-window would otherwise jump to the other window."
 
 ;;; Extras (optional, disabled by default)
 ;; (load (expand-file-name "extras/clojure.el"    user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/cobol.el"      user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/cpp.el"        user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/elixir.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/erlang.el"     user-emacs-directory) :noerror :nomessage)
