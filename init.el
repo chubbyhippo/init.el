@@ -314,9 +314,11 @@
   :config
   (with-eval-after-load 'meow
     (advice-add 'wgrep-change-to-wgrep-mode :after
-                (lambda (&rest _) (meow--switch-state 'normal)))
+                (lambda (&rest _) (meow--switch-state 'normal))
+                '((name . my-wgrep--enter-normal)))
     (advice-add 'wgrep-to-original-mode :after
-                (lambda (&rest _) (meow--switch-state 'motion)))))
+                (lambda (&rest _) (meow--switch-state 'motion))
+                '((name . my-wgrep--restore-motion)))))
 
 (use-package magit
   :ensure t
