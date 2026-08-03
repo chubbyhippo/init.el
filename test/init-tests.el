@@ -468,6 +468,16 @@ session with the stock preview at the stock one-second delay."
 consult in at startup."
   (should (init-test--declares '(:after (embark consult)))))
 
+(ert-deftest init-test/given-wgrep-and-corfu-terminal-then-they-defer-until-used ()
+  "A block with only :init/:custom/:config has no defer trigger, so use-package
+requires the package at startup.  wgrep defers through :commands (its entry
+command has no autoload of its own; grep buffers and embark's export both reach
+it through the autoloaded wgrep-setup), and corfu-terminal through :defer t
+(its :init only calls the autoloaded mode, and only in a tty)."
+  (should (member '(wgrep-change-to-wgrep-mode)
+                  (init-test--use-package-section 'wgrep :commands)))
+  (should (member t (init-test--use-package-section 'corfu-terminal :defer))))
+
 (ert-deftest init-test/given-corfu-then-history-persists-through-savehist ()
   "corfu-history is added to savehist so completion ordering survives restarts."
   (should (init-test--declares '(add-to-list 'savehist-additional-variables 'corfu-history))))

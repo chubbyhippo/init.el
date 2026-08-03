@@ -429,16 +429,36 @@ pager with =q=.
 
 #+begin_src elisp
 ;; corfu-terminal: corfu popups in a tty (Emacs 30 can't draw child frames there).
+:defer t
+:init
 (unless (display-graphic-p) (corfu-terminal-mode 1))
 #+end_src
 
+=corfu-terminal-mode= is autoloaded, so the =:init= call is what loads the
+package in a tty session.  =:defer t= is for the *other* case: a block with
+only =:init=/=:custom=/=:config= has no defer trigger, so use-package would
+=require= the package (and its popon dependency) eagerly — a GUI session was
+paying that load for a mode it never enables.
+
 #+begin_src elisp
 ;; wgrep: edit ripgrep results in place (consult-ripgrep → embark-export → C-c C-p).
+:commands (wgrep-change-to-wgrep-mode)
+:config
 (advice-add 'wgrep-change-to-wgrep-mode :after
-            (lambda (&rest _) (meow--switch-state 'normal)))
+            (lambda (&rest _) (meow--switch-state 'normal))
+            '((name . my-wgrep--enter-normal)))
 (advice-add 'wgrep-to-original-mode :after
-            (lambda (&rest _) (meow--switch-state 'motion)))
+            (lambda (&rest _) (meow--switch-state 'motion))
+            '((name . my-wgrep--restore-motion)))
 #+end_src
+
+The same eager-require trap, same fix: =:commands= both defers the package and
+adds an autoload for its entry command (which stock wgrep does not autoload —
+only =wgrep-setup= is).  Every path into wgrep still loads it on demand: real
+grep buffers run =wgrep-setup= from =grep-setup-hook= (wired by wgrep's own
+autoloads), and embark's export calls =(when (fboundp 'wgrep-setup) …
+(wgrep-setup))= — true for an autoload stub, so the export loads it too.  The
+meow advice in =:config= lands whenever that first load happens.
 
 Grep buffers are read-only, so meow parks them in MOTION.  =C-c C-p= makes
 them editable but only swaps the *local keymap* (they're still grep-mode

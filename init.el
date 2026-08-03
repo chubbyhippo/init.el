@@ -304,12 +304,14 @@ would take the major mode's own capf with it."
 
 (use-package corfu-terminal
   :ensure t
+  :defer t
   :init
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
 
 (use-package wgrep
   :ensure t
+  :commands (wgrep-change-to-wgrep-mode)
   :custom
   (wgrep-auto-save-buffer t)
   :config
