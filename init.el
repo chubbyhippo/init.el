@@ -193,14 +193,13 @@
          ("M-s e" . consult-isearch-history)
          ("M-s l" . consult-line)
          ("M-s L" . consult-line-multi))
-  :config
-  (add-hook 'consult-after-jump-hook #'recenter)
-  (setq consult-narrow-key "<")
+  :init
   (setq xref-show-xrefs-function #'consult-xref
         xref-show-definitions-function #'consult-xref)
-  (setq register-preview-delay 0.5
-        register-preview-function #'consult-register-format)
-  (advice-add #'register-preview :override #'consult-register-window))
+  (setq register-preview-delay 0.5)
+  (advice-add #'register-preview :override #'consult-register-window)
+  :config
+  (setq consult-narrow-key "<"))
 
 (use-package embark
   :ensure t
@@ -246,15 +245,17 @@
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
   (add-hook 'completion-at-point-functions #'cape-keyword)
+  (defun my-eglot-capf ()
+    "Eglot's completions merged with dabbrev's, as a single capf."
+    (funcall (cape-capf-super #'eglot-completion-at-point #'cape-dabbrev)))
   (defun my-eglot-capfs ()
-    "Merge eglot's capf with cape's while managed; restore the globals after."
+    "Add `my-eglot-capf' to this buffer while eglot manages it, remove it after.
+`eglot-managed-mode-hook' fires on disable too, so this adds and removes only
+its own capf: replacing the buffer-local list and killing it on the way out
+would take the major mode's own capf with it."
     (if (eglot-managed-p)
-        (setq-local completion-at-point-functions
-                    (list (cape-capf-super #'eglot-completion-at-point
-                                           #'cape-dabbrev)
-                          #'cape-file
-                          #'cape-keyword))
-      (kill-local-variable 'completion-at-point-functions)))
+        (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
+      (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
   (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs))
 
 (use-package vundo

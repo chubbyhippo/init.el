@@ -265,12 +265,24 @@ The heart of the interactive experience — several small packages that layer:
 - *consult* — enhanced search/nav commands (=consult-line=, =consult-buffer=,
   =consult-ripgrep=…).
   #+begin_src elisp
-  (add-hook 'consult-after-jump-hook #'recenter)   ; jump target lands centred, not at the edge
-  (setq consult-narrow-key "<")                    ; type < then a key to narrow to one group
+  :init                                            ; runs at startup, always
   (setq xref-show-xrefs-function #'consult-xref    ; xref pickers use consult
         xref-show-definitions-function #'consult-xref)
+  (setq register-preview-delay 0.5)
   (advice-add #'register-preview :override #'consult-register-window)  ; nicer register preview
+  :config                                          ; runs only once consult loads
+  (setq consult-narrow-key "<")                    ; type < then a key to narrow to one group
   #+end_src
+  =:bind= makes consult *lazy*, so its =:config= does not run until the first
+  consult command.  That is the right home for =consult-narrow-key=, which
+  consult reads itself — but the wrong home for the other three, which
+  configure *Emacs*: with them in =:config=, an =M-.= or a =C-x r j= early in a
+  session still got the stock =*xref*= buffer and the stock register preview,
+  and then quietly switched to consult's once some unrelated command had pulled
+  the package in.  =consult-xref= and =consult-register-window= are both
+  autoloaded, so naming them from =:init= costs no startup load.
+  =consult-after-jump-hook= needs no entry at all — it already defaults to
+  =(recenter)=.
 - *embark* — act on the thing at point / the current candidate.
   #+begin_src elisp
   (setq prefix-help-command #'embark-prefix-help-command)  ; C-h after a prefix → searchable list
@@ -289,24 +301,33 @@ The heart of the interactive experience — several small packages that layer:
 ** cape + eglot — merge the capfs safely
 
 #+begin_src elisp
+(defun my-eglot-capf ()
+  "Eglot's completions merged with dabbrev's, as a single capf."
+  (funcall (cape-capf-super #'eglot-completion-at-point #'cape-dabbrev)))
 (defun my-eglot-capfs ()
-  "Merge eglot's capf with cape's while managed; restore the globals after."
+  "Add `my-eglot-capf' to this buffer while eglot manages it, remove it after."
   (if (eglot-managed-p)
-      (setq-local completion-at-point-functions
-                  (list (cape-capf-super #'eglot-completion-at-point
-                                         #'cape-dabbrev)
-                        #'cape-file
-                        #'cape-keyword))
-    (kill-local-variable 'completion-at-point-functions)))
+      (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
+    (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
 (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs)
 #+end_src
 
 While eglot manages a buffer we want *both* the server's completions and
-cape's (via =cape-capf-super=).  The catch: =eglot-managed-mode-hook= fires on
-*disable* too (all minor-mode hooks fire both ways), so the function branches
-on =eglot-managed-p=.  On the way out it *kills* the buffer-local list —
-otherwise a now-serverless =eglot-completion-at-point= is left behind and
-errors on the next completion.
+cape's, so =cape-capf-super= fuses the two into one capf and the depth =-10=
+puts it in front of everything else in that buffer.
+
+The catch: =eglot-managed-mode-hook= fires on *disable* too (all minor-mode
+hooks fire both ways), so the function branches on =eglot-managed-p= and takes
+the capf back out — otherwise a now-serverless =eglot-completion-at-point= is
+left behind and errors on the next completion.
+
+It has to take out *exactly* what it put in, which is why this is a
+=remove-hook= and not a =kill-local-variable=.  An earlier version replaced the
+whole buffer-local list and killed it on the way out; that also discarded
+whatever the major mode had put there, so after an =eglot-shutdown= a Python
+buffer was left with no =python-completion-at-point= and silently fell back to
+dabbrev until the mode was re-run.  =add-hook= / =remove-hook= with the LOCAL
+flag touch only our own entry.
 
 ** ace-window, vundo, diff-hl
 

@@ -36,6 +36,7 @@
 ;; installed packages when present, else installed from NonGNU ELPA.
 
 (require 'ert)
+(require 'cl-lib)
 (require 'package)
 (require 'seq)
 
@@ -98,6 +99,31 @@
 (defun init-test--declares (needle)
   "Non-nil if init.el contains NEEDLE anywhere in its source forms."
   (seq-some (lambda (f) (init-test--subform-p needle f)) init-test--init-forms))
+
+(defun init-test--use-package-section (package keyword)
+  "The forms init.el puts under KEYWORD in its (use-package PACKAGE ...) block.
+Presence in the source is not enough for a deferred package: :init runs at
+startup, :config only when the package finally loads."
+  (let ((body (cddr (or (seq-find (lambda (f)
+                                    (and (consp f)
+                                         (eq (car f) 'use-package)
+                                         (eq (cadr f) package)))
+                                  init-test--init-forms)
+                        (error "init.el: no (use-package %s ...) block" package))))
+        (section '())
+        (collecting nil))
+    (dolist (form body (nreverse section))
+      (cond ((eq form keyword) (setq collecting t))
+            ((keywordp form) (setq collecting nil))
+            (collecting (push form section))))))
+
+(defun init-test--eval-init-def (package head name)
+  "Evaluate the (HEAD NAME ...) form from PACKAGE's :init section in init.el."
+  (let ((form (seq-find (lambda (f)
+                          (and (consp f) (eq (car f) head) (eq (cadr f) name)))
+                        (init-test--use-package-section package :init))))
+    (unless form (error "init.el: no (%s %s ...) in %s's :init" head name package))
+    (eval form t)))
 
 ;;; ---------------------------------------------- bring the units to life
 ;; Evaluating the meow use-package block defines and calls my-meow-setup, which
@@ -411,21 +437,28 @@ partial-completion so foo/bar expands path segments."
   (should (init-test--declares
            '(completion-category-overrides '((file (styles partial-completion)))))))
 
-(ert-deftest init-test/given-a-consult-jump-then-the-hit-is-recentered ()
-  "Without this the jump target lands at the screen edge."
-  (should (init-test--declares '(add-hook 'consult-after-jump-hook #'recenter))))
-
 (ert-deftest init-test/given-consult-results-then-angle-bracket-narrows ()
-  "Type < then a group key to narrow the candidate list to one group."
-  (should (init-test--declares '(setq consult-narrow-key "<"))))
+  "Type < then a group key to narrow the candidate list to one group.  consult
+reads this itself, so it is the one consult setting that belongs in :config."
+  (should (member '(setq consult-narrow-key "<")
+                  (init-test--use-package-section 'consult :config))))
 
 (ert-deftest init-test/given-xref-then-consult-drives-its-pickers ()
-  (should (init-test--declares '(setq xref-show-xrefs-function #'consult-xref
-                                      xref-show-definitions-function #'consult-xref))))
+  ":init, not :config — :bind defers consult, so in :config the first xref jump
+of a session would still get the stock *xref* buffer."
+  (should (member '(setq xref-show-xrefs-function #'consult-xref
+                         xref-show-definitions-function #'consult-xref)
+                  (init-test--use-package-section 'consult :init))))
 
 (ert-deftest init-test/given-register-preview-then-consult-renders-it ()
-  (should (init-test--declares
-           '(advice-add #'register-preview :override #'consult-register-window))))
+  "Also :init: both functions are autoloaded, so advising eagerly costs no
+startup load, while advising from :config would leave the first C-x r j of a
+session with the stock preview at the stock one-second delay."
+  (let ((eager (init-test--use-package-section 'consult :init)))
+    (should (member '(advice-add #'register-preview
+                                 :override #'consult-register-window)
+                    eager))
+    (should (member '(setq register-preview-delay 0.5) eager))))
 
 (ert-deftest init-test/given-a-prefix-key-then-embark-shows-the-bindings ()
   (should (init-test--declares '(setq prefix-help-command #'embark-prefix-help-command))))
@@ -440,11 +473,31 @@ consult in at startup."
   (should (init-test--declares '(add-to-list 'savehist-additional-variables 'corfu-history))))
 
 (ert-deftest init-test/given-an-eglot-buffer-then-cape-supers-the-capfs ()
-  "eglot-managed-mode-hook fires on disable too, so my-eglot-capfs branches on
-state: merged eglot+dabbrev capf while managed, and the buffer-local list is
-dropped on exit — otherwise a serverless eglot capf is left behind and errors."
+  "While eglot manages a buffer, its completions and dabbrev's arrive merged as
+one capf, ahead of everything else in the buffer."
   (should (init-test--declares '(add-hook 'eglot-managed-mode-hook #'my-eglot-capfs)))
-  (should (init-test--declares '(kill-local-variable 'completion-at-point-functions))))
+  (should (init-test--declares
+           '(cape-capf-super #'eglot-completion-at-point #'cape-dabbrev))))
+
+(ert-deftest init-test/given-eglot-stops-managing-then-the-mode-keeps-its-own-capf ()
+  "eglot-managed-mode-hook fires on disable too, so my-eglot-capfs must add and
+remove ONLY its own capf.  Replacing the whole buffer-local list and killing it
+on the way out also discards the major mode's capf — after an eglot-shutdown the
+buffer would silently drop to the global capfs, with no
+python-completion-at-point (or elisp-, or any other) left."
+  (init-test--eval-init-def 'cape 'defun 'my-eglot-capf)
+  (init-test--eval-init-def 'cape 'defun 'my-eglot-capfs)
+  (with-temp-buffer
+    (add-hook 'completion-at-point-functions #'ignore nil t)
+    (let ((mode-capfs completion-at-point-functions))
+      (cl-letf (((symbol-function 'eglot-managed-p) (lambda () t)))
+        (my-eglot-capfs))
+      (should (memq 'my-eglot-capf completion-at-point-functions))
+      (should (memq 'ignore completion-at-point-functions))
+      (cl-letf (((symbol-function 'eglot-managed-p) (lambda () nil)))
+        (my-eglot-capfs))
+      (should-not (memq 'my-eglot-capf completion-at-point-functions))
+      (should (equal completion-at-point-functions mode-capfs)))))
 
 ;;; ------------------------------------------------------------- ace-window
 (ert-deftest init-test/given-other-window-then-ace-window-remaps-it-frame-scoped ()
