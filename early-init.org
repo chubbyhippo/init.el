@@ -34,6 +34,45 @@ When the menu bar, tool bar, or font changes, Emacs normally resizes the
 frame to compensate.  During startup that reflow happens several times and
 just wastes time; this suppresses it.
 
+#+begin_src elisp
+(when (eq system-type 'windows-nt)
+  (setq w32-get-true-file-attributes nil
+        w32-pipe-read-delay 0
+        w32-pipe-buffer-size (* 64 1024))
+  (setq inhibit-compacting-font-caches t))
+#+end_src
+
+Native Windows Emacs has no real =fork()=, so every subprocess launch —
+=eglot=, =flymake=, VC, =compile= — goes through the far more expensive
+Win32 =CreateProcess=, and file I/O goes through Win32 APIs rather than a
+POSIX layer.  These four settings are the well-documented, low-risk levers
+for closing that gap without changing anything on Linux/macOS, so the whole
+block is guarded by =system-type= and is a no-op there:
+
+- =w32-get-true-file-attributes nil= — by default Emacs issues extra Win32
+  syscalls per file-attributes call to get accurate NTFS link counts, which
+  is the classic cause of multi-second Dired/save hangs on Windows; almost
+  nothing needs that accuracy.
+- =w32-pipe-read-delay 0= / =w32-pipe-buffer-size (* 64 1024)= — Windows
+  pipes default to an OS-chosen (small) buffer for subprocess I/O; a 64K
+  buffer means fewer round-trips for chatty subprocesses, especially LSP
+  servers whose JSON responses can be hundreds of KB. Pairs with the
+  already-set =read-process-output-max= in =init.el= (that one is portable
+  and left alone).
+- =inhibit-compacting-font-caches t= — stops GC from repeatedly compacting
+  (and thus rebuilding) font caches, a cost that is far more visible on
+  Windows' GDI font path than on Linux.
+
+Two more of the same "close the gap" list live *outside* elisp entirely, so
+they are not in this file: a native-comp build (so heavy operations like
+=magit-status= run compiled rather than interpreted — the single biggest
+lever, but a build/toolchain concern, not a setting) and excluding
+=emacs.exe=/=~/.emacs.d=/project directories from Windows Defender's
+real-time scanning (every subprocess launch and packed-object read gets
+scanned otherwise). Running fully inside WSL2 sidesteps the whole class of
+problem by providing a real =fork/exec= and =inotify=, at the cost of losing
+native Windows GUI integration.
+
 * Load hygiene
 
 #+begin_src elisp

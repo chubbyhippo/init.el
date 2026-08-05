@@ -87,6 +87,26 @@
   "Menu-bar/font changes should not reflow the frame during startup."
   (should (eq frame-inhibit-implied-resize t)))
 
+;;; ================================================= native Windows perf
+(ert-deftest early-init-test/given-native-windows-then-the-w32-file-and-pipe-perf-knobs-apply ()
+  "w32-get-true-file-attributes and the pipe-buffer/read-delay knobs are set
+on Windows only."
+  (should (early-init-test--declares '(eq system-type 'windows-nt)))
+  (should (early-init-test--declares
+           '(setq w32-get-true-file-attributes nil
+                  w32-pipe-read-delay 0
+                  w32-pipe-buffer-size (* 64 1024))))
+  (should (member '(when (eq system-type 'windows-nt)
+                      (setq w32-get-true-file-attributes nil
+                            w32-pipe-read-delay 0
+                            w32-pipe-buffer-size (* 64 1024))
+                      (setq inhibit-compacting-font-caches t))
+                   early-init-test--forms)))
+
+(ert-deftest early-init-test/given-native-windows-then-font-cache-compaction-is-inhibited ()
+  "inhibit-compacting-font-caches is set on Windows only."
+  (should (early-init-test--declares '(setq inhibit-compacting-font-caches t))))
+
 ;;; ================================================= load hygiene
 (ert-deftest early-init-test/given-a-stale-elc-then-a-fresh-el-is-preferred ()
   (should (eq load-prefer-newer t)))

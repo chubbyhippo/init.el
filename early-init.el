@@ -21,6 +21,12 @@
 
 (setq frame-inhibit-implied-resize t)
 
+(when (eq system-type 'windows-nt)
+  (setq w32-get-true-file-attributes nil
+        w32-pipe-read-delay 0
+        w32-pipe-buffer-size (* 64 1024))
+  (setq inhibit-compacting-font-caches t))
+
 (setq load-prefer-newer t)
 
 (setq inhibit-x-resources t)
