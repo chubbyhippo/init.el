@@ -1,0 +1,621 @@
+#+title: Emacs Shortcuts Cheat Sheet
+#+subtitle: Built-in Emacs + this config (init.el) + extras/
+#+options: toc:2 num:nil
+
+This sheet covers (1) essential *built-in* GNU Emacs keys, (2) every binding
+defined in =init.el=, and (3) language extras under =extras/=. Meow normal-state
+keys replace many motion/edit defaults while INSERT keeps vanilla Emacs editing.
+
+Discover anything live: =C-h b= (buffer bindings), =C-h k= (describe key),
+=C-h w= (where-is), =C-h m= (mode help), =C-h B= (embark-bindings, searchable).
+
+* Built-in Emacs (essential)
+** Help
+| Key     | Command                    | Description                    |
+|---------+----------------------------+--------------------------------|
+| C-h ?   | help-for-help              | Help menu                      |
+| C-h k   | describe-key               | What does this key do?         |
+| C-h c   | describe-key-briefly       | Short command name for key     |
+| C-h f   | describe-function          | Describe a command/function    |
+| C-h v   | describe-variable          | Describe a variable            |
+| C-h m   | describe-mode              | Current major/minor modes      |
+| C-h b   | describe-bindings          | All bindings in this buffer    |
+| C-h a   | apropos-command            | Search commands by name/regexp |
+| C-h t   | help-with-tutorial         | Built-in tutorial              |
+| C-h i   | info                       | Info manuals                   |
+| C-h r   | info-emacs-manual          | Emacs manual                   |
+| C-h l   | view-lossage               | Recent keys typed              |
+| C-h w   | where-is                   | Keys bound to a command        |
+| C-g     | keyboard-quit              | Cancel / quit minibuffer       |
+| ESC ESC ESC | keyboard-escape-quit   | Stronger quit                  |
+
+** Files & buffers
+| Key       | Command                 | Description                 |
+|-----------+-------------------------+-----------------------------|
+| C-x C-f   | find-file               | Open / visit file           |
+| C-x C-s   | save-buffer             | Save current buffer         |
+| C-x C-w   | write-file              | Save as…                    |
+| C-x s     | save-some-buffers       | Save many buffers           |
+| C-x C-c   | save-buffers-kill-terminal | Exit Emacs               |
+| C-x b     | switch-to-buffer        | Switch buffer (overridden → consult-buffer) |
+| C-x C-b   | list-buffers            | Buffer list (overridden → consult-buffer)   |
+| C-x k     | kill-buffer             | Kill a buffer               |
+| C-x C-q   | read-only-mode          | Toggle read-only            |
+| C-x i     | insert-file             | Insert file contents        |
+| C-x C-v   | find-alternate-file     | Replace buffer with other file |
+| C-x C-r   | find-file-read-only     | Visit file read-only        |
+| C-x d     | dired                   | Directory editor            |
+| C-x C-d   | list-directory          | List directory              |
+| C-x C-z   | suspend-frame           | Suspend / minimize (note: C-z rebound to undo here) |
+
+** Windows & frames
+| Key     | Command                | Description              |
+|---------+------------------------+--------------------------|
+| C-x 0   | delete-window          | Delete this window       |
+| C-x 1   | delete-other-windows   | Only this window         |
+| C-x 2   | split-window-below     | Split horizontal         |
+| C-x 3   | split-window-right     | Split vertical           |
+| C-x o   | other-window           | Other window (→ ace-window) |
+| C-x +   | balance-windows        | Balance sizes            |
+| C-x ^   | enlarge-window         | Taller                   |
+| C-x {   | shrink-window-horizontally | Narrower             |
+| C-x }   | enlarge-window-horizontally | Wider              |
+| C-x 4 f | find-file-other-window | File in other window     |
+| C-x 4 b | switch-to-buffer-other-window | Buffer other window |
+| C-x 4 d | dired-other-window     | Dired other window       |
+| C-x 5 2 | make-frame-command     | New frame                |
+| C-x 5 0 | delete-frame           | Delete frame             |
+| C-x 5 o | other-frame            | Other frame              |
+| C-x 5 f | find-file-other-frame  | File other frame         |
+
+** Cursor motion (INSERT / non-Meow)
+| Key     | Command                    | Description           |
+|---------+----------------------------+-----------------------|
+| C-f     | forward-char               | Forward char          |
+| C-b     | backward-char              | Backward char         |
+| C-n     | next-line                  | Next line             |
+| C-p     | previous-line              | Previous line         |
+| C-a     | move-beginning-of-line     | Start of line         |
+| C-e     | move-end-of-line           | End of line           |
+| M-f     | forward-word               | Forward word          |
+| M-b     | backward-word              | Backward word         |
+| M-a     | backward-sentence          | Start of sentence     |
+| M-e     | forward-sentence           | End of sentence       |
+| M-{     | backward-paragraph         | Prev paragraph        |
+| M-}     | forward-paragraph          | Next paragraph        |
+| C-M-f   | forward-sexp               | Forward sexp          |
+| C-M-b   | backward-sexp              | Backward sexp         |
+| C-M-u   | backward-up-list           | Up list               |
+| C-M-d   | down-list                  | Down list             |
+| C-M-n   | forward-list               | Next list             |
+| C-M-p   | backward-list              | Prev list             |
+| M-<     | beginning-of-buffer        | Buffer start          |
+| M->     | end-of-buffer              | Buffer end            |
+| C-v     | scroll-up-command          | Page down             |
+| M-v     | scroll-down-command        | Page up               |
+| C-l     | recenter-top-bottom        | Recenter              |
+| M-g g / M-g M-g | goto-line          | Go to line number (here also avy-goto-line) |
+| M-m     | back-to-indentation        | First non-space       |
+| M-r     | move-to-window-line-top-bottom | (overridden → expreg-expand) |
+
+** Editing & kill/yank
+| Key     | Command                 | Description                |
+|---------+-------------------------+----------------------------|
+| C-d     | delete-char             | Delete char forward        |
+| DEL     | delete-backward-char    | Backspace                  |
+| M-d     | kill-word               | Kill word forward          |
+| M-DEL   | backward-kill-word      | Kill word backward         |
+| C-k     | kill-line               | Kill to end of line        |
+| C-S-backspace | kill-whole-line   | Kill whole line            |
+| C-w     | kill-region             | Kill (cut) region          |
+| M-w     | kill-ring-save          | Copy region                |
+| C-y     | yank                    | Paste                      |
+| M-y     | yank-pop                | Cycle kill ring (→ consult-yank-pop) |
+| C-/ / C-_ / C-x u | undo          | Undo (C-x u → vundo here)  |
+| C-? / C-M-_ | undo-redo           | Redo (also C-S-z here)     |
+| C-t     | transpose-chars         | Swap chars                 |
+| M-t     | transpose-words         | Swap words                 |
+| C-x C-t | transpose-lines         | Swap lines                 |
+| M-u     | upcase-word             | UPPERCASE word             |
+| M-l     | downcase-word           | lowercase word             |
+| M-c     | capitalize-word         | Capitalize word            |
+| M-q     | fill-paragraph          | Reflow paragraph           |
+| C-o     | open-line               | Open line                  |
+| C-j     | electric-newline-and-maybe-indent | Newline+indent |
+| RET     | newline                 | Newline                    |
+| M-;     | comment-dwim            | Comment / uncomment        |
+| C-x C-; | comment-line            | Comment line(s)            |
+| C-M-\   | indent-region           | Indent region              |
+| TAB     | indent-for-tab-command  | Indent / complete          |
+| M-^     | delete-indentation      | Join to previous line      |
+| C-x r t | string-rectangle        | Rectangle replace          |
+| C-x r k | kill-rectangle          | Kill rectangle             |
+| C-x r y | yank-rectangle          | Yank rectangle             |
+| C-x r o | open-rectangle          | Open rectangle             |
+| C-x SPC | rectangle-mark-mode     | Rectangle mark             |
+
+** Mark & region
+| Key     | Command              | Description              |
+|---------+----------------------+--------------------------|
+| C-SPC   | set-mark-command     | Set mark / toggle region |
+| C-@     | set-mark-command     | Same as C-SPC            |
+| C-x C-x | exchange-point-and-mark | Swap point and mark   |
+| C-u C-SPC | pop-global-mark    | Pop global mark          |
+| M-h     | mark-paragraph       | Mark paragraph           |
+| C-x h   | mark-whole-buffer    | Select all               |
+| C-M-SPC / C-M-@ | mark-sexp    | Mark sexp                |
+| M-@     | mark-word            | Mark word                |
+
+** Search & replace
+| Key     | Command                    | Description             |
+|---------+----------------------------+-------------------------|
+| C-s     | isearch-forward            | Incremental search      |
+| C-r     | isearch-backward           | Reverse isearch         |
+| C-M-s   | isearch-forward-regexp     | Regexp isearch          |
+| C-M-r   | isearch-backward-regexp    | Reverse regexp isearch  |
+| M-%     | query-replace             | Query replace           |
+| C-M-%   | query-replace-regexp       | Regexp query replace    |
+| M-s o   | occur                      | Occur (here also consult-outline on M-s o) |
+| M-s h . | highlight-symbol-at-point  | Highlight symbol        |
+| M-s h r | highlight-regexp           | Highlight regexp        |
+| M-s h u | unhighlight-regexp         | Remove highlight        |
+
+In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
+=M-e= edit string (here also consult-isearch-history).
+
+** Prefix arguments & macros
+| Key     | Command                | Description              |
+|---------+------------------------+--------------------------|
+| C-u     | universal-argument     | Numeric / raw prefix     |
+| M-0…M-9 | digit-argument         | Digit prefix             |
+| M--     | negative-argument      | Negative prefix          |
+| C-x (   | kmacro-start-macro     | Start keyboard macro     |
+| C-x )   | kmacro-end-macro       | End keyboard macro       |
+| C-x e   | kmacro-end-and-call-macro | Run last macro        |
+| F3 / F4 | kmacro-start / end-or-call | Alternate macro keys |
+
+** Registers, bookmarks, rectangles (C-x r)
+| Key       | Command                 | Description            |
+|-----------+-------------------------+------------------------|
+| C-x r SPC | point-to-register       | Save point             |
+| C-x r j   | jump-to-register        | Jump to register       |
+| C-x r s   | copy-to-register        | Copy region to register|
+| C-x r i   | insert-register         | Insert register        |
+| C-x r m   | bookmark-set            | Set bookmark           |
+| C-x r b   | bookmark-jump           | Jump bookmark (→ consult-bookmark) |
+| C-x r l   | bookmark-bmenu-list     | List bookmarks         |
+| C-x r n   | number-to-register      | Number → register      |
+| C-x r +   | increment-register      | Increment register     |
+
+** Minibuffer & completion (vanilla)
+| Key     | Command                         | Description            |
+|---------+---------------------------------+------------------------|
+| M-x     | execute-extended-command        | Run command by name    |
+| M-!     | shell-command                   | Shell command          |
+| M-\|    | shell-command-on-region         | Shell on region        |
+| M-&     | async-shell-command             | Async shell            |
+| C-x RET c | universal-coding-system-argument | Coding system        |
+| M-:     | eval-expression                 | Eval Lisp              |
+| C-x C-e | eval-last-sexp                  | Eval sexp before point |
+| C-M-x   | eval-defun                      | Eval defun             |
+| TAB / C-M-i | completion-at-point         | Complete at point      |
+| M-n / M-p | next/previous-history-element | Minibuffer history   |
+| C-g     | abort                           | Quit minibuffer        |
+
+** Project, VC, compile (built-in)
+| Key       | Command              | Description           |
+|-----------+----------------------+-----------------------|
+| C-x p p   | project-switch-project | Switch project      |
+| C-x p f   | project-find-file    | Find file in project  |
+| C-x p b   | project-switch-to-buffer | Project buffer   |
+| C-x p g   | project-find-regexp  | Project search        |
+| C-x p c   | project-compile      | Project compile       |
+| C-x p e   | project-eshell       | Project eshell        |
+| C-x p D   | project-dired        | Project root dired    |
+| C-x v v   | vc-next-action       | VC commit/checkin     |
+| C-x v =   | vc-diff              | VC diff               |
+| C-x v l   | vc-print-log         | VC log                |
+| C-x v d   | vc-dir               | VC directory          |
+| C-x v u   | vc-revert            | Revert file           |
+| M-x compile | compile            | Run compile command   |
+| C-x `     | next-error           | Next compile/grep hit |
+| M-g n     | next-error           | Next error            |
+| M-g p     | previous-error       | Previous error        |
+
+** Xref / tags / imenu (built-in; enhanced by eglot + consult)
+| Key     | Command                 | Description              |
+|---------+-------------------------+--------------------------|
+| M-.     | xref-find-definitions   | Definition (also embark-dwim globally — see config notes) |
+| M-,     | xref-go-back            | Back after jump          |
+| M-?     | xref-find-references    | References               |
+| C-M-.   | xref-find-apropos       | Apropos definitions      |
+| M-x imenu | imenu                 | Jump by outline/index    |
+
+** Org-mode (built-in major mode keys; globals also in init.el)
+| Key     | Command                 | Description              |
+|---------+-------------------------+--------------------------|
+| TAB     | org-cycle               | Cycle visibility         |
+| S-TAB   | org-shifttab            | Global cycle             |
+| M-RET   | org-meta-return         | New heading/item         |
+| M-S-RET | org-insert-todo-heading | New TODO                 |
+| M-←/→   | org-metaleft/right      | Promote/demote           |
+| M-↑/↓   | org-metaup/down         | Move subtree             |
+| C-c C-t | org-todo                | Cycle TODO state         |
+| C-c C-s | org-schedule            | Schedule                 |
+| C-c C-d | org-deadline            | Deadline                 |
+| C-c C-l | org-insert-link         | Insert link              |
+| C-c C-o | org-open-at-point       | Open link                |
+| C-c C-c | org-ctrl-c-ctrl-c       | Context action           |
+| C-c '   | org-edit-special        | Edit source/table block  |
+| C-c C-e | org-export-dispatch     | Export                   |
+| C-c /   | org-sparse-tree         | Sparse tree              |
+| C-c *   | org-toggle-heading      | Toggle heading           |
+
+** Dired (built-in)
+| Key | Command              | Description        |
+|-----+----------------------+--------------------|
+| i   | dired-maybe-insert-subdir | Insert subdir |
+| RET | dired-find-file      | Open               |
+| o   | dired-find-file-other-window | Other window |
+| ^   | dired-up-directory   | Parent             |
+| +   | dired-create-directory | mkdir            |
+| d/x | dired-flag / do-flagged-delete | Mark delete / execute |
+| m/u | dired-mark / unmark  | Mark / unmark      |
+| C   | dired-do-copy        | Copy               |
+| R   | dired-do-rename      | Rename             |
+| Z   | dired-do-compress    | Compress           |
+| g   | revert-buffer        | Refresh            |
+| * s | dired-mark-subdir-files | Mark in subdir  |
+
+** Keyboard conventions (built-in)
+- =C-= Control, =M-= Meta/Alt, =S-= Shift, =s-= Super/Win
+- =C-x= global prefix (files, windows, registers…)
+- =C-c= reserved for major/minor modes and user keys
+- =C-h= help prefix
+- =M-x= run any command by name
+- Full dump of *all* active keys: =C-h b= or =C-h B= (embark)
+
+* This config — init.el
+** Global keys (added or remapped)
+| Key           | Command              | Notes                          |
+|---------------+----------------------+--------------------------------|
+| C-c f         | find-file            | User alias                     |
+| C-c k         | kill-current-buffer  | Close current                  |
+| C-c b m       | bookmark-set         | Set bookmark                   |
+| C-c b j       | consult-bookmark     | Jump bookmark                  |
+| C-c r         | consult-ripgrep      | Project/global ripgrep         |
+| C-c w …       | my-window-map        | Window prefix (see below)      |
+| C-c a         | org-agenda           | Org agenda                     |
+| C-c c         | org-capture          | Org capture                    |
+| C-c l         | org-store-link       | Store org link                 |
+| C-c e         | expreg-expand        | Expand region                  |
+| C-c j w       | avy-goto-char-2      | Avy 2-char                     |
+| C-c j l       | avy-goto-line        | Avy line                       |
+| C-c j c       | avy-goto-char-timer  | Avy timer                      |
+| C-c M-g       | magit-file-dispatch  | Magit file popup               |
+| C-z           | undo-only            | Undo (not suspend)             |
+| C-S-z         | undo-redo            | Redo                           |
+| M-SPC         | meow-keypad          | Leader/keypad from INSERT      |
+| C-x b         | consult-buffer       | Switch buffer                  |
+| C-x C-b       | consult-buffer       | Same                           |
+| C-x r b       | consult-bookmark     | Bookmark jump                  |
+| C-x g         | magit-status         | Magit                          |
+| C-x M-g       | magit-dispatch       | Magit dispatch                 |
+| C-x u         | vundo                | Visual undo tree               |
+| C-x o         | ace-window           | Remap of other-window          |
+| C-.           | embark-act           | Embark actions                 |
+| M-.           | embark-dwim          | Embark DWIM (note: conflicts with xref default; use eglot/xref via embark or M-x) |
+| C-h B         | embark-bindings      | Searchable bindings            |
+| M-o           | avy-goto-char-timer  | Jump to char                   |
+| M-g g         | avy-goto-line        | Jump to line                   |
+| M-g M-g       | avy-goto-line        | Same                           |
+| M-r           | expreg-expand        | Expand region                  |
+| M-R           | expreg-contract      | Contract region                |
+| M-y           | consult-yank-pop     | Kill-ring browser              |
+| M-s r         | consult-ripgrep      | Ripgrep                        |
+| M-s l         | consult-line         | Buffer line search             |
+| M-s s         | consult-line         | Alias                          |
+| M-s L         | consult-line-multi   | All buffers lines              |
+| M-s o         | consult-outline      | Outline/headings               |
+| S-←/→/↑/↓     | windmove-*           | Focus window (windmove-default-keybindings) |
+
+Enabled built-ins (no extra keys): =repeat-mode=, =which-key-mode=,
+=winner-mode=, =electric-pair-mode=, =savehist=, =save-place=,
+=global-auto-revert-mode=, =recentf-mode=, =pixel-scroll-precision-mode=,
+=global-so-long-mode=, =context-menu-mode=, optional =global-completion-preview-mode=.
+
+** Isearch extras (consult)
+| Key (in isearch) | Command                 | Description            |
+|------------------+-------------------------+------------------------|
+| M-e              | consult-isearch-history | History / edit         |
+| M-s e            | consult-isearch-history | Same                   |
+| M-s l            | consult-line            | Lines from isearch     |
+| M-s L            | consult-line-multi      | Multi-buffer lines     |
+
+** Vertico (minibuffer UI)
+| Key   | Command                         | Description              |
+|-------+---------------------------------+--------------------------|
+| RET   | vertico-directory-enter         | Enter dir / finish       |
+| DEL   | vertico-directory-delete-char   | Up directory             |
+| M-DEL | vertico-directory-delete-word   | Delete word              |
+
+Orderless: space-separated flexible matching. consult-narrow-key: =<=.
+
+** Corfu (in-buffer completion)
+| Key | Command                | Description                 |
+|-----+------------------------+-----------------------------|
+| C-n | corfu-next             | Next candidate              |
+| C-p | corfu-previous         | Previous candidate          |
+| SPC | corfu-insert-separator | Space for Orderless in popup|
+
+Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-eglot-capf=.
+
+** Embark
+| Key   | Command          | Description                    |
+|-------+------------------+--------------------------------|
+| C-.   | embark-act       | Act on thing at point/target   |
+| M-.   | embark-dwim      | Default action                 |
+| C-h B | embark-bindings  | Searchable key help            |
+
+=prefix-help-command= → embark-prefix-help-command (which-key style prefixes).
+
+** Modal editing (Meow)
+*** Motion state (read-only / Magit / etc.)
+| Key | Command    | Description              |
+|-----+------------+--------------------------|
+| j   | meow-next  | Down                     |
+| k   | meow-prev  | Up                       |
+| ESC | ignore     | No accidental exit       |
+
+*** Leader (SPC in Normal, or M-SPC keypad)
+| Key     | Command                   | Description              |
+|---------+---------------------------+--------------------------|
+| SPC 0–9 | meow-digit-argument       | Count prefix             |
+| SPC s   | consult-line              | Search buffer lines      |
+| SPC b b | consult-buffer            | Switch buffer            |
+| SPC . c | diff-hl-next-hunk         | Next VCS hunk            |
+| SPC , c | diff-hl-previous-hunk     | Prev VCS hunk            |
+| SPC . e | flymake-goto-next-error   | Next diagnostic          |
+| SPC , e | flymake-goto-prev-error   | Prev diagnostic          |
+| SPC /   | meow-keypad-describe-key  | Describe keypad sequence |
+| SPC ?   | meow-cheatsheet           | Meow cheatsheet          |
+
+Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g → =C-x g= magit).
+
+*** Normal state
+| Key     | Command                | Description                |
+|---------+------------------------+----------------------------|
+| 0–9     | meow-expand-N          | Expand to Nth              |
+| -       | negative-argument      | Negative arg               |
+| ;       | meow-reverse           | Reverse selection          |
+| ,       | meow-inner-of-thing    | Inner thing                |
+| .       | meow-bounds-of-thing   | Outer thing                |
+| [ / <   | meow-beginning-of-thing| Start of thing             |
+| ] / >   | meow-end-of-thing      | End of thing               |
+| h j k l | meow-left/next/prev/right | Motions                 |
+| H J K L | meow-*-expand          | Expand selection           |
+| w / W   | meow-mark-word/symbol  | Mark word/symbol           |
+| e / E   | meow-next-word/symbol  | Next word/symbol           |
+| b / B   | meow-back-word/symbol  | Prev word/symbol           |
+| f / t   | meow-find / meow-till  | Find / till char           |
+| x / X   | meow-line / meow-goto-line | Line select / goto     |
+| o / O   | meow-block / meow-to-block | Block select            |
+| a / i   | meow-append / meow-insert | Enter INSERT            |
+| A / I   | meow-open-below/above  | Open line + INSERT         |
+| c       | meow-change            | Change                     |
+| d / D   | meow-delete / backward-delete | Delete              |
+| s       | meow-kill              | Kill                       |
+| y / p   | meow-save / meow-yank  | Copy / paste               |
+| r / R   | meow-replace / swap-grab | Replace / swap grab      |
+| u / U   | meow-undo / undo-in-selection | Undo                |
+| n       | meow-search            | Search selection           |
+| v       | meow-visit             | Visit (search)             |
+| m       | meow-join              | Join lines                 |
+| g / G   | meow-cancel-selection / grab | Cancel / grab         |
+| Y       | meow-sync-grab         | Sync grab                  |
+| z       | meow-pop-selection     | Pop selection              |
+| q       | meow-quit              | Quit selection/window      |
+| S       | avy-goto-char-timer    | Avy char                   |
+| Q       | avy-goto-line          | Avy line                   |
+| '       | repeat                 | Repeat last command        |
+| ESC     | ignore                 | Stay in Normal             |
+
+eat-mode starts in INSERT; Magit buffers use MOTION.
+
+** Window map (=C-c w= or Meow keypad =SPC c w=)
+| Key     | Command                    | Description           |
+|---------+----------------------------+-----------------------|
+| v       | split-window-right         | Vertical split        |
+| s       | split-window-below         | Horizontal split      |
+| d       | delete-window              | Delete window         |
+| D / m   | delete-other-windows       | Maximize              |
+| w       | other-window (ace-window)  | Jump by letter        |
+| W       | ace-swap-window            | Swap windows          |
+| r       | my-window-resize           | Resize (h/j/k/l/arrows; ace if 3+ wins) |
+| h/j/k/l | windmove-*                 | Focus neighbor        |
+| H/J/K/L | windmove-swap-states-*     | Swap buffers          |
+| b       | balance-windows            | Balance               |
+| , / .   | winner-undo / winner-redo  | Layout history        |
+| i / =   | text-scale-increase        | Zoom in               |
+| o / -   | text-scale-decrease        | Zoom out              |
+| u / 0   | my-text-scale-reset        | Zoom reset            |
+
+ace-window letters: =a s d f g h j k l=.
+
+** Repeat maps (after first command, press again without prefix)
+| After                    | Keys   | Effect                |
+|--------------------------+--------+-----------------------|
+| flymake-goto-*-error     | .  ,   | Next / prev error     |
+| diff-hl-*-hunk           | .  ,   | Next / prev hunk      |
+| expreg-expand/contract   | .  ,   | Expand / contract more|
+| text-scale-* / reset     | i o u = - 0 | Keep zooming    |
+| winner-undo/redo         | ,  .   | Layout history        |
+
+** Magit
+| Key     | Command              | Description        |
+|---------+----------------------+--------------------|
+| C-x g   | magit-status         | Status             |
+| C-x M-g | magit-dispatch       | Dispatch popup     |
+| C-c M-g | magit-file-dispatch  | File popup         |
+
+** LSP (Eglot) & diagnostics
+Eglot auto-starts on =prog-mode= (except lisp-data derivatives). No custom eglot keys; use M-x or embark.
+
+| Command / key              | Description                |
+|----------------------------+----------------------------|
+| M-x eglot                  | Start server manually      |
+| M-x eglot-rename           | Rename symbol              |
+| M-x eglot-code-actions     | Code actions               |
+| M-x eglot-format           | Format buffer/region       |
+| M-x eglot-format-buffer    | Format whole buffer        |
+| M-x eglot-shutdown         | Stop server                |
+| M-x eglot-reconnect        | Reconnect                  |
+| M-x flymake-show-buffer-diagnostics | List buffer diagnostics |
+| M-x flymake-show-project-diagnostics | Project diagnostics  |
+| SPC . e / SPC , e          | Next/prev Flymake error    |
+| xref via consult           | Definitions/refs UI        |
+
+** Diff-HL
+| Key           | Command                 | Description   |
+|---------------+-------------------------+---------------|
+| SPC . c       | diff-hl-next-hunk       | Next hunk     |
+| SPC , c       | diff-hl-previous-hunk   | Prev hunk     |
+| then . / ,    | (repeat)                | Continue      |
+
+** Other packages in init.el
+| Package / feature | Keys / commands                                      |
+|-------------------+------------------------------------------------------|
+| wgrep             | M-x wgrep-change-to-wgrep-mode (in grep buffers)     |
+| eat               | M-x eat; eshell visual commands                      |
+| vundo             | C-x u                                                |
+| marginalia        | annotations in minibuffer (automatic)                |
+| which-key         | popup after prefix pause                             |
+| corfu-terminal    | TTY popup backend (automatic when non-GUI)           |
+
+* Extras (=extras/*.el=, optional — uncomment loads at bottom of init.el)
+Most extras add modes, eglot servers, format-on-save, and =dape= debug configs.
+Few define extra keys; prefer =M-x= and built-in/CIDER/Geiser/inf-ruby maps.
+
+** Shared across language extras
+| Command                     | Description                          |
+|-----------------------------+--------------------------------------|
+| M-x dape                    | Start DAP session (pick config)      |
+| M-x dape-breakpoint-toggle  | Toggle breakpoint                    |
+| M-x project-compile         | Build via project                    |
+| M-x treesit-install-language-grammar | Install tree-sitter grammar |
+
+** Clojure (=extras/clojure.el=) — CIDER
+| Key / command        | Description                    |
+|----------------------+--------------------------------|
+| C-c M-j              | cider-jack-in                  |
+| C-c C-k              | Load buffer                    |
+| C-c C-e              | Eval form before point         |
+| C-c C-z              | Switch to REPL                 |
+| C-u C-M-x            | Instrument defun for debugger  |
+
+** COBOL (=extras/cobol.el=)
+| Command                 | Description                 |
+|-------------------------+-----------------------------|
+| M-x cobol-column-ruler  | Show column areas           |
+| M-x cobol-format-buffer | Format buffer               |
+| M-m                     | Format-aware back-to-indentation (mode remap) |
+| M-x gdb                 | Debug with GDB after =cobc -g= |
+
+** C / C++ (=extras/cpp.el=)
+| Command     | Description                          |
+|-------------+--------------------------------------|
+| M-x dape    | Configs: =gdb=, =codelldb=, etc.     |
+
+** Elixir (=extras/elixir.el=)
+| Command     | Description                |
+|-------------+----------------------------|
+| M-x dape    | ElixirLS =mix_task= configs |
+| format      | on save via mix format     |
+
+** Erlang (=extras/erlang.el=)
+| Command              | Description        |
+|----------------------+--------------------|
+| M-x project-compile  | rebar3 / erlang.mk |
+
+** Go (=extras/go.el=)
+| Command     | Description             |
+|-------------+-------------------------|
+| M-x dape    | =dlv= (Delve) config    |
+| format      | gofmt/goimports on save |
+
+** Haskell (=extras/haskell.el=)
+| Change              | Description                              |
+|---------------------+------------------------------------------|
+| keymap-unset M-.    | Removes interactive-haskell M-. (leave eglot/xref) |
+
+** HTML (=extras/html.el=)
+Tree-sitter HTML mode / grammar setup; no extra keys.
+
+** Java (=extras/java.el=)
+| Command                        | Description           |
+|--------------------------------+-----------------------|
+| M-x javaimp-add-import         | Add import            |
+| M-x javaimp-organize-imports   | Organize imports      |
+| M-x dape                       | =jdtls= + java-debug  |
+
+** Python (=extras/python.el=)
+| Command  | Description                |
+|----------+----------------------------|
+| M-x dape | debugpy / related configs  |
+
+** Ruby (=extras/ruby.el=) — inf-ruby
+| Key          | Description                |
+|--------------+----------------------------|
+| C-c C-z      | inf-ruby / jump to REPL    |
+| C-c C-r      | Eval region (inf-ruby)     |
+| M-x dape     | Ruby DAP configs           |
+
+(Optional minitest package uses =C-c C-r= prefix if enabled.)
+
+** Rust (=extras/rust.el=)
+| Command  | Description                     |
+|----------+---------------------------------|
+| M-x dape | =lldb-dap= / =lldb-vscode=      |
+| format   | rustfmt on save                 |
+
+** Scheme (=extras/scheme.el=) — Geiser
+| Key / command              | Description              |
+|----------------------------+--------------------------|
+| C-c C-z                    | Geiser REPL              |
+| C-M-x                      | Eval defun               |
+| C-x C-e                    | Eval last sexp           |
+| M-x run-guile / run-chez   | Specific REPL            |
+| M-x geiser-doc-look-up-manual | Docs (Guile)          |
+
+** TypeScript / JS (=extras/typescript.el=)
+| Command  | Description                         |
+|----------+-------------------------------------|
+| M-x dape | =js-debug-*= (Node / Chrome)        |
+
+** Zig (=extras/zig.el=)
+| Command            | Description        |
+|--------------------+--------------------|
+| M-x zig-build      | zig build          |
+| M-x zig-run        | zig run            |
+| M-x zig-test       | zig test           |
+| M-x dape           | =zig-lldb=         |
+| format             | zig fmt on save    |
+
+* Quick reference — “where do I…?”
+| Task                 | Keys                                      |
+|----------------------+-------------------------------------------|
+| Open file            | C-x C-f or C-c f                          |
+| Save                 | C-x C-s                                   |
+| Switch buffer        | C-x b / SPC b b                           |
+| Search in buffer     | M-s l / SPC s / C-s                       |
+| Search project       | M-s r / C-c r                             |
+| Git status           | C-x g                                     |
+| Windows              | C-c w … or S-arrows                       |
+| Jump on screen       | M-o / Normal S or Q                       |
+| Expand selection     | M-r or C-c e                              |
+| Actions on thing     | C-.                                       |
+| Undo tree            | C-x u                                     |
+| LSP rename/format    | M-x eglot-rename / eglot-format           |
+| Debug                | M-x dape                                  |
+| All bindings         | C-h b or C-h B                            |
+)
