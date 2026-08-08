@@ -192,7 +192,7 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 |---------+---------------------------------+------------------------|
 | M-x     | execute-extended-command        | Run command by name    |
 | M-!     | shell-command                   | Shell command          |
-| M-\|    | shell-command-on-region         | Shell on region        |
+| M-\vert | shell-command-on-region         | Shell on region (Meta+\vert) |
 | M-&     | async-shell-command             | Async shell            |
 | C-x RET c | universal-coding-system-argument | Coding system        |
 | M-:     | eval-expression                 | Eval Lisp              |
