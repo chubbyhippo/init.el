@@ -34,6 +34,7 @@
                     "extras/html.el"
                     "extras/java.el"
                     "extras/python.el"
+                    "extras/ruby.el"
                     "extras/rust.el"
                     "extras/scheme.el"
                     "extras/typescript.el"
