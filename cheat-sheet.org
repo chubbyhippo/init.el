@@ -372,7 +372,10 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 |---------+---------------------------+--------------------------|
 | SPC 0–9 | meow-digit-argument       | Count prefix             |
 | SPC s   | consult-line              | Search buffer lines      |
+| SPC r   | consult-ripgrep           | Project/global ripgrep   |
 | SPC b b | consult-buffer            | Switch buffer            |
+| SPC p f | project-find-file         | Find file in project     |
+| SPC p p | project-switch-project    | Switch project           |
 | SPC . c | diff-hl-next-hunk         | Next VCS hunk            |
 | SPC , c | diff-hl-previous-hunk     | Prev VCS hunk            |
 | SPC . e | flymake-goto-next-error   | Next diagnostic          |
