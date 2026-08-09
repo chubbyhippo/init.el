@@ -17,7 +17,13 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
+
+;; Skip file-name handlers (tramp, compression, …) while starting up; init.el
+;; restores the saved alist on emacs-startup-hook.
+(defvar my--file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
 
 (setq frame-inhibit-implied-resize t)
 
@@ -40,3 +46,8 @@
 
 (setq native-comp-async-report-warnings-errors 'silent
       package-native-compile t)
+
+;; Explicit policy: GNU + NonGNU only — never MELPA (or any third archive).
+(setq package-archives
+      '(("gnu"    . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))

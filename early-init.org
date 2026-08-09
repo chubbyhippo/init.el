@@ -16,15 +16,28 @@ global assignment — no packages, no keybindings.
 * Startup performance
 
 #+begin_src elisp
-(setq gc-cons-threshold most-positive-fixnum)
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.6)
 #+end_src
 
 Raise the garbage-collection ceiling as high as it goes so *no* GC happens
-while Emacs is starting up — collecting mid-startup just slows it down.  This
-is deliberately paired with =init.el=, which drops the threshold back to a
-sane 16 MB on =emacs-startup-hook= once startup is over.  Leaving it at
-=most-positive-fixnum= forever would mean Emacs almost never collects and
-grows huge, so the two files must be read together.
+while Emacs is starting up — collecting mid-startup just slows it down.  Pair
+it with a higher =gc-cons-percentage= so that even if a collection does fire,
+Emacs waits until a larger fraction of heap is garbage.  This is deliberately
+paired with =init.el=, which drops both knobs back to sane defaults
+(=16 MB= / =0.1=) on =emacs-startup-hook= once startup is over.  Leaving them
+raised forever would mean Emacs almost never collects and grows huge, so the
+two files must be read together.
+
+#+begin_src elisp
+(defvar my--file-name-handler-alist file-name-handler-alist)
+(setq file-name-handler-alist nil)
+#+end_src
+
+Every =load= / =require= normally walks =file-name-handler-alist= (tramp,
+compression, =jka-compr=, …).  During startup that list is pure overhead — no
+remote or compressed files are being opened yet — so stash it and empty the
+alist.  =init.el= restores the saved value on =emacs-startup-hook=.
 
 #+begin_src elisp
 (setq frame-inhibit-implied-resize t)
@@ -141,6 +154,20 @@ that means "no scroll bar", the same as =(vertical-scroll-bars . nil)=.
 - =package-native-compile t= native-compiles packages when they are
   installed, so they run at full speed from the first session rather than
   being compiled lazily later.
+
+* Package archives — GNU + NonGNU only
+
+#+begin_src elisp
+(setq package-archives
+      '(("gnu"    . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+#+end_src
+
+Set *before* =package-initialize= (which runs after early-init) so the policy
+is unambiguous: only the two FSF archives.  Emacs 28+ already defaults to
+these two, but spelling them out makes the "never MELPA" rule visible in
+code and tests, and stops a site-lisp or environment tweak from quietly
+adding a third archive.
 
 * See also
 

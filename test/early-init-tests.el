@@ -78,10 +78,30 @@
 ;; Load the file into this batch process so we can assert the state it produces.
 (load (early-init-test-file "early-init.el") nil t)
 
+;; Capture the emptied-handlers startup effect, then restore the alist so a
+;; later suite in the same batch process (init-tests via run.sh) can still
+;; load compressed/ELPA files normally.
+(defvar early-init-test--handlers-were-cleared (null file-name-handler-alist)
+  "Non-nil if early-init.el cleared file-name-handler-alist at load time.")
+(when (boundp 'my--file-name-handler-alist)
+  (setq file-name-handler-alist my--file-name-handler-alist))
+
 ;;; ================================================= startup performance
 (ert-deftest early-init-test/given-startup-then-gc-is-uncapped ()
   "No GC while starting up; init.el drops the ceiling back afterwards."
   (should (= gc-cons-threshold most-positive-fixnum)))
+
+(ert-deftest early-init-test/given-startup-then-gc-percentage-is-raised ()
+  "Higher gc-cons-percentage pairs with the uncapped threshold during startup."
+  (should (= gc-cons-percentage 0.6)))
+
+(ert-deftest early-init-test/given-startup-then-file-name-handlers-are-stashed ()
+  "file-name-handler-alist is emptied for startup; the prior value is saved
+so init.el can restore it on emacs-startup-hook."
+  (should (early-init-test--declares
+           '(defvar my--file-name-handler-alist file-name-handler-alist)))
+  (should (early-init-test--declares '(setq file-name-handler-alist nil)))
+  (should early-init-test--handlers-were-cleared))
 
 (ert-deftest early-init-test/given-startup-then-implied-frame-resize-is-inhibited ()
   "Menu-bar/font changes should not reflow the frame during startup."
@@ -142,6 +162,14 @@ printing function itself is aliased to ignore."
 
 (ert-deftest early-init-test/given-package-install-then-native-compilation-is-on ()
   (should (eq package-native-compile t)))
+
+;;; ================================================= package archives
+(ert-deftest early-init-test/given-package-archives-then-only-gnu-and-nongnu-are-listed ()
+  "Explicit GNU + NonGNU policy — never MELPA or any third archive."
+  (should (equal package-archives
+                 '(("gnu"    . "https://elpa.gnu.org/packages/")
+                   ("nongnu" . "https://elpa.nongnu.org/nongnu/"))))
+  (should-not (assoc "melpa" package-archives)))
 
 ;;; ================================================= structural declarations
 (ert-deftest early-init-test/given-early-init-then-it-strips-the-three-ui-bars ()
