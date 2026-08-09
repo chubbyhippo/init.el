@@ -33,6 +33,7 @@
                     "extras/haskell.el"
                     "extras/html.el"
                     "extras/java.el"
+                    "extras/perl.el"
                     "extras/python.el"
                     "extras/ruby.el"
                     "extras/rust.el"

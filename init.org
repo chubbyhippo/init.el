@@ -687,11 +687,13 @@ at the bottom of =init.el= to enable one:
 Most follow one pattern: a built-in tree-sitter major mode (guarded by
 =treesit-language-available-p=) + eglot (hooked globally from =init.el=) +
 dape for debugging.  The exceptions (clojure, cobol, erlang, haskell, html,
-scheme) and each file's external-binary requirements are documented in their own
-headers — haskell and cobol are the languages with no built-in mode at all, so
-even the major mode comes from ELPA, and html is the opposite extreme: every
-mode is built in, and the layer exists only because the HTML modes derive from
-=text-mode=, so the prog-mode eglot hook above never reaches them.
+perl, scheme) and each file's external-binary requirements are documented in
+their own headers — haskell and cobol are the languages with no built-in mode
+at all, so even the major mode comes from ELPA; html is the opposite extreme
+(every mode is built in, and the layer exists only because the HTML modes
+derive from =text-mode=, so the prog-mode eglot hook above never reaches them);
+perl stays on built-in =cperl-mode= (no =perl-ts-mode=) and skips dape in
+favour of =M-x perldb=, same "no standard DAP" call as erlang.
 
 The eglot hook is the seam those last two pull on from opposite sides.  html
 adds the hook the mode never gets; cobol *withholds* it — =cobol-mode= is a

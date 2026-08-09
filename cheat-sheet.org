@@ -561,6 +561,13 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | M-x javaimp-organize-imports   | Organize imports      |
 | M-x dape                       | =jdtls= + java-debug  |
 
+** Perl (=extras/perl.el=)
+| Change / command     | Description                                      |
+|----------------------+--------------------------------------------------|
+| major-mode remap     | =perl-mode= → =cperl-mode=                       |
+| eglot                | =Perl::LanguageServer= (eglot built-in entry)    |
+| M-x perldb           | built-in debugger (no dape)                      |
+
 ** Python (=extras/python.el=)
 | Command  | Description                |
 |----------+----------------------------|
