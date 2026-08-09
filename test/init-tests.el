@@ -225,9 +225,18 @@ grab-color default."
   "Spelled out so keypad translation does not drop it."
   (should (eq (init-test--leader "s") 'consult-line)))
 
+(ert-deftest init-test/given-the-leader-then-r-is-consult-ripgrep ()
+  "Leader-first project search; matches the global C-c r bind."
+  (should (eq (init-test--leader "r") 'consult-ripgrep)))
+
 (ert-deftest init-test/given-the-leader-then-b-b-is-consult-buffer ()
   "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
   (should (eq (init-test--leader "b b") 'consult-buffer)))
+
+(ert-deftest init-test/given-the-leader-then-p-group-is-project-navigation ()
+  "SPC p f / p p mirror C-x p f / C-x p p without the C-x detour."
+  (should (eq (init-test--leader "p f") 'project-find-file))
+  (should (eq (init-test--leader "p p") 'project-switch-project)))
 
 (ert-deftest init-test/given-the-leader-then-comma-and-dot-groups-navigate-hunks-and-errors ()
   "SPC ,/. c = previous/next hunk (diff-hl); ,/. e = error (flymake)."
@@ -330,7 +339,26 @@ grab-color default."
 (ert-deftest init-test/given-startup-over-then-the-gc-ceiling-drops-back-to-16mb ()
   "early-init.el cranks gc-cons-threshold to the max for a fast startup; this
 hook drops it back to a sane 16 MB once `emacs-startup-hook' fires."
-  (should (init-test--declares '(setq gc-cons-threshold (* 16 1024 1024)))))
+  (should (init-test--declares '(setq gc-cons-threshold (* 16 1024 1024)
+                                        gc-cons-percentage 0.1))))
+
+(ert-deftest init-test/given-startup-over-then-file-name-handlers-are-restored ()
+  "early-init.el emptied file-name-handler-alist; restore the stashed value
+so tramp/compression handlers work after startup."
+  (should (init-test--declares
+           '(setq file-name-handler-alist my--file-name-handler-alist))))
+
+(ert-deftest init-test/given-a-save-then-backups-autosaves-and-locks-live-under-var ()
+  "Redirect litter out of project trees into user-emacs-directory/var/."
+  (should (init-test--declares
+           '(backup-dir (expand-file-name "var/backup/" user-emacs-directory))))
+  (should (init-test--declares
+           '(auto-save-dir (expand-file-name "var/auto-save/" user-emacs-directory))))
+  (should (init-test--declares
+           '(lock-dir (expand-file-name "var/lock/" user-emacs-directory))))
+  (should (init-test--declares 'backup-directory-alist))
+  (should (init-test--declares 'auto-save-file-name-transforms))
+  (should (init-test--declares 'lock-file-name-transforms)))
 
 (ert-deftest init-test/given-a-pathological-file-then-so-long-mode-guards-it ()
   "Files with pathologically long lines (minified JS, logs) wedge Emacs;

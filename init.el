@@ -18,7 +18,11 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (add-hook 'emacs-startup-hook
-          (lambda () (setq gc-cons-threshold (* 16 1024 1024))))
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024)
+                  gc-cons-percentage 0.1)
+            (when (boundp 'my--file-name-handler-alist)
+              (setq file-name-handler-alist my--file-name-handler-alist))))
 
 ;;; Built-in
 (use-package emacs
@@ -44,6 +48,17 @@
   (setq custom-file (locate-user-emacs-file "custom.el"))
   (load custom-file 'noerror)
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  ;; Keep backups, autosaves, and lockfiles out of project trees.
+  (let ((backup-dir (expand-file-name "var/backup/" user-emacs-directory))
+        (auto-save-dir (expand-file-name "var/auto-save/" user-emacs-directory))
+        (lock-dir (expand-file-name "var/lock/" user-emacs-directory)))
+    (dolist (dir (list backup-dir auto-save-dir lock-dir))
+      (unless (file-directory-p dir)
+        (make-directory dir t)))
+    (setq backup-directory-alist `(("." . ,backup-dir))
+          auto-save-file-name-transforms `((".*" ,auto-save-dir t))
+          auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
+          lock-file-name-transforms `((".*" ,lock-dir t))))
   :custom
   (context-menu-mode t)
   (tab-always-indent 'complete)
@@ -360,7 +375,10 @@ would take the major mode's own capf with it."
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet)
      '("s"   . consult-line)
+     '("r"   . consult-ripgrep)
      '("b b" . consult-buffer)
+     '("p f" . project-find-file)
+     '("p p" . project-switch-project)
      '(", c" . diff-hl-previous-hunk)
      '(", e" . flymake-goto-prev-error)
      '(". c" . diff-hl-next-hunk)

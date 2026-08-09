@@ -15,13 +15,19 @@ editor plugins port.
 
 #+begin_src elisp
 (add-hook 'emacs-startup-hook
-          (lambda () (setq gc-cons-threshold (* 16 1024 1024))))
+          (lambda ()
+            (setq gc-cons-threshold (* 16 1024 1024)
+                  gc-cons-percentage 0.1)
+            (when (boundp 'my--file-name-handler-alist)
+              (setq file-name-handler-alist my--file-name-handler-alist))))
 #+end_src
 
-=early-init.el= cranked =gc-cons-threshold= to =most-positive-fixnum= so no
-garbage collection would slow startup.  Startup is now over, so drop it back
-to a normal 16 MB — otherwise Emacs would almost never collect and balloon in
-memory.  Read this together with =early-init.org='s "Startup performance".
+=early-init.el= cranked =gc-cons-threshold= / =gc-cons-percentage= and emptied
+=file-name-handler-alist= so startup stayed fast.  Startup is now over, so
+drop the GC knobs back to normal (=16 MB= / =0.1=) and restore the stashed
+handler alist — otherwise Emacs would almost never collect, balloon in
+memory, and miss tramp/compression handlers.  Read this together with
+=early-init.org='s "Startup performance".
 
 * Built-in
 
@@ -108,6 +114,22 @@ blocks into this hand-curated file.  Redirect those writes to a separate
 #+begin_src elisp
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 #+end_src
+
+#+begin_src elisp
+(let ((backup-dir (expand-file-name "var/backup/" user-emacs-directory))
+      (auto-save-dir (expand-file-name "var/auto-save/" user-emacs-directory))
+      (lock-dir (expand-file-name "var/lock/" user-emacs-directory)))
+  (dolist (dir (list backup-dir auto-save-dir lock-dir))
+    (unless (file-directory-p dir)
+      (make-directory dir t)))
+  (setq backup-directory-alist `(("." . ,backup-dir))
+        auto-save-file-name-transforms `((".*" ,auto-save-dir t))
+        auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
+        lock-file-name-transforms `((".*" ,lock-dir t))))
+#+end_src
+
+Redirect backups, autosaves, and lockfiles under =user-emacs-directory/var/=
+so project trees stay clean.  Directories are created on first run.
 
 The =:custom= block sets =minibuffer-prompt-properties= to include
 =cursor-intangible= (so the cursor can't land *inside* the prompt text).  That
@@ -495,7 +517,10 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("/" . meow-keypad-describe-key)
  '("?" . meow-cheatsheet)
  '("s"   . consult-line)
+ '("r"   . consult-ripgrep)
  '("b b" . consult-buffer)
+ '("p f" . project-find-file)
+ '("p p" . project-switch-project)
  '(", c" . diff-hl-previous-hunk)
  '(", e" . flymake-goto-prev-error)
  '(". c" . diff-hl-next-hunk)
@@ -508,7 +533,10 @@ Key facts to internalise:
   So =SPC s= is literally =C-c s=.  This is why a bare =b= here would clobber
   the =C-c b= bookmark prefix — so buffers live one key deeper at =b b=,
   completing the =SPC b= group (=b m= set / =b j= jump / =b b= buffers).
-- =s= (=consult-line=) is *spelled out* so keypad translation doesn't drop it.
+- =s= (=consult-line=) and =r= (=consult-ripgrep=) are *spelled out* so keypad
+  translation doesn't drop them.  =r= also matches the global =C-c r= bind.
+- =p f= / =p p= are the project find-file / switch-project pair (leader-first
+  mirrors of =C-x p f= / =C-x p p=).
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so
   =SPC x b= already reaches =consult-buffer= through the =C-x C-b=
   translation — a leader entry there would be dead weight.
