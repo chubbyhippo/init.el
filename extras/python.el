@@ -52,16 +52,23 @@
 ;;; GNU ELPA
 ;; Activate the project's virtualenv buffer-locally so the LSP / debugger / REPL
 ;; all use it. Honours direnv (.envrc) out of the box; the :config below also
-;; teaches it to source a plain .venv/bin/activate.
+;; teaches it to source a plain Unix .venv/bin/activate or a native Windows
+;; .venv/Scripts/activate.bat.
 (use-package buffer-env
   :ensure t
   :hook ((hack-local-variables . buffer-env-update)  ; set env when a project file opens
          (comint-mode          . buffer-env-update))  ; ...and in REPL / shell buffers
   :custom
-  (buffer-env-script-name '(".envrc" ".venv/bin/activate")) ; searched up the directory tree
+  ;; direnv, Unix venv, native Windows venv — searched up the directory tree.
+  (buffer-env-script-name '(".envrc"
+                            ".venv/bin/activate"
+                            ".venv/Scripts/activate.bat"))
   :config
   (add-to-list 'buffer-env-command-alist
-               '("/bin/activate\\'" . "set -a && . \"$0\" && env -0")))
+               '("/bin/activate\\'" . "set -a && . \"$0\" && env -0"))
+  ;; cmd.exe batch activator used by CPython's Windows venvs.
+  (add-to-list 'buffer-env-command-alist
+               '("/Scripts/activate\\.bat\\'" . "call \"$0\" >NUL && set")))
 
 ;; DAP debugging that pairs with eglot (no lsp-mode needed). M-x dape, pick the
 ;; `debugpy' config; set breakpoints with dape-breakpoint-toggle, then n / c to
