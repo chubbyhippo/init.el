@@ -376,6 +376,9 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC b b | consult-buffer            | Switch buffer            |
 | SPC p f | project-find-file         | Find file in project     |
 | SPC p p | project-switch-project    | Switch project           |
+| SPC o a | org-agenda                | Org agenda               |
+| SPC o c | org-capture               | Org capture              |
+| SPC o l | org-store-link            | Org store link           |
 | SPC . c | diff-hl-next-hunk         | Next VCS hunk            |
 | SPC , c | diff-hl-previous-hunk     | Prev VCS hunk            |
 | SPC . e | flymake-goto-next-error   | Next diagnostic          |
