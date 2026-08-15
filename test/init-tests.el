@@ -238,6 +238,12 @@ grab-color default."
   (should (eq (init-test--leader "p f") 'project-find-file))
   (should (eq (init-test--leader "p p") 'project-switch-project)))
 
+(ert-deftest init-test/given-the-leader-then-o-group-is-org-entry-points ()
+  "SPC o a / o c / o l mirror C-c a / C-c c / C-c l."
+  (should (eq (init-test--leader "o a") 'org-agenda))
+  (should (eq (init-test--leader "o c") 'org-capture))
+  (should (eq (init-test--leader "o l") 'org-store-link)))
+
 (ert-deftest init-test/given-the-leader-then-comma-and-dot-groups-navigate-hunks-and-errors ()
   "SPC ,/. c = previous/next hunk (diff-hl); ,/. e = error (flymake)."
   (should (eq (init-test--leader ", c") 'diff-hl-previous-hunk))
