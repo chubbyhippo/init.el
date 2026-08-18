@@ -60,6 +60,7 @@
           auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
           lock-file-name-transforms `((".*" ,lock-dir t))))
   :custom
+  (visible-bell t)
   (context-menu-mode t)
   (tab-always-indent 'complete)
   (enable-recursive-minibuffers t)

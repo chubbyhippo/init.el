@@ -139,6 +139,7 @@ on for every minibuffer.
 ** :custom values worth knowing
 
 #+begin_src elisp
+(visible-bell t)                        ; flash instead of beeping on errors
 (tab-always-indent 'complete)          ; TAB indents, or completes if already indented
 (enable-recursive-minibuffers t)       ; use the minibuffer while in the minibuffer
 (use-short-answers t)                  ; y/n instead of yes/no

@@ -388,6 +388,10 @@ hand-curated init.el."
   (should (init-test--declares '(setq custom-file (locate-user-emacs-file "custom.el"))))
   (should (init-test--declares '(load custom-file 'noerror))))
 
+(ert-deftest init-test/given-the-bell-then-it-is-visual ()
+  "visible-bell is enabled in use-package emacs so error rings flash visually."
+  (should (init-test--declares '(visible-bell t))))
+
 (ert-deftest init-test/given-the-minibuffer-then-cursor-intangible-mode-is-armed ()
   "The cursor-intangible property in minibuffer-prompt-properties is inert
 without the mode that honors it, so it is added to minibuffer-setup-hook."
