@@ -25,30 +25,31 @@
 ;; Most of the stack is built in: the tree-sitter major modes (js-ts-mode,
 ;; typescript-ts-mode, tsx-ts-mode) and eglot, which init.el already hooks onto
 ;; prog-mode. You supply the external tools:
-;;   - typescript-language-server (npm i -g typescript typescript-language-server)
-;;     — eglot launches it automatically for js/jsx/ts/tsx once it's on PATH; the
-;;     one server handles both JavaScript and TypeScript
+;;   - TypeScript compiler & LSP server:
+;;       npm install -g typescript typescript-language-server
+;;     — eglot launches `typescript-language-server' automatically for
+;;     .js / .jsx / .ts / .tsx once it's on PATH.
+;;   - Direct TypeScript runtimes (optional, for running/debugging without build step):
+;;       npm install -g tsx ts-node
+;;     — needed if running `js-debug-tsx' or `js-debug-ts-node' via dape.
 ;;   - the vscode-js-debug adapter — unpacked into
 ;;     ~/.config/emacs/debug-adapters/js-debug/, where dape's js-debug configs
-;;     run its src/dapDebugServer.js; dape errors out if that file is missing
+;;     run its src/dapDebugServer.js; dape errors out if that file is missing.
 ;;   - the tree-sitter grammars (javascript, typescript, tsx) — AUTO-INSTALLED
 ;;     on first load from the sources registered in :init (which encode the
 ;;     typescript/src and tsx/src subdirs; needs git + a C compiler on PATH);
 ;;     until they build, .js falls back to js-mode and .ts/.tsx aren't
-;;     auto-detected
+;;     auto-detected.
 ;;
-;; The first two are installed by wsl-ubuntu-settings' init-el-extras.sh:
-;; `npm i -g typescript typescript-language-server', plus the latest
-;; js-debug-dap release untarred into ~/.config/emacs/debug-adapters/.
+;; Summary of external CLI setup:
+;;   npm install -g typescript typescript-language-server tsx ts-node
 ;;
 ;; Debugging, by config (M-x dape):
 ;;   - js-debug-node / -node-attach / -chrome — JavaScript, and -attach and
 ;;     -chrome also serve TypeScript; these need nothing beyond the adapter
-;;   - js-debug-ts-node needs `ts-node' and js-debug-tsx needs `tsx' on PATH —
-;;     NEITHER is installed by init-el-extras.sh, so those two fail until you
-;;     `npm i -g' them. To debug TypeScript without either, attach to
-;;     `node --inspect' with js-debug-node-attach, or debug the compiled
-;;     output with js-debug-node and a source map.
+;;   - js-debug-ts-node needs `ts-node' and js-debug-tsx needs `tsx' on PATH (`npm i -g tsx ts-node').
+;;     To debug TypeScript without either, attach to `node --inspect' with
+;;     js-debug-node-attach, or debug the compiled output with js-debug-node and a source map.
 ;;
 ;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
 ;; (typescript-mode / tide / lsp-* are MELPA-only, so they're not used here.)
