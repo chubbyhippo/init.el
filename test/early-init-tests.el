@@ -156,6 +156,12 @@ printing function itself is aliased to ignore."
 (ert-deftest early-init-test/given-the-first-frame-then-the-menu-bar-is-off ()
   (should (equal (assq 'menu-bar-lines default-frame-alist) '(menu-bar-lines . 0))))
 
+;;; ================================================= warning suppression
+(ert-deftest early-init-test/given-warnings-then-routine-package-notices-are-suppressed ()
+  "Package obsolescence and compilation notices are suppressed from popping up."
+  (should (eq warning-minimum-level :error))
+  (should (equal warning-suppress-types '((bytecomp) (files) (comp)))))
+
 ;;; ================================================= native compilation
 (ert-deftest early-init-test/given-native-comp-then-warnings-are-silenced ()
   (should (eq native-comp-async-report-warnings-errors 'silent)))

@@ -142,7 +142,17 @@ them in the frame defaults means the very first frame is already bare.
 Note the scroll-bar entry is a bare =(vertical-scroll-bars)= with no value:
 that means "no scroll bar", the same as =(vertical-scroll-bars . nil)=.
 
-* Native compilation
+* Warning suppression and native compilation
+
+#+begin_src elisp
+(setq warning-minimum-level :error
+      warning-suppress-types '((bytecomp) (files) (comp)))
+#+end_src
+
+- =warning-minimum-level :error= and =warning-suppress-types= keep external
+  package deprecation notices (such as =if-let= macro obsolescence), missing
+  lexical-binding warnings, and non-fatal compilation warnings from popping up
+  during package installation or byte-compilation.
 
 #+begin_src elisp
 (setq native-comp-async-report-warnings-errors 'silent

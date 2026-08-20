@@ -44,6 +44,9 @@
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 
+(setq warning-minimum-level :error
+      warning-suppress-types '((bytecomp) (files) (comp)))
+
 (setq native-comp-async-report-warnings-errors 'silent
       package-native-compile t)
 
