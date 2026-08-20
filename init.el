@@ -177,6 +177,8 @@
 
 (use-package vertico
   :ensure t
+  :preface
+  (declare-function vertico-mode "vertico")
   :config
   (vertico-mode 1))
 
@@ -191,6 +193,8 @@
 
 (use-package marginalia
   :ensure t
+  :preface
+  (declare-function marginalia-mode "marginalia")
   :config
   (marginalia-mode 1))
 
@@ -244,8 +248,16 @@
   :ensure t
   :after (embark consult))
 
+(defvar corfu-map)
 (use-package corfu
   :ensure t
+  :preface
+  (declare-function global-corfu-mode "corfu")
+  (declare-function corfu-popupinfo-mode "corfu-popupinfo")
+  (declare-function corfu-history-mode "corfu-history")
+  (declare-function corfu-insert-separator "corfu")
+  (declare-function corfu-next "corfu")
+  (declare-function corfu-previous "corfu")
   :custom
   (corfu-auto t)
   (corfu-auto-delay 0.2)
@@ -269,6 +281,9 @@
   (declare-function eglot-completion-at-point "eglot")
   (declare-function eglot-managed-p "eglot")
   (declare-function cape-capf-super "cape")
+  (declare-function cape-dabbrev "cape")
+  (declare-function cape-file "cape")
+  (declare-function cape-keyword "cape")
   (defun my-eglot-capf ()
     "Eglot's completions merged with dabbrev's, as a single capf."
     (funcall (cape-capf-super #'eglot-completion-at-point #'cape-dabbrev)))
@@ -310,6 +325,10 @@ would take the major mode's own capf with it."
   (declare-function diff-hl-next-hunk "diff-hl")
   (declare-function diff-hl-previous-hunk "diff-hl")
   (declare-function diff-hl-margin-mode "diff-hl-margin")
+  (declare-function diff-hl-dired-mode "diff-hl-dired")
+  (declare-function diff-hl-magit-post-refresh "diff-hl")
+  (declare-function global-diff-hl-mode "diff-hl")
+  (declare-function diff-hl-flydiff-mode "diff-hl-flydiff")
   :hook
   (dired-mode         . diff-hl-dired-mode)
   (magit-post-refresh . diff-hl-magit-post-refresh)
