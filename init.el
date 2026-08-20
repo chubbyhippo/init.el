@@ -25,6 +25,9 @@
               (setq file-name-handler-alist my--file-name-handler-alist))))
 
 ;;; Built-in
+(require 'winner)
+(require 'savehist)
+
 (use-package emacs
   :config
   (load-theme 'modus-operandi)
@@ -174,9 +177,10 @@
 
 (use-package vertico
   :ensure t
-  :init
+  :config
   (vertico-mode 1))
 
+(defvar vertico-map)
 (use-package vertico-directory
   :ensure nil
   :after vertico
@@ -187,11 +191,14 @@
 
 (use-package marginalia
   :ensure t
-  :init
+  :config
   (marginalia-mode 1))
 
 (use-package consult
   :ensure t
+  :preface
+  (declare-function consult-xref "consult")
+  (declare-function consult-register-window "consult")
   :bind (
          ("C-c b j" . consult-bookmark)
          ("C-c r" . consult-ripgrep)
@@ -219,6 +226,8 @@
 
 (use-package embark
   :ensure t
+  :preface
+  (declare-function embark-prefix-help-command "embark")
   :bind
   (("C-." . embark-act)
    ("M-." . embark-dwim)
@@ -243,11 +252,10 @@
   (corfu-auto-prefix 2)
   (corfu-cycle t)
   (corfu-popupinfo-delay '(0.5 . 0.1))
-  :init
+  :config
   (global-corfu-mode 1)
   (corfu-popupinfo-mode 1)
   (corfu-history-mode 1)
-  :config
   (add-to-list 'savehist-additional-variables 'corfu-history)
   :bind
   (:map corfu-map
@@ -257,10 +265,10 @@
 
 (use-package cape
   :ensure t
-  :init
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-keyword)
+  :preface
+  (declare-function eglot-completion-at-point "eglot")
+  (declare-function eglot-managed-p "eglot")
+  (declare-function cape-capf-super "cape")
   (defun my-eglot-capf ()
     "Eglot's completions merged with dabbrev's, as a single capf."
     (funcall (cape-capf-super #'eglot-completion-at-point #'cape-dabbrev)))
@@ -272,6 +280,10 @@ would take the major mode's own capf with it."
     (if (eglot-managed-p)
         (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
       (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
+  :init
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-keyword)
   (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs))
 
 (use-package vundo
@@ -290,9 +302,14 @@ would take the major mode's own capf with it."
   (set-face-attribute 'aw-leading-char-face nil
                       :background 'unspecified :foreground "#2ECC71" :weight 'bold))
 
+(defvar diff-hl-command-map)
 (use-package diff-hl
   :ensure t
   :demand t
+  :preface
+  (declare-function diff-hl-next-hunk "diff-hl")
+  (declare-function diff-hl-previous-hunk "diff-hl")
+  (declare-function diff-hl-margin-mode "diff-hl-margin")
   :hook
   (dired-mode         . diff-hl-dired-mode)
   (magit-post-refresh . diff-hl-magit-post-refresh)
@@ -310,6 +327,9 @@ would take the major mode's own capf with it."
 ;;; End GNU ELPA
 
 ;;; NonGNU ELPA
+(defvar meow-mode-state-list)
+(declare-function meow--switch-state "meow")
+
 (use-package eat
   :ensure t
   :hook
@@ -321,6 +341,8 @@ would take the major mode's own capf with it."
 (use-package corfu-terminal
   :ensure t
   :defer t
+  :preface
+  (declare-function corfu-terminal-mode "corfu-terminal")
   :init
   (unless (display-graphic-p)
     (corfu-terminal-mode 1)))
@@ -353,8 +375,14 @@ would take the major mode's own capf with it."
 (use-package meow
   :ensure t
   :demand t
-  :config
-  (set-face-attribute 'secondary-selection nil :background "#C0F0CD")
+  :preface
+  (defvar meow-cheatsheet-layout-qwerty)
+  (defvar meow-cheatsheet-layout)
+  (declare-function meow-motion-overwrite-define-key "meow")
+  (declare-function meow-leader-define-key "meow")
+  (declare-function meow-normal-define-key "meow")
+  (declare-function meow-keypad "meow")
+  (declare-function meow-global-mode "meow")
   (defun my-meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -452,6 +480,8 @@ would take the major mode's own capf with it."
      '("z" . meow-pop-selection)
      '("'" . repeat)
      '("<escape>" . ignore)))
+  :config
+  (set-face-attribute 'secondary-selection nil :background "#C0F0CD")
   (my-meow-setup)
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
@@ -459,6 +489,10 @@ would take the major mode's own capf with it."
 ;;; End NonGNU ELPA
 
 ;;; Window management
+(declare-function aw-select "ace-window")
+(declare-function aw-switch-to-window "ace-window")
+(declare-function ace-swap-window "ace-window")
+
 (defun my-text-scale-reset ()
   "Reset this buffer's text size back to the default."
   (interactive)

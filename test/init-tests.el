@@ -117,13 +117,17 @@ startup, :config only when the package finally loads."
             ((keywordp form) (setq collecting nil))
             (collecting (push form section))))))
 
-(defun init-test--eval-init-def (package head name)
-  "Evaluate the (HEAD NAME ...) form from PACKAGE's :init section in init.el."
+(defun init-test--eval-section-def (package section head name)
+  "Evaluate the (HEAD NAME ...) form from PACKAGE's SECTION (:init, :preface, etc.) in init.el."
   (let ((form (seq-find (lambda (f)
                           (and (consp f) (eq (car f) head) (eq (cadr f) name)))
-                        (init-test--use-package-section package :init))))
-    (unless form (error "init.el: no (%s %s ...) in %s's :init" head name package))
+                        (init-test--use-package-section package section))))
+    (unless form (error "init.el: no (%s %s ...) in %s's %s" head name package section))
     (eval form t)))
+
+(defun init-test--eval-init-def (package head name)
+  "Evaluate the (HEAD NAME ...) form from PACKAGE's :init section in init.el."
+  (init-test--eval-section-def package :init head name))
 
 ;;; ---------------------------------------------- bring the units to life
 ;; Evaluating the meow use-package block defines and calls my-meow-setup, which
@@ -533,8 +537,8 @@ remove ONLY its own capf.  Replacing the whole buffer-local list and killing it
 on the way out also discards the major mode's capf — after an eglot-shutdown the
 buffer would silently drop to the global capfs, with no
 python-completion-at-point (or elisp-, or any other) left."
-  (init-test--eval-init-def 'cape 'defun 'my-eglot-capf)
-  (init-test--eval-init-def 'cape 'defun 'my-eglot-capfs)
+  (init-test--eval-section-def 'cape :preface 'defun 'my-eglot-capf)
+  (init-test--eval-section-def 'cape :preface 'defun 'my-eglot-capfs)
   (with-temp-buffer
     (add-hook 'completion-at-point-functions #'ignore nil t)
     (let ((mode-capfs completion-at-point-functions))

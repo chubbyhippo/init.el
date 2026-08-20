@@ -276,7 +276,9 @@ ends the run.  Same =repeat-check-key= reasoning as flymake.
 
 The heart of the interactive experience — several small packages that layer:
 
-- *vertico* — vertical minibuffer completion UI.
+- *vertico* — vertical minibuffer completion UI.  Enabled in =:config=
+  so =vertico-mode= is evaluated after the package is loaded, keeping the
+  byte-compiler and Flymake happy.
 - *orderless* — match candidates by space-separated fragments in any order.
   #+begin_src elisp
   (completion-styles '(orderless basic))
@@ -285,9 +287,13 @@ The heart of the interactive experience — several small packages that layer:
   Files additionally use =partial-completion= so =/u/s/b= expands to
   =/usr/share/bin=.
 - *marginalia* — rich annotations (docstrings, file sizes…) beside candidates.
+  Also enabled in =:config=.
 - *consult* — enhanced search/nav commands (=consult-line=, =consult-buffer=,
   =consult-ripgrep=…).
   #+begin_src elisp
+  :preface
+  (declare-function consult-xref "consult")
+  (declare-function consult-register-window "consult")
   :init                                            ; runs at startup, always
   (setq xref-show-xrefs-function #'consult-xref    ; xref pickers use consult
         xref-show-definitions-function #'consult-xref)
@@ -303,7 +309,8 @@ The heart of the interactive experience — several small packages that layer:
   session still got the stock =*xref*= buffer and the stock register preview,
   and then quietly switched to consult's once some unrelated command had pulled
   the package in.  =consult-xref= and =consult-register-window= are both
-  autoloaded, so naming them from =:init= costs no startup load.
+  autoloaded, so naming them from =:init= costs no startup load (and declaring
+  them in =:preface= keeps the byte-compiler quiet).
   =consult-after-jump-hook= needs no entry at all — it already defaults to
   =(recenter)=.
 - *embark* — act on the thing at point / the current candidate.
@@ -324,6 +331,7 @@ The heart of the interactive experience — several small packages that layer:
 ** cape + eglot — merge the capfs safely
 
 #+begin_src elisp
+;; in cape's :preface block (with forward declarations):
 (defun my-eglot-capf ()
   "Eglot's completions merged with dabbrev's, as a single capf."
   (funcall (cape-capf-super #'eglot-completion-at-point #'cape-dabbrev)))
@@ -332,8 +340,13 @@ The heart of the interactive experience — several small packages that layer:
   (if (eglot-managed-p)
       (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
     (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
+;; in cape's :init block:
 (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs)
 #+end_src
+
+Helper functions and external declarations live in the =:preface= block so
+they are evaluated at compile time before macro expansion, ensuring clean
+Flymake and byte-compiler runs without undefined symbol warnings.
 
 While eglot manages a buffer we want *both* the server's completions and
 cape's, so =cape-capf-super= fuses the two into one capf and the depth =-10=
