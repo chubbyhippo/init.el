@@ -44,13 +44,18 @@
 (push '(vertical-scroll-bars) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 
+(defvar warning-minimum-level)
+(defvar warning-suppress-types)
 (setq warning-minimum-level :error
       warning-suppress-types '((bytecomp) (files) (comp)))
 
+(defvar native-comp-async-report-warnings-errors)
+(defvar package-native-compile)
 (setq native-comp-async-report-warnings-errors 'silent
       package-native-compile t)
 
 ;; Explicit policy: GNU + NonGNU only — never MELPA (or any third archive).
+(defvar package-archives)
 (setq package-archives
       '(("gnu"    . "https://elpa.gnu.org/packages/")
         ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
