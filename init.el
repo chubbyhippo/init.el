@@ -201,6 +201,7 @@
 (use-package consult
   :ensure t
   :preface
+  (defvar consult-narrow-key)
   (declare-function consult-xref "consult")
   (declare-function consult-register-window "consult")
   :bind (

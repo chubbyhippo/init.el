@@ -292,6 +292,7 @@ The heart of the interactive experience — several small packages that layer:
   =consult-ripgrep=…).
   #+begin_src elisp
   :preface
+  (defvar consult-narrow-key)
   (declare-function consult-xref "consult")
   (declare-function consult-register-window "consult")
   :init                                            ; runs at startup, always
