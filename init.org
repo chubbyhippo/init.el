@@ -256,9 +256,9 @@ mirror that S/Q choice.
 
 #+begin_src elisp
 (:bind
- ("M-r"   . expreg-expand)     ; M- is reachable in a terminal via the ESC prefix
- ("C-c e" . expreg-expand)     ; also SPC c e via the meow leader
- ("M-R"   . expreg-contract))
+ ("M-r"     . expreg-expand)     ; M- is reachable in a terminal via the ESC prefix
+ ("C-c e e" . expreg-expand)     ; also SPC e e via the meow leader
+ ("M-R"     . expreg-contract))
 (defvar-keymap my-expreg-repeat-map
   :repeat t
   "." #'expreg-expand
@@ -534,6 +534,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("s"   . consult-line)
  '("r"   . consult-ripgrep)
  '("b b" . consult-buffer)
+ '("e e" . expreg-expand)
  '("p f" . project-find-file)
  '("p p" . project-switch-project)
  '("o a" . org-agenda)
@@ -682,7 +683,7 @@ in the NonGNU section.
 Three maps (flymake, expreg, diff-hl) share one gotcha.  =repeat-mode=, by
 default, only *arms* a repeat map if the key you invoked the command with is
 itself a member of that map.  But here you *enter* via a leader/keypad or a
-=M-r=/=C-c e= chord — keys that are **not** in the repeat map — and you want
+=M-r=/=C-c e e= chord — keys that are **not** in the repeat map — and you want
 to *then* repeat on =.= / =,=.  So each of those commands gets:
 
 #+begin_src elisp

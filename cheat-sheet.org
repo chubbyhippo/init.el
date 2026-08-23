@@ -288,7 +288,7 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | C-c a         | org-agenda           | Org agenda                     |
 | C-c c         | org-capture          | Org capture                    |
 | C-c l         | org-store-link       | Store org link                 |
-| C-c e         | expreg-expand        | Expand region                  |
+| C-c e e       | expreg-expand        | Expand region                  |
 | C-c j w       | avy-goto-char-2      | Avy 2-char                     |
 | C-c j l       | avy-goto-line        | Avy line                       |
 | C-c j c       | avy-goto-char-timer  | Avy timer                      |
@@ -374,6 +374,7 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC s   | consult-line              | Search buffer lines      |
 | SPC r   | consult-ripgrep           | Project/global ripgrep   |
 | SPC b b | consult-buffer            | Switch buffer            |
+| SPC e e | expreg-expand             | Expand region            |
 | SPC p f | project-find-file         | Find file in project     |
 | SPC p p | project-switch-project    | Switch project           |
 | SPC o a | org-agenda                | Org agenda               |
@@ -625,7 +626,7 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | Git status           | C-x g                                     |
 | Windows              | C-c w … or S-arrows                       |
 | Jump on screen       | M-o / Normal S or Q                       |
-| Expand selection     | M-r or C-c e                              |
+| Expand selection     | M-r or C-c e e                            |
 | Actions on thing     | C-.                                       |
 | Undo tree            | C-x u                                     |
 | LSP rename/format    | M-x eglot-rename / eglot-format           |

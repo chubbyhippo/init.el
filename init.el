@@ -158,9 +158,9 @@
 
 (use-package expreg
   :ensure t
-  :bind (("M-r"   . expreg-expand)
-         ("C-c e" . expreg-expand)
-         ("M-R"   . expreg-contract))
+  :bind (("M-r"     . expreg-expand)
+         ("C-c e e" . expreg-expand)
+         ("M-R"     . expreg-contract))
   :config
   (defvar-keymap my-expreg-repeat-map
     :repeat t
@@ -426,6 +426,7 @@ would take the major mode's own capf with it."
      '("s"   . consult-line)
      '("r"   . consult-ripgrep)
      '("b b" . consult-buffer)
+     '("e e" . expreg-expand)
      '("p f" . project-find-file)
      '("p p" . project-switch-project)
      '("o a" . org-agenda)

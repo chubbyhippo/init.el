@@ -237,6 +237,10 @@ grab-color default."
   "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
   (should (eq (init-test--leader "b b") 'consult-buffer)))
 
+(ert-deftest init-test/given-the-leader-then-e-e-is-expreg-expand ()
+  "SPC e e expands region."
+  (should (eq (init-test--leader "e e") 'expreg-expand)))
+
 (ert-deftest init-test/given-the-leader-then-p-group-is-project-navigation ()
   "SPC p f / p p mirror C-x p f / C-x p p without the C-x detour."
   (should (eq (init-test--leader "p f") 'project-find-file))
@@ -467,7 +471,7 @@ hide; and edits inside folded text warn instead of silently corrupting."
 
 (ert-deftest init-test/given-expreg-then-dot-comma-repeat-with-check-key-off ()
   "After any expreg command tap . to grow / , to shrink.  The entry keys
-(M-r, C-c e, M-R) are not in the repeat map, so repeat-check-key is disabled."
+(M-r, C-c e e, M-R) are not in the repeat map, so repeat-check-key is disabled."
   (should (init-test--declares '(put 'expreg-expand   'repeat-check-key 'no)))
   (should (init-test--declares '(put 'expreg-contract 'repeat-check-key 'no))))
 
