@@ -581,6 +581,21 @@ command map and check-key is off because the keypad's final key `c' is not a mem
   (should (init-test--declares '(unless (display-graphic-p)
                                   (diff-hl-margin-mode 1)))))
 
+;;; ------------------------------------------------------- default font
+(ert-deftest init-test/given-font-available-then-default-font-is-jetbrains-mono-nerd-font ()
+  "JetBrains Mono Nerd Font is configured for the default face when available."
+  (should (init-test--declares
+           '(when (find-font (font-spec :family "JetBrains Mono Nerd Font"))
+              (set-face-attribute 'default nil :family "JetBrains Mono Nerd Font")))))
+
+(ert-deftest init-test/given-default-font-then-size-is-13 ()
+  "Default face height is configured to 13pt (:height 130)."
+  (should (init-test--declares '(set-face-attribute 'default nil :height 130))))
+
+(ert-deftest init-test/given-default-font-then-line-spacing-is-1-2 ()
+  "Line spacing is configured to 1.2 (0.2 additional relative spacing)."
+  (should (init-test--declares '(setq-default line-spacing 0.2))))
+
 ;;; ------------------------------------------------------- terminal / corfu tty
 (ert-deftest init-test/given-a-terminal-then-corfu-popups-render-in-tty ()
   "Emacs 30 can't draw child frames in a tty, so corfu-terminal-mode takes over."
