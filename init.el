@@ -31,10 +31,6 @@
 (use-package emacs
   :config
   (load-theme 'modus-operandi)
-  (set-face-attribute 'default nil :height 130)
-  (when (find-font (font-spec :family "JetBrains Mono Nerd Font"))
-    (set-face-attribute 'default nil :family "JetBrains Mono Nerd Font"))
-  (setq-default line-spacing 0.2)
   (repeat-mode 1)
   (which-key-mode 1)
   (pixel-scroll-precision-mode 1)
