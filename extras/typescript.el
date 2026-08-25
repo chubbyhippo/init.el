@@ -68,8 +68,11 @@
     (unless (treesit-language-available-p 'javascript)
       (with-demoted-errors "treesit: %S" (treesit-install-language-grammar 'javascript)))
     (when (treesit-language-available-p 'javascript)
-      (dolist (m '(js-mode javascript-mode js-jsx-mode))
-        (add-to-list 'major-mode-remap-alist (cons m 'js-ts-mode)))))
+      (dolist (m '(js-mode javascript-mode js-jsx-mode jsx-mode))
+        (add-to-list 'major-mode-remap-alist (cons m 'js-ts-mode)))
+      (add-to-list 'auto-mode-alist '("\\.jsx\\'" . js-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.m?js\\'" . js-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.cjs\\'" . js-ts-mode))))
   :custom
   (js-indent-level 2))
 
@@ -93,8 +96,13 @@
       (unless (treesit-language-available-p lang)
         (with-demoted-errors "treesit: %S" (treesit-install-language-grammar lang))))
     (when (treesit-language-available-p 'typescript)
-      (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode)))
+      (add-to-list 'major-mode-remap-alist '(typescript-mode . typescript-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.ts\\'" . typescript-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.mts\\'" . typescript-ts-mode))
+      (add-to-list 'auto-mode-alist '("\\.cts\\'" . typescript-ts-mode)))
     (when (treesit-language-available-p 'tsx)
+      (add-to-list 'major-mode-remap-alist '(tsx-mode . tsx-ts-mode))
+      (add-to-list 'major-mode-remap-alist '(typescript-tsx-mode . tsx-ts-mode))
       (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))))
   :custom
   (typescript-ts-mode-indent-offset 2))
