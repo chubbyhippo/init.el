@@ -410,6 +410,28 @@ without the mode that honors it, so it is added to minibuffer-setup-hook."
   (should (init-test--declares '(keymap-global-set "C-c b m" #'bookmark-set)))
   (should (init-test--declares '("C-c b j" . consult-bookmark))))
 
+;;; ------------------------------------------------------------ project
+(ert-deftest init-test/given-non-vc-projects-then-project-vc-extra-root-markers-are-set ()
+  "Without a .git marker, project.el falls back to buffer directory and misroots
+eglot; extra root markers recognize uninitialized project trees."
+  (should (init-test--declares
+           '(project-vc-extra-root-markers
+             '("package.json" "tsconfig.json" "jsconfig.json" "deno.json" "deno.jsonc" "bunfig.toml"
+               "pyproject.toml" "setup.py" "setup.cfg" "requirements.txt" "Pipfile"
+               "Cargo.toml"
+               "go.mod" "go.work"
+               "pom.xml" "build.gradle" "build.gradle.kts" "settings.gradle" "settings.gradle.kts" "gradlew" "mvnw"
+               "deps.edn" "project.clj" "shadow-cljs.edn" "build.boot"
+               "CMakeLists.txt" "compile_commands.json" "meson.build"
+               "mix.exs"
+               "rebar.config" "erlang.mk"
+               "cabal.project" "stack.yaml" "package.yaml" "*.cabal"
+               "Gemfile" "Rakefile" "*.gemspec"
+               "build.zig" "build.zig.zon"
+               "superbol.toml"
+               "cpanfile" "Makefile.PL" "Build.PL" "dist.ini"
+               "guix.scm" "manifest.scm" "akku.manifest")))))
+
 ;;; ------------------------------------------------------------ eglot / flymake
 (ert-deftest init-test/given-a-lisp-buffer-then-eglot-is-skipped ()
   "Hooking eglot-ensure onto prog-mode nags \"Cannot find suitable server\" in

@@ -164,6 +164,36 @@ current buffer/mode from =M-x=.
 
 The subtle part of the config.  Read the two together.
 
+** Recognize non-VC project roots
+
+#+begin_src elisp
+(use-package project
+  :custom
+  (project-vc-extra-root-markers
+   '("package.json" "tsconfig.json" "jsconfig.json" "deno.json" "deno.jsonc" "bunfig.toml"
+     "pyproject.toml" "setup.py" "setup.cfg" "requirements.txt" "Pipfile"
+     "Cargo.toml"
+     "go.mod" "go.work"
+     "pom.xml" "build.gradle" "build.gradle.kts" "settings.gradle" "settings.gradle.kts" "gradlew" "mvnw"
+     "deps.edn" "project.clj" "shadow-cljs.edn" "build.boot"
+     "CMakeLists.txt" "compile_commands.json" "meson.build"
+     "mix.exs"
+     "rebar.config" "erlang.mk"
+     "cabal.project" "stack.yaml" "package.yaml" "*.cabal"
+     "Gemfile" "Rakefile" "*.gemspec"
+     "build.zig" "build.zig.zon"
+     "superbol.toml"
+     "cpanfile" "Makefile.PL" "Build.PL" "dist.ini"
+     "guix.scm" "manifest.scm" "akku.manifest")))
+#+end_src
+
+Without a VCS marker (=.git=), ~project.el~ falls back to a narrow/transient
+root — often just the buffer's own directory — which makes eglot launch
+language servers with the wrong workspace root.  A freshly scaffolded (not
+yet git-initialized) project can't resolve =node_modules= or =tsconfig.json=
+paths as a result.  Adding these markers lets a bare directory containing
+one of them be recognized as a project root too.
+
 ** Skip LSP in lisp buffers
 
 #+begin_src elisp

@@ -93,6 +93,26 @@
   :custom
   (bookmark-save-flag 1))
 
+(use-package project
+  :ensure nil
+  :custom
+  (project-vc-extra-root-markers
+   '("package.json" "tsconfig.json" "jsconfig.json" "deno.json" "deno.jsonc" "bunfig.toml"
+     "pyproject.toml" "setup.py" "setup.cfg" "requirements.txt" "Pipfile"
+     "Cargo.toml"
+     "go.mod" "go.work"
+     "pom.xml" "build.gradle" "build.gradle.kts" "settings.gradle" "settings.gradle.kts" "gradlew" "mvnw"
+     "deps.edn" "project.clj" "shadow-cljs.edn" "build.boot"
+     "CMakeLists.txt" "compile_commands.json" "meson.build"
+     "mix.exs"
+     "rebar.config" "erlang.mk"
+     "cabal.project" "stack.yaml" "package.yaml" "*.cabal"
+     "Gemfile" "Rakefile" "*.gemspec"
+     "build.zig" "build.zig.zon"
+     "superbol.toml"
+     "cpanfile" "Makefile.PL" "Build.PL" "dist.ini"
+     "guix.scm" "manifest.scm" "akku.manifest")))
+
 (defun my-eglot-ensure ()
   "Run `eglot-ensure', except in lisp modes with no language server."
   (unless (derived-mode-p 'lisp-data-mode)
