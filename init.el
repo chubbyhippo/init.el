@@ -406,6 +406,10 @@ would take the major mode's own capf with it."
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch)
          ("C-c M-g" . magit-file-dispatch))
+  :custom
+  (magit-status-show-untracked-files (not (eq system-type 'windows-nt)))
+  (magit-diff-paint-whitespace (not (eq system-type 'windows-nt)))
+  (magit-auto-revert-immediately (not (eq system-type 'windows-nt)))
   :config
   (with-eval-after-load 'meow
     (dolist (mode '(magit-status-mode magit-log-mode magit-diff-mode

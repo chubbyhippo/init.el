@@ -336,6 +336,19 @@ grab-color default."
   (should (init-test--declares 'magit-status-mode))
   (should (init-test--declares '(add-to-list 'meow-mode-state-list (cons mode 'motion)))))
 
+(ert-deftest init-test/given-windows-then-magit-skips-expensive-refresh-work ()
+  "Untracked scans, whitespace painting, and immediate reverts are slow on Windows."
+  (let ((custom (init-test--use-package-section 'magit :custom)))
+    (should (member '(magit-status-show-untracked-files
+                     (not (eq system-type 'windows-nt)))
+                    custom))
+    (should (member '(magit-diff-paint-whitespace
+                     (not (eq system-type 'windows-nt)))
+                    custom))
+    (should (member '(magit-auto-revert-immediately
+                     (not (eq system-type 'windows-nt)))
+                    custom))))
+
 (ert-deftest init-test/given-the-config-then-wgrep-edits-flip-the-buffer-to-normal ()
   "wgrep only swaps the local keymap, so an advice flips meow to NORMAL on edit."
   (should (init-test--declares 'wgrep-change-to-wgrep-mode))
