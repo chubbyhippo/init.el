@@ -459,11 +459,29 @@ ace-window letters: =a s d f g h j k l=.
 | winner-undo/redo         | ,  .   | Layout history        |
 
 ** Magit
-| Key     | Command              | Description        |
-|---------+----------------------+--------------------|
-| C-x g   | magit-status         | Status             |
-| C-x M-g | magit-dispatch       | Dispatch popup     |
-| C-c M-g | magit-file-dispatch  | File popup         |
+| Key     | Command                       | Description                    |
+|---------+-------------------------------+--------------------------------|
+| C-x g   | magit-status                  | Open repository status         |
+| C-x M-g | magit-dispatch                | Open Magit command dispatcher  |
+| C-c M-g | magit-file-dispatch           | Open current-file dispatcher   |
+| g       | magit-refresh                 | Refresh the current Magit view |
+| TAB/RET | magit-section-toggle/visit   | Fold or visit section at point |
+| s       | magit-stage                   | Stage item at point            |
+| u       | magit-unstage                 | Unstage item at point          |
+| c       | magit-commit                  | Commit dispatcher              |
+| p       | magit-push                    | Push dispatcher                |
+| f       | magit-fetch                   | Fetch dispatcher               |
+| b       | magit-branch                  | Branch dispatcher              |
+| l       | magit-log                     | Log dispatcher                 |
+| q       | magit-mode-bury-buffer        | Quit the Magit buffer          |
+
+*** Commit message workflow
+1. In =magit-status=, stage files with =s=, then press =c c= to create a commit.
+2. Write a concise subject on the first line; add a blank line and body when context is useful.
+3. Press =C-c C-c= (=with-editor-finish=) to save the message and create the commit.
+4. Press =C-c C-k= (=with-editor-cancel=) to discard the message and abort the commit.
+
+Magit uses Meow MOTION state, so these single-key bindings remain available.
 
 ** LSP (Eglot) & diagnostics
 Eglot auto-starts on =prog-mode= (except lisp-data derivatives). No custom eglot keys; use M-x or embark.
