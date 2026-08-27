@@ -252,20 +252,41 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | C-c *   | org-toggle-heading      | Toggle heading           |
 
 ** Dired (built-in)
-| Key | Command              | Description        |
-|-----+----------------------+--------------------|
-| i   | dired-maybe-insert-subdir | Insert subdir |
-| RET | dired-find-file      | Open               |
-| o   | dired-find-file-other-window | Other window |
-| ^   | dired-up-directory   | Parent             |
-| +   | dired-create-directory | mkdir            |
-| d/x | dired-flag / do-flagged-delete | Mark delete / execute |
-| m/u | dired-mark / unmark  | Mark / unmark      |
-| C   | dired-do-copy        | Copy               |
-| R   | dired-do-rename      | Rename             |
-| Z   | dired-do-compress    | Compress           |
-| g   | revert-buffer        | Refresh            |
-| * s | dired-mark-subdir-files | Mark in subdir  |
+Open a directory with =C-x d= or =M-x dired RET DIRECTORY RET=. Navigate with
+=j=/=k= in Meow MOTION state, or the standard keys below.
+
+| Key       | Command                         | Description                         |
+|-----------+---------------------------------+-------------------------------------|
+| RET / f   | dired-find-file                 | Open file or enter directory        |
+| o         | dired-find-file-other-window    | Open in other window                |
+| ^         | dired-up-directory              | Go to parent directory              |
+| i         | dired-maybe-insert-subdir       | Expand directory inline             |
+| $         | dired-hide-subdir               | Collapse expanded directory         |
+| g         | revert-buffer                   | Refresh listing                     |
+| +         | dired-create-directory          | Create directory                    |
+| C         | dired-do-copy                   | Copy marked files                   |
+| R         | dired-do-rename                 | Move or rename marked files         |
+| D         | dired-do-delete                 | Delete marked files                 |
+| d / x     | dired-flag-file-deletion / dired-do-flagged-delete | Flag / delete flagged files |
+| m / u     | dired-mark / dired-unmark       | Mark / unmark file                  |
+| t         | dired-toggle-marks              | Invert marks                        |
+| U         | dired-unmark-all-marks          | Clear all marks                     |
+| * s       | dired-mark-subdir-files         | Mark files in expanded subdirectory |
+| % m       | dired-mark-files-regexp         | Mark names matching regexp          |
+| % g       | dired-mark-files-containing-regexp | Mark contents matching regexp    |
+| A         | dired-do-find-regexp            | Search marked files                 |
+| Q         | dired-do-query-replace-regexp   | Query-replace in marked files       |
+| !         | dired-do-shell-command          | Run shell command on marked files   |
+| &         | dired-do-async-shell-command    | Run shell command asynchronously    |
+| Z         | dired-do-compress               | Compress or uncompress marked files |
+| M         | dired-do-chmod                  | Change permissions                  |
+| w         | dired-copy-filename-as-kill     | Copy filename                        |
+| W         | dired-do-copy-regexp            | Copy/rename by regexp               |
+| q         | quit-window                     | Quit Dired window                   |
+
+Mark one or more files with =m= before file operations. A capital operation
+key applies to marked files, or to the file at point when nothing is marked.
+Use =C-h m= inside Dired for the complete mode-specific reference.
 
 ** Eshell (built-in)
 | Key / command | Description                          |
