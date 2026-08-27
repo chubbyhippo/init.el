@@ -267,6 +267,76 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | g   | revert-buffer        | Refresh            |
 | * s | dired-mark-subdir-files | Mark in subdir  |
 
+** Eshell (built-in)
+| Key / command | Description                          |
+|---------------+--------------------------------------|
+| M-x eshell    | Open an Emacs shell                  |
+| RET           | Run command at prompt                |
+| TAB           | Complete command, file, or argument  |
+| C-p / C-n     | Previous / next command history      |
+| M-p / M-n     | Previous / next matching history item |
+| C-c C-l       | eshell/clear-scrollback              |
+| C-c C-r       | eshell-show-output                   |
+| C-c C-u       | eshell-kill-input                    |
+| C-c C-z       | eshell-stop                          |
+| C-c C-d       | eshell-send-eof / exit when prompt empty |
+| cd DIR        | Change directory                     |
+| pwd           | Print working directory              |
+| ls            | List files                           |
+| clear         | Clear the visible Eshell buffer      |
+| exit          | Close Eshell                         |
+
+*** Files and directories
+| Command             | Description                                      |
+|---------------------+--------------------------------------------------|
+| echo -n "" > FILE  | Create or empty a file                           |
+| mkdir DIR           | Create a directory                               |
+| mkdir -p PATH       | Create a directory and missing parents           |
+| cp SOURCE DEST      | Copy a file or directory                         |
+| mv SOURCE DEST      | Move or rename a file or directory               |
+| rm FILE             | Delete a file                                    |
+| rm -r DIR           | Recursively delete a directory                   |
+| cat FILE            | Print a file's contents                          |
+| less FILE           | Read a file in an Eat terminal pager             |
+| find-file FILE      | Open a file in an Emacs editing buffer           |
+| dired DIR           | Open a directory in Emacs Dired                  |
+| echo TEXT > FILE    | Write text to a file, replacing existing content |
+| echo TEXT >> FILE   | Append text to a file                            |
+| wc -l FILE          | Count lines in a file                            |
+| grep PATTERN FILE   | Search a file for text                           |
+| rg PATTERN          | Search recursively with ripgrep, when installed  |
+
+Use =rm -r= carefully: it permanently removes the target directory and its
+contents. For interactive file management, prefer =dired=; use =find-file= to
+read or edit files with normal Emacs buffers.
+
+*** Emacs Lisp functions
+Eshell can call ordinary Emacs Lisp functions by name. Arguments are passed as
+strings unless a function's Eshell integration converts them. Prefix the call
+with parentheses when you need normal Lisp syntax or expressions.
+
+| Command                    | Description                                  |
+|----------------------------+----------------------------------------------|
+| find-file FILE             | Open or create FILE in an Emacs buffer       |
+| find-file-other-window FILE| Open FILE in another window                  |
+| dired DIR                  | Open DIR in a Dired buffer                   |
+| switch-to-buffer BUFFER    | Select an existing buffer                    |
+| kill-buffer BUFFER         | Kill a buffer                                |
+| rename-buffer NAME         | Rename the current buffer                    |
+| compile COMMAND            | Run Emacs's compilation command              |
+| occur PATTERN              | List matching lines in the current buffer    |
+| (message "TEXT")          | Display TEXT in the echo area                |
+| (find-file "FILE")        | Explicit Lisp form of =find-file=            |
+| (insert "TEXT")           | Insert TEXT in the current Emacs buffer      |
+| (write-region "" nil FILE)| Create or overwrite FILE with empty contents |
+
+Use =M-x describe-function RET FUNCTION RET= for documentation on any function
+before invoking it from Eshell.
+
+Eshell runs Emacs Lisp commands and supports shell-style external commands. This
+config enables =eat-eshell-visual-command-mode=, so visual commands such as
+=less= open in an Eat terminal buffer.
+
 ** Keyboard conventions (built-in)
 - =C-= Control, =M-= Meta/Alt, =S-= Shift, =s-= Super/Win
 - =C-x= global prefix (files, windows, registers…)
