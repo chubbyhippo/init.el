@@ -48,8 +48,14 @@
 ;;   - Prettier (npm install -g prettier, or as a project devDependency) —
 ;;     wired below as `prettier-format-on-save-mode' via reformatter.el;
 ;;     `eglot-format-buffer' would call tsserver's own formatter instead,
-;;     which isn't Prettier-aware. Both this and the ESLint check above
-;;     prefer a project-local node_modules/.bin binary when one exists.
+;;     which isn't Prettier-aware.
+;;
+;; All four npm-backed tools above (typescript-language-server, ESLint,
+;; Prettier, and the tsx/ts-node runtimes dape launches) go through
+;; `my-typescript--npm-bin', which prefers a project-local
+;; node_modules/.bin/<name> over the global one on PATH — so per-project
+;; versions win whenever `npm install -D' put one there, with the global
+;; install (below) only as a fallback for projects that have none.
 ;;
 ;; Summary of external CLI setup:
 ;;   npm install -g typescript typescript-language-server tsx ts-node eslint prettier
@@ -67,14 +73,33 @@
 
 ;;; Built-in
 ;; Prefer a project-local npm binary (node_modules/.bin) over a global one,
-;; so per-project ESLint/Prettier versions win when they exist.
-(defun my-typescript--npm-bin (name)
-  "Return the project-local node_modules/.bin/NAME if it exists, else NAME."
-  (if-let* ((root (locate-dominating-file default-directory "node_modules"))
+;; so per-project tool versions win when they exist. DIR defaults to
+;; `default-directory'; callers that already have a project root (eglot,
+;; dape) pass it explicitly instead of relying on the current buffer.
+(defun my-typescript--npm-bin (name &optional dir)
+  "Return the project-local node_modules/.bin/NAME under DIR, else NAME."
+  (if-let* ((root (locate-dominating-file (or dir default-directory) "node_modules"))
             (bin (expand-file-name (concat "node_modules/.bin/" name) root))
             ((file-executable-p bin)))
       bin
     name))
+
+;; Override eglot's own default (plain PATH lookup) so a project-local
+;; typescript-language-server wins too, same as ESLint/Prettier above.
+(defun my-typescript--lsp-contact (&optional _interactive project)
+  "Contact function preferring a project-local typescript-language-server."
+  (list (my-typescript--npm-bin "typescript-language-server"
+                                 (and project (project-root project)))
+        "--stdio"))
+
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '(((js-mode :language-id "javascript")
+                  (js-ts-mode :language-id "javascript")
+                  (tsx-ts-mode :language-id "typescriptreact")
+                  (typescript-ts-mode :language-id "typescript")
+                  (typescript-mode :language-id "typescript"))
+                 . my-typescript--lsp-contact)))
 
 ;; No flymake/LSP wiring for ESLint here (typescript-language-server doesn't
 ;; run it) — just a `compile' wrapper with the usual next-error navigation.
@@ -165,7 +190,17 @@
   :commands (dape dape-breakpoint-toggle)
   :custom
   (dape-buffer-window-arrangement 'right)  ; debugger windows on the right
-  (dape-inlay-hints t))                     ; show variable values inline when stopped
+  (dape-inlay-hints t)                      ; show variable values inline when stopped
+  :config
+  ;; js-debug-tsx / js-debug-ts-node hardcode "tsx" / "ts-node" as the
+  ;; :runtimeExecutable, which vscode-js-debug then resolves off PATH — patch
+  ;; both to prefer node_modules/.bin, evaluated fresh at launch (dape
+  ;; evaluates non-keyword list-valued config entries, see dape--config-eval).
+  (dolist (key '(js-debug-tsx js-debug-ts-node))
+    (when-let* ((cfg (alist-get key dape-configs))
+                (runtime (plist-get cfg :runtimeExecutable)))
+      (plist-put cfg :runtimeExecutable
+                 `(my-typescript--npm-bin ,runtime (dape-cwd))))))
 ;;; End GNU ELPA
 
 (provide 'typescript)
