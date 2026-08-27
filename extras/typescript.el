@@ -40,9 +40,19 @@
 ;;     typescript/src and tsx/src subdirs; needs git + a C compiler on PATH);
 ;;     until they build, .js falls back to js-mode and .ts/.tsx aren't
 ;;     auto-detected.
+;;   - ESLint (npm install -g eslint, or as a project devDependency) — this
+;;     file only gives you `my-typescript-eslint-check' (C-c C-l / M-x), a
+;;     `compile' wrapper with next-error navigation, NOT a flymake backend;
+;;     typescript-language-server above only ever reports tsserver's own
+;;     diagnostics, never ESLint's.
+;;   - Prettier (npm install -g prettier, or as a project devDependency) —
+;;     wired below as `prettier-format-on-save-mode' via reformatter.el;
+;;     `eglot-format-buffer' would call tsserver's own formatter instead,
+;;     which isn't Prettier-aware. Both this and the ESLint check above
+;;     prefer a project-local node_modules/.bin binary when one exists.
 ;;
 ;; Summary of external CLI setup:
-;;   npm install -g typescript typescript-language-server tsx ts-node
+;;   npm install -g typescript typescript-language-server tsx ts-node eslint prettier
 ;;
 ;; Debugging, by config (M-x dape):
 ;;   - js-debug-node / -node-attach / -chrome — JavaScript, and -attach and
@@ -51,13 +61,34 @@
 ;;     To debug TypeScript without either, attach to `node --inspect' with
 ;;     js-debug-node-attach, or debug the compiled output with js-debug-node and a source map.
 ;;
-;; ELPA-only: dape is on GNU ELPA; the major modes and eglot are built in.
-;; (typescript-mode / tide / lsp-* are MELPA-only, so they're not used here.)
+;; ELPA-only: dape is on GNU ELPA, reformatter is on NonGNU ELPA; the major
+;; modes and eglot are built in. (typescript-mode / tide / lsp-* /
+;; flymake-eslint / apheleia are MELPA-only, so they're not used here.)
 
 ;;; Built-in
+;; Prefer a project-local npm binary (node_modules/.bin) over a global one,
+;; so per-project ESLint/Prettier versions win when they exist.
+(defun my-typescript--npm-bin (name)
+  "Return the project-local node_modules/.bin/NAME if it exists, else NAME."
+  (if-let* ((root (locate-dominating-file default-directory "node_modules"))
+            (bin (expand-file-name (concat "node_modules/.bin/" name) root))
+            ((file-executable-p bin)))
+      bin
+    name))
+
+;; No flymake/LSP wiring for ESLint here (typescript-language-server doesn't
+;; run it) — just a `compile' wrapper with the usual next-error navigation.
+(defun my-typescript-eslint-check ()
+  "Run ESLint on the current file in a `compile' buffer."
+  (interactive)
+  (compile (format "%s %s" (my-typescript--npm-bin "eslint")
+                    (shell-quote-argument buffer-file-name))))
+
 ;; JavaScript + JSX → js-ts-mode (the built-in js.el tree-sitter mode).
 (use-package js
   :ensure nil
+  :bind (:map js-ts-mode-map ("C-c C-l" . my-typescript-eslint-check))
+  :hook (js-ts-mode . prettier-format-on-save-mode)
   :init
   ;; Register the grammar source (no URL prompt on install); remap the js majors
   ;; to js-ts-mode once the grammar exists.
@@ -104,9 +135,25 @@
       (add-to-list 'major-mode-remap-alist '(tsx-mode . tsx-ts-mode))
       (add-to-list 'major-mode-remap-alist '(typescript-tsx-mode . tsx-ts-mode))
       (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))))
+  :bind (:map typescript-ts-mode-map ("C-c C-l" . my-typescript-eslint-check)
+         :map tsx-ts-mode-map ("C-c C-l" . my-typescript-eslint-check))
+  :hook ((typescript-ts-mode tsx-ts-mode) . prettier-format-on-save-mode)
   :custom
   (typescript-ts-mode-indent-offset 2))
 ;;; End Built-in
+
+;;; NonGNU ELPA
+;; Prettier, wired as format-on-save (see `my-typescript--npm-bin' above for
+;; which binary it picks). Needs Prettier reachable, either project-local
+;; (npm install -D prettier) or global (npm install -g prettier).
+(use-package reformatter
+  :ensure t
+  :config
+  (reformatter-define prettier-format
+    :program (my-typescript--npm-bin "prettier")
+    :args (list "--stdin-filepath" buffer-file-name)
+    :lighter " Prettier"))
+;;; End NonGNU ELPA
 
 ;;; GNU ELPA
 ;; DAP-based debugging that pairs with eglot (no lsp-mode needed). To debug:
