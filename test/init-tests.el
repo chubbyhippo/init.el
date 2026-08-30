@@ -207,6 +207,25 @@ grab-color default."
   (should (eq (init-test--normal "9") 'meow-expand-9))
   (should (eq (init-test--normal "1") 'meow-expand-1)))
 
+(ert-deftest init-test/given-normal-state-then-t-is-mapped-to-tag-thing ()
+  "Tag thing registered on ?t in meow-char-thing-table."
+  (should (eq (cdr (assq ?t meow-char-thing-table)) 'tag)))
+
+(ert-deftest init-test/given-tag-thing-then-inner-and-bounds-resolve-html-and-xml-tags ()
+  "Inner of tag selects content between > and <; bounds select full <tag>...</tag>."
+  (with-temp-buffer
+    (insert "<div class=\"hero\"><p>Hello World</p></div>")
+    ;; Inside inner <p> tag
+    (goto-char 24)
+    (should (equal (meow--parse-inner-of-thing-char ?t) '(22 . 33)))
+    (should (equal (buffer-substring-no-properties 22 33) "Hello World"))
+    (should (equal (meow--parse-bounds-of-thing-char ?t) '(19 . 37)))
+    (should (equal (buffer-substring-no-properties 19 37) "<p>Hello World</p>"))
+    ;; On opening <div...> tag
+    (goto-char 5)
+    (should (equal (meow--parse-inner-of-thing-char ?t) '(19 . 37)))
+    (should (equal (meow--parse-bounds-of-thing-char ?t) '(1 . 43)))))
+
 (ert-deftest init-test/given-normal-state-then-escape-is-ignored ()
   (should (eq (init-test--normal "<escape>") 'ignore)))
 

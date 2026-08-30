@@ -518,6 +518,22 @@ Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g â
 | '       | repeat                 | Repeat last command        |
 | ESC     | ignore                 | Stay in Normal             |
 
+**** Things (used with =,= inner / =.= bounds / =[= start / =]= end)
+| Key | Thing                  | Inner (=,=) / Outer (=.=)           |
+|-----+------------------------+-------------------------------------|
+| t   | tag (HTML/XML)         | Inside tag content / full <tag>...</tag> |
+| r   | round parentheses ()   | Inside () / include ()              |
+| s   | square brackets []     | Inside [] / include []              |
+| c   | curly braces {}        | Inside {} / include {}              |
+| g   | string / quotes ""     | Inside quotes / include quotes      |
+| e   | symbol                 | Symbol bounds                       |
+| w   | window                 | Current window                      |
+| b   | buffer                 | Entire buffer                       |
+| p   | paragraph              | Paragraph                           |
+| l   | line                   | Indented line / full line           |
+| d   | defun                  | Current function / defun            |
+| .   | sentence               | Sentence                            |
+
 eat-mode starts in INSERT; Magit buffers use MOTION.
 
 ** Window map (=C-c w= or Meow keypad =SPC c w=)

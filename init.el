@@ -427,6 +427,48 @@ would take the major mode's own capf with it."
   (declare-function meow-normal-define-key "meow")
   (declare-function meow-keypad "meow")
   (declare-function meow-global-mode "meow")
+  (declare-function meow-thing-register "meow")
+  (defvar meow-char-thing-table)
+
+  (defun my-meow-bounds-of-tag ()
+    "Return the bounds (START . END) of the surrounding HTML/XML tag."
+    (save-excursion
+      (require 'sgml-mode)
+      (with-syntax-table sgml-mode-syntax-table
+        (when (and (looking-at-p "<[^/]") (not (looking-back ">" 1)))
+          (forward-char 1))
+        (let ((context (sgml-get-context)))
+          (when context
+            (let ((tag (car (last context))))
+              (condition-case nil
+                  (if (eq (sgml-tag-type tag) 'close)
+                      (progn
+                        (goto-char (sgml-tag-end tag))
+                        (sgml-skip-tag-backward 1)
+                        (let ((beg (point)))
+                          (sgml-skip-tag-forward 1)
+                          (cons beg (point))))
+                    (let ((beg (sgml-tag-start tag)))
+                      (goto-char beg)
+                      (sgml-skip-tag-forward 1)
+                      (cons beg (point))))
+                (error nil))))))))
+
+  (defun my-meow-inner-of-tag ()
+    "Return the inner bounds (START . END) between opening > and closing <."
+    (when-let* ((bounds (my-meow-bounds-of-tag)))
+      (save-excursion
+        (let (beg end)
+          (goto-char (car bounds))
+          (if (re-search-forward ">" (cdr bounds) t)
+              (setq beg (point))
+            (setq beg (car bounds)))
+          (goto-char (cdr bounds))
+          (if (re-search-backward "<" beg t)
+              (setq end (point))
+            (setq end (cdr bounds)))
+          (cons beg end)))))
+
   (defun my-meow-setup ()
     "Meow's standard keybindings for a QWERTY keyboard."
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
@@ -528,6 +570,8 @@ would take the major mode's own capf with it."
   :config
   (set-face-attribute 'secondary-selection nil :background "#C0F0CD")
   (my-meow-setup)
+  (meow-thing-register 'tag #'my-meow-inner-of-tag #'my-meow-bounds-of-tag)
+  (add-to-list 'meow-char-thing-table '(?t . tag))
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 

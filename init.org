@@ -609,6 +609,19 @@ signature changes (the sibling plugins mirror them):
 Otherwise: =h/j/k/l= are the directional motions, =i=/=a= insert/append,
 =x= marks the line, digits =0..9= expand the selection.
 
+** Custom thing: HTML/XML tags
+
+#+begin_src elisp
+(meow-thing-register 'tag #'my-meow-inner-of-tag #'my-meow-bounds-of-tag)
+(add-to-list 'meow-char-thing-table '(?t . tag))
+#+end_src
+
+Registers =tag= as a Meow thing on =t=, using =sgml-mode='s syntax and tag
+navigation so it works across HTML, XML, JSX/TSX, and template buffers:
+- =, t= (inner) selects the content between opening =>= and closing =<=.
+- =. t= (bounds) selects the full =<tag>...</tag>= element.
+- =[ t= / =] t= (or =< t= / => t=) jump to the beginning / end of the tag.
+
 ** Reaching the leader from INSERT
 
 #+begin_src elisp
