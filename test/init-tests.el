@@ -250,6 +250,19 @@ grab-color default."
     (should (equal (meow--parse-inner-of-thing-char ?}) '(2 . 13)))
     (should (equal (meow--parse-bounds-of-thing-char ?}) '(1 . 14)))))
 
+(ert-deftest init-test/given-normal-state-then-quotes-are-mapped-to-string-thing ()
+  "Quote characters ?' and ?\" are registered as aliases for string in meow-char-thing-table."
+  (should (eq (cdr (assq ?\' meow-char-thing-table)) 'string))
+  (should (eq (cdr (assq ?\" meow-char-thing-table)) 'string))
+  (with-temp-buffer
+    (emacs-lisp-mode)
+    (insert "\"hello world\"")
+    (goto-char 5)
+    (should (equal (meow--parse-inner-of-thing-char ?\') '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\') '(1 . 14)))
+    (should (equal (meow--parse-inner-of-thing-char ?\") '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\") '(1 . 14)))))
+
 (ert-deftest init-test/given-tag-thing-then-inner-and-bounds-resolve-html-and-xml-tags ()
   "Inner of tag selects content between > and <; bounds select full <tag>...</tag>."
   (with-temp-buffer

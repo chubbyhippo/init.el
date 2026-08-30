@@ -578,6 +578,8 @@ would take the major mode's own capf with it."
   (add-to-list 'meow-char-thing-table '(?\] . square))
   (add-to-list 'meow-char-thing-table '(?{ . curly))
   (add-to-list 'meow-char-thing-table '(?} . curly))
+  (add-to-list 'meow-char-thing-table '(?\' . string))
+  (add-to-list 'meow-char-thing-table '(?\" . string))
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 
