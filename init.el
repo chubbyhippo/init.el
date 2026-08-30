@@ -580,6 +580,14 @@ would take the major mode's own capf with it."
   (add-to-list 'meow-char-thing-table '(?} . curly))
   (add-to-list 'meow-char-thing-table '(?\' . string))
   (add-to-list 'meow-char-thing-table '(?\" . string))
+  (meow-thing-register 'slash
+                       '(regexp "/" "/")
+                       '(regexp "/" "/"))
+  (add-to-list 'meow-char-thing-table '(?/ . slash))
+  (meow-thing-register 'question
+                       '(regexp "\\?" "\\?")
+                       '(regexp "\\?" "\\?"))
+  (add-to-list 'meow-char-thing-table '(?\? . question))
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 

@@ -622,6 +622,14 @@ Otherwise: =h/j/k/l= are the directional motions, =i=/=a= insert/append,
 (add-to-list 'meow-char-thing-table '(?} . curly))
 (add-to-list 'meow-char-thing-table '(?\' . string))
 (add-to-list 'meow-char-thing-table '(?\" . string))
+(meow-thing-register 'slash
+                     '(regexp "/" "/")
+                     '(regexp "/" "/"))
+(add-to-list 'meow-char-thing-table '(?/ . slash))
+(meow-thing-register 'question
+                     '(regexp "\\?" "\\?")
+                     '(regexp "\\?" "\\?"))
+(add-to-list 'meow-char-thing-table '(?\? . question))
 #+end_src
 
 Registers =tag= as a Meow thing on =t=, using =sgml-mode='s syntax and tag
@@ -635,6 +643,8 @@ Also maps delimiter and quote characters directly to their matching things:
 - =[= / =]= to =square=: =, [= or =, ]= for inner, =. [= or =. ]= for bounds (same as =s=).
 - ={= / =}= to =curly=: =, {= or =, }= for inner, =. {= or =. }= for bounds (same as =c=).
 - ='= / ="= to =string=: =, '= or =, "= for inner, =. '= or =. "= for bounds (same as =g=).
+- =/= to =slash= (=/.../=): =, /= for inner, =. /= for bounds.
+- =?= to =question= (=?...?=): =, ?= for inner, =. ?= for bounds.
 
 ** Reaching the leader from INSERT
 

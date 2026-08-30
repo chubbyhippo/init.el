@@ -263,6 +263,25 @@ grab-color default."
     (should (equal (meow--parse-inner-of-thing-char ?\") '(2 . 13)))
     (should (equal (meow--parse-bounds-of-thing-char ?\") '(1 . 14)))))
 
+(ert-deftest init-test/given-normal-state-then-slash-and-question-are-mapped-to-things ()
+  "Slash ?/ and question ?\\? are registered for delimiter matching in meow-char-thing-table."
+  (should (eq (cdr (assq ?/ meow-char-thing-table)) 'slash))
+  (should (eq (cdr (assq ?\? meow-char-thing-table)) 'question))
+  (with-temp-buffer
+    (insert "foo /bar baz/ qux")
+    (goto-char 8)
+    (should (equal (meow--parse-inner-of-thing-char ?/) '(6 . 13)))
+    (should (equal (buffer-substring-no-properties 6 13) "bar baz"))
+    (should (equal (meow--parse-bounds-of-thing-char ?/) '(5 . 14)))
+    (should (equal (buffer-substring-no-properties 5 14) "/bar baz/")))
+  (with-temp-buffer
+    (insert "foo ?bar baz? qux")
+    (goto-char 8)
+    (should (equal (meow--parse-inner-of-thing-char ?\?) '(6 . 13)))
+    (should (equal (buffer-substring-no-properties 6 13) "bar baz"))
+    (should (equal (meow--parse-bounds-of-thing-char ?\?) '(5 . 14)))
+    (should (equal (buffer-substring-no-properties 5 14) "?bar baz?"))))
+
 (ert-deftest init-test/given-tag-thing-then-inner-and-bounds-resolve-html-and-xml-tags ()
   "Inner of tag selects content between > and <; bounds select full <tag>...</tag>."
   (with-temp-buffer
