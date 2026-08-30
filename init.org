@@ -616,6 +616,8 @@ Otherwise: =h/j/k/l= are the directional motions, =i=/=a= insert/append,
 (add-to-list 'meow-char-thing-table '(?t . tag))
 (add-to-list 'meow-char-thing-table '(?\( . round))
 (add-to-list 'meow-char-thing-table '(?\) . round))
+(add-to-list 'meow-char-thing-table '(?\[ . square))
+(add-to-list 'meow-char-thing-table '(?\] . square))
 #+end_src
 
 Registers =tag= as a Meow thing on =t=, using =sgml-mode='s syntax and tag
@@ -624,9 +626,11 @@ navigation so it works across HTML, XML, JSX/TSX, and template buffers:
 - =. t= (bounds) selects the full =<tag>...</tag>= element.
 - =[ t= / =] t= (or =< t= / => t=) jump to the beginning / end of the tag.
 
-Also maps =(= and =)= directly to the =round= thing:
+Also maps =(= / =)= to the =round= thing and =[= / =]= to the =square= thing:
 - =, (= or =, )= selects inside parentheses =()= (same as =, r=).
 - =. (= or =. )= selects full parentheses including =()= (same as =. r=).
+- =, [= or =, ]= selects inside square brackets =[]= (same as =, s=).
+- =. [= or =. ]= selects full square brackets including =[]= (same as =. s=).
 
 ** Reaching the leader from INSERT
 

@@ -574,6 +574,8 @@ would take the major mode's own capf with it."
   (add-to-list 'meow-char-thing-table '(?t . tag))
   (add-to-list 'meow-char-thing-table '(?\( . round))
   (add-to-list 'meow-char-thing-table '(?\) . round))
+  (add-to-list 'meow-char-thing-table '(?\[ . square))
+  (add-to-list 'meow-char-thing-table '(?\] . square))
   (keymap-global-set "M-SPC" #'meow-keypad)
   (meow-global-mode 1))
 

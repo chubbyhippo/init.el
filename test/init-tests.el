@@ -224,6 +224,19 @@ grab-color default."
     (should (equal (meow--parse-inner-of-thing-char ?\)) '(2 . 13)))
     (should (equal (meow--parse-bounds-of-thing-char ?\)) '(1 . 14)))))
 
+(ert-deftest init-test/given-normal-state-then-brackets-are-mapped-to-square-thing ()
+  "Square brackets ?[ and ?] are registered as aliases for square in meow-char-thing-table."
+  (should (eq (cdr (assq ?\[ meow-char-thing-table)) 'square))
+  (should (eq (cdr (assq ?\] meow-char-thing-table)) 'square))
+  (with-temp-buffer
+    (emacs-lisp-mode)
+    (insert "[hello world]")
+    (goto-char 5)
+    (should (equal (meow--parse-inner-of-thing-char ?\[) '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\[) '(1 . 14)))
+    (should (equal (meow--parse-inner-of-thing-char ?\]) '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\]) '(1 . 14)))))
+
 (ert-deftest init-test/given-tag-thing-then-inner-and-bounds-resolve-html-and-xml-tags ()
   "Inner of tag selects content between > and <; bounds select full <tag>...</tag>."
   (with-temp-buffer

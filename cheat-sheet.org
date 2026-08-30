@@ -523,8 +523,8 @@ Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g â
 |-----------+------------------------+-------------------------------------|
 | t         | tag (HTML/XML)         | Inside tag content / full <tag>...</tag> |
 | r / ( / ) | round parentheses ()   | Inside () / include ()              |
-| s         | square brackets []     | Inside [] / include []              |
-| c   | curly braces {}        | Inside {} / include {}              |
+| s / [ / ] | square brackets []     | Inside [] / include []              |
+| c         | curly braces {}        | Inside {} / include {}              |
 | g   | string / quotes ""     | Inside quotes / include quotes      |
 | e   | symbol                 | Symbol bounds                       |
 | w   | window                 | Current window                      |
