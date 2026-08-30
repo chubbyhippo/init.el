@@ -519,11 +519,11 @@ Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g â
 | ESC     | ignore                 | Stay in Normal             |
 
 **** Things (used with =,= inner / =.= bounds / =[= start / =]= end)
-| Key | Thing                  | Inner (=,=) / Outer (=.=)           |
-|-----+------------------------+-------------------------------------|
-| t   | tag (HTML/XML)         | Inside tag content / full <tag>...</tag> |
-| r   | round parentheses ()   | Inside () / include ()              |
-| s   | square brackets []     | Inside [] / include []              |
+| Key       | Thing                  | Inner (=,=) / Outer (=.=)           |
+|-----------+------------------------+-------------------------------------|
+| t         | tag (HTML/XML)         | Inside tag content / full <tag>...</tag> |
+| r / ( / ) | round parentheses ()   | Inside () / include ()              |
+| s         | square brackets []     | Inside [] / include []              |
 | c   | curly braces {}        | Inside {} / include {}              |
 | g   | string / quotes ""     | Inside quotes / include quotes      |
 | e   | symbol                 | Symbol bounds                       |

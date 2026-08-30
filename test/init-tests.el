@@ -211,6 +211,19 @@ grab-color default."
   "Tag thing registered on ?t in meow-char-thing-table."
   (should (eq (cdr (assq ?t meow-char-thing-table)) 'tag)))
 
+(ert-deftest init-test/given-normal-state-then-parens-are-mapped-to-round-thing ()
+  "Parentheses ?( and ?) are registered as aliases for round in meow-char-thing-table."
+  (should (eq (cdr (assq ?\( meow-char-thing-table)) 'round))
+  (should (eq (cdr (assq ?\) meow-char-thing-table)) 'round))
+  (with-temp-buffer
+    (emacs-lisp-mode)
+    (insert "(hello world)")
+    (goto-char 5)
+    (should (equal (meow--parse-inner-of-thing-char ?\() '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\() '(1 . 14)))
+    (should (equal (meow--parse-inner-of-thing-char ?\)) '(2 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?\)) '(1 . 14)))))
+
 (ert-deftest init-test/given-tag-thing-then-inner-and-bounds-resolve-html-and-xml-tags ()
   "Inner of tag selects content between > and <; bounds select full <tag>...</tag>."
   (with-temp-buffer
