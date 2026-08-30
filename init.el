@@ -580,6 +580,12 @@ would take the major mode's own capf with it."
   (add-to-list 'meow-char-thing-table '(?} . curly))
   (add-to-list 'meow-char-thing-table '(?\' . string))
   (add-to-list 'meow-char-thing-table '(?\" . string))
+  (meow-thing-register 'angle
+                       '(pair ("<") (">"))
+                       '(pair ("<") (">")))
+  (add-to-list 'meow-char-thing-table '(?a . angle))
+  (add-to-list 'meow-char-thing-table '(?< . angle))
+  (add-to-list 'meow-char-thing-table '(?> . angle))
   (meow-thing-register 'slash
                        '(regexp "/" "/")
                        '(regexp "/" "/"))

@@ -525,6 +525,7 @@ Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g â
 | r / ( / ) | round parentheses ()   | Inside () / include ()              |
 | s / [ / ] | square brackets []     | Inside [] / include []              |
 | c / { / } | curly braces {}        | Inside {} / include {}              |
+| a / < / > | angle brackets <>      | Inside <> / include <>              |
 | g / ' / " | string / quotes ""     | Inside quotes / include quotes      |
 | /         | slash /.../            | Inside slashes / include /          |
 | ?         | question ?...?         | Inside question marks / include ?   |

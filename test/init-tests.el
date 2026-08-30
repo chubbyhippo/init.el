@@ -263,6 +263,23 @@ grab-color default."
     (should (equal (meow--parse-inner-of-thing-char ?\") '(2 . 13)))
     (should (equal (meow--parse-bounds-of-thing-char ?\") '(1 . 14)))))
 
+(ert-deftest init-test/given-normal-state-then-angle-brackets-are-mapped-to-angle-thing ()
+  "Angle brackets ?< and ?> (and ?a) are registered for angle brackets in meow-char-thing-table."
+  (should (eq (cdr (assq ?a meow-char-thing-table)) 'angle))
+  (should (eq (cdr (assq ?< meow-char-thing-table)) 'angle))
+  (should (eq (cdr (assq ?> meow-char-thing-table)) 'angle))
+  (with-temp-buffer
+    (insert "foo <bar baz> qux")
+    (goto-char 8)
+    (should (equal (meow--parse-inner-of-thing-char ?<) '(6 . 13)))
+    (should (equal (buffer-substring-no-properties 6 13) "bar baz"))
+    (should (equal (meow--parse-bounds-of-thing-char ?<) '(5 . 14)))
+    (should (equal (buffer-substring-no-properties 5 14) "<bar baz>"))
+    (should (equal (meow--parse-inner-of-thing-char ?>) '(6 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?>) '(5 . 14)))
+    (should (equal (meow--parse-inner-of-thing-char ?a) '(6 . 13)))
+    (should (equal (meow--parse-bounds-of-thing-char ?a) '(5 . 14)))))
+
 (ert-deftest init-test/given-normal-state-then-slash-and-question-are-mapped-to-things ()
   "Slash ?/ and question ?\\? are registered for delimiter matching in meow-char-thing-table."
   (should (eq (cdr (assq ?/ meow-char-thing-table)) 'slash))
