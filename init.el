@@ -429,6 +429,13 @@ would take the major mode's own capf with it."
   (declare-function meow-global-mode "meow")
   (declare-function meow-thing-register "meow")
   (defvar meow-char-thing-table)
+  (defvar sgml-mode-syntax-table)
+  (declare-function sgml-get-context "sgml-mode")
+  (declare-function sgml-tag-type "sgml-mode")
+  (declare-function sgml-tag-start "sgml-mode")
+  (declare-function sgml-tag-end "sgml-mode")
+  (declare-function sgml-skip-tag-backward "sgml-mode")
+  (declare-function sgml-skip-tag-forward "sgml-mode")
 
   (defun my-meow-bounds-of-tag ()
     "Return the bounds (START . END) of the surrounding HTML/XML tag."
