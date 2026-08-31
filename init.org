@@ -741,12 +741,12 @@ repeat maps, so =repeat-mode= arms them normally.
 
 ** meow states, in one place
 
-| State  | For                     | Behaviour                                   |
-|--------+-------------------------+---------------------------------------------|
-| NORMAL | editing                 | keys run commands; =i=/=a= to type          |
-| INSERT | typing                  | keys insert text; =ESC= back to NORMAL      |
-| MOTION | read-only buffers       | only a few keys bound, so single-key        |
-|        | (magit, grep, pagers)   | commands in the buffer still work           |
+| State  | For                   | Behaviour                              |
+|--------+-----------------------+----------------------------------------|
+| NORMAL | editing               | keys run commands; =i=/=a= to type     |
+| INSERT | typing                | keys insert text; =ESC= back to NORMAL |
+| MOTION | read-only buffers     | only a few keys bound, so single-key   |
+|        | (magit, grep, pagers) | commands in the buffer still work      |
 
 =meow-mode-state-list= maps a major mode to its starting state.  The tricky
 cases (eat → INSERT, magit → MOTION, wgrep's keymap-only switch) are handled
