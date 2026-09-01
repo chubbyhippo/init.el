@@ -380,6 +380,8 @@ config enables =eat-eshell-visual-command-mode=, so visual commands such as
 | C-c c                         | org-capture         | Org capture                                                                       |
 | C-c l                         | org-store-link      | Store org link                                                                    |
 | C-c e e                       | expreg-expand       | Expand region                                                                     |
+| C-c e m                       | my-edit-init-file   | Edit init.el                                                                      |
+| C-c e M                       | my-reload-init-file | Reload init.el                                                                    |
 | C-c j w                       | avy-goto-char-2     | Avy 2-char                                                                        |
 | C-c j l                       | avy-goto-line       | Avy line                                                                          |
 | C-c j c                       | avy-goto-char-timer | Avy timer                                                                         |
@@ -755,6 +757,8 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | Windows           | C-c w … or S-arrows        |
 | Jump on screen    | M-o / Normal S or Q             |
 | Expand selection  | M-r or C-c e e                  |
+| Edit config       | C-c e m                         |
+| Reload config     | C-c e M                         |
 | Actions on thing  | C-.                             |
 | Undo tree         | C-x u                           |
 | LSP rename/format | M-x eglot-rename / eglot-format |

@@ -680,6 +680,20 @@ ace-window would otherwise jump to the other window."
   "," #'winner-undo
   "." #'winner-redo)
 
+;;; Config editing
+(defun my-edit-init-file ()
+  "Open this config's init.el for editing."
+  (interactive)
+  (find-file (expand-file-name "init.el" user-emacs-directory)))
+
+(defun my-reload-init-file ()
+  "Reload this config's init.el."
+  (interactive)
+  (load-file (expand-file-name "init.el" user-emacs-directory)))
+
+(keymap-global-set "C-c e m" #'my-edit-init-file)
+(keymap-global-set "C-c e M" #'my-reload-init-file)
+
 ;;; Extras (optional, disabled by default)
 ;; (load (expand-file-name "extras/clojure.el"    user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/cobol.el"      user-emacs-directory) :noerror :nomessage)

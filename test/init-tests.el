@@ -138,7 +138,8 @@ startup, :config only when the package finally loads."
 (dolist (km '(my-window-map my-window-resize-map
               my-text-scale-repeat-map my-winner-repeat-map))
   (init-test--eval-def 'defvar-keymap km))
-(dolist (fn '(my-text-scale-reset my-window-resize))
+(dolist (fn '(my-text-scale-reset my-window-resize
+              my-edit-init-file my-reload-init-file))
   (init-test--eval-def 'defun fn))
 
 (defun init-test--normal (key) (keymap-lookup meow-normal-state-keymap key))
@@ -430,6 +431,12 @@ grab-color default."
 (ert-deftest init-test/given-my-window-resize-then-it-is-an-interactive-command ()
   (should (commandp 'my-window-resize)))
 
+(ert-deftest init-test/given-my-edit-init-file-then-it-is-an-interactive-command ()
+  (should (commandp 'my-edit-init-file)))
+
+(ert-deftest init-test/given-my-reload-init-file-then-it-is-an-interactive-command ()
+  (should (commandp 'my-reload-init-file)))
+
 ;;; ================================================= config invariants
 (ert-deftest init-test/given-the-config-then-M-SPC-reaches-the-leader-from-insert ()
   (should (eq (keymap-lookup (current-global-map) "M-SPC") 'meow-keypad)))
@@ -529,6 +536,13 @@ without the mode that honors it, so it is added to minibuffer-setup-hook."
   "The C-c b bookmark prefix splits make/set (m) from jump (j → consult-bookmark)."
   (should (init-test--declares '(keymap-global-set "C-c b m" #'bookmark-set)))
   (should (init-test--declares '("C-c b j" . consult-bookmark))))
+
+(ert-deftest init-test/given-the-config-then-C-c-e-m-edits-init-and-C-c-e-M-reloads-it ()
+  "The C-c e config prefix splits edit (m, lowercase) from reload (M, uppercase)."
+  (should (init-test--declares '(keymap-global-set "C-c e m" #'my-edit-init-file)))
+  (should (init-test--declares '(keymap-global-set "C-c e M" #'my-reload-init-file)))
+  (should (init-test--declares '(find-file (expand-file-name "init.el" user-emacs-directory))))
+  (should (init-test--declares '(load-file (expand-file-name "init.el" user-emacs-directory)))))
 
 ;;; ------------------------------------------------------------ project
 (ert-deftest init-test/given-non-vc-projects-then-project-vc-extra-root-markers-are-set ()
