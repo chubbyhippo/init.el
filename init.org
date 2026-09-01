@@ -240,14 +240,15 @@ stale report.  Remove first, enable second.
 
 #+begin_src elisp
 (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
-(flymake-show-diagnostics-at-end-of-line 'short)
+(flymake-show-diagnostics-at-end-of-line 'fancy)
 #+end_src
 
 Byte-compiling runs macro code, so Emacs 30 gates that backend behind
 =trusted-content=.  =user-init-file= is trusted automatically, but
 =early-init.el= and =extras/*.el= are not — so trust the *whole* config dir
-and they get linted too.  =…-at-end-of-line 'short= renders the most severe
-diagnostic as IDE-style inline text.
+and they get linted too.  =…-at-end-of-line 'fancy= (Emacs 31+) lays
+diagnostics out below the line with Unicode pointer graphics, replacing the
+plain inline text that =short= used to render.
 
 ** Repeatable error jumps
 

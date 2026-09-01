@@ -169,6 +169,11 @@ printing function itself is aliased to ignore."
 (ert-deftest early-init-test/given-package-install-then-native-compilation-is-on ()
   (should (eq package-native-compile t)))
 
+(ert-deftest early-init-test/given-battery-power-then-async-native-comp-is-skipped ()
+  "native-comp-async-on-battery-power (Emacs 31) stops new async native-comp
+jobs from starting while unplugged."
+  (should (eq native-comp-async-on-battery-power nil)))
+
 ;;; ================================================= package archives
 (ert-deftest early-init-test/given-package-archives-then-only-gnu-and-nongnu-are-listed ()
   "Explicit GNU + NonGNU policy — never MELPA or any third archive."

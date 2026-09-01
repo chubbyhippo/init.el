@@ -54,6 +54,10 @@
 (setq native-comp-async-report-warnings-errors 'silent
       package-native-compile t)
 
+;; Emacs 31+: skip async native-comp jobs while unplugged.
+(defvar native-comp-async-on-battery-power)
+(setq native-comp-async-on-battery-power nil)
+
 ;; Explicit policy: GNU + NonGNU only — never MELPA (or any third archive).
 (defvar package-archives)
 (setq package-archives

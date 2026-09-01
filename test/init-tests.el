@@ -527,6 +527,28 @@ hand-curated init.el."
   "visible-bell is enabled in use-package emacs so error rings flash visually."
   (should (init-test--declares '(visible-bell t))))
 
+(ert-deftest init-test/given-no-active-region-then-C-w-kills-the-last-word ()
+  "kill-region-dwim (Emacs 31) makes C-w fall back to unix-word-rubout instead
+of erroring when there is no region to kill."
+  (should (init-test--declares '(kill-region-dwim t))))
+
+(ert-deftest init-test/given-save-place-then-it-also-autosaves-periodically ()
+  "save-place-mode already saves on kill-emacs; save-place-autosave-interval
+(Emacs 31) additionally saves every 5 minutes so a crash loses less."
+  (should (init-test--declares '(save-place-autosave-interval 300))))
+
+(ert-deftest init-test/given-vc-tracked-files-then-vc-auto-revert-mode-is-armed ()
+  "vc-auto-revert-mode (Emacs 31) is a more reliable complement to
+global-auto-revert-mode's auto-revert-check-vc-info for VCS-tracked files."
+  (should (init-test--declares '(when (fboundp 'vc-auto-revert-mode)
+                                  (vc-auto-revert-mode 1)))))
+
+(ert-deftest init-test/given-recentf-then-it-also-autosaves-periodically ()
+  "recentf-autosave-interval (Emacs 31) saves the recent-files list every 5
+minutes, not just on a clean exit."
+  (let ((custom (init-test--use-package-section 'recentf :custom)))
+    (should (member '(recentf-autosave-interval 300) custom))))
+
 (ert-deftest init-test/given-the-minibuffer-then-cursor-intangible-mode-is-armed ()
   "The cursor-intangible property in minibuffer-prompt-properties is inert
 without the mode that honors it, so it is added to minibuffer-setup-hook."
@@ -599,8 +621,8 @@ dir (early-init.el, extras/*.el) is trusted explicitly so it lints too."
              (list (abbreviate-file-name (file-truename user-emacs-directory)))))))
 
 (ert-deftest init-test/given-a-diagnostic-then-it-shows-inline-at-end-of-line ()
-  "IDE-style: the most severe diagnostic is rendered inline at end of line."
-  (should (init-test--declares '(flymake-show-diagnostics-at-end-of-line 'short))))
+  "IDE-style: diagnostics render inline at end of line with Unicode pointers."
+  (should (init-test--declares '(flymake-show-diagnostics-at-end-of-line 'fancy))))
 
 (ert-deftest init-test/given-a-flymake-error-jump-then-comma-dot-repeat ()
   "After one SPC . e / SPC , e jump, keep tapping . / , — the entry keys are

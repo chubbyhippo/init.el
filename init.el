@@ -76,7 +76,15 @@
   (use-short-answers t)
   (read-extended-command-predicate #'command-completion-default-include-p)
   (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt)))
+   '(read-only t cursor-intangible t face minibuffer-prompt))
+  (kill-region-dwim t)
+  (save-place-autosave-interval 300))
+
+(use-package vc
+  :ensure nil
+  :init
+  (when (fboundp 'vc-auto-revert-mode)
+    (vc-auto-revert-mode 1)))
 
 (use-package autorevert
   :ensure nil
@@ -92,7 +100,8 @@
   :init
   (recentf-mode 1)
   :custom
-  (recentf-max-saved-items 200))
+  (recentf-max-saved-items 200)
+  (recentf-autosave-interval 300))
 
 (use-package bookmark
   :ensure nil
@@ -142,7 +151,7 @@
   :hook (emacs-lisp-mode . my-elisp-flymake)
   :custom
   (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
-  (flymake-show-diagnostics-at-end-of-line 'short)
+  (flymake-show-diagnostics-at-end-of-line 'fancy)
   :config
   (defvar-keymap my-flymake-repeat-map
     :repeat t
