@@ -1,4 +1,4 @@
-;;; init.el --- personal GNU Emacs 30 config  -*- lexical-binding: t; -*-
+;;; init.el --- personal GNU Emacs config  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026 Chubby Hippo
 ;;
@@ -16,6 +16,12 @@
 ;; with this program. If not, see <https://www.gnu.org/licenses/>.
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
+
+;;; Commentary:
+
+;; Personal GNU Emacs configuration.
+
+;;; Code:
 
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -114,7 +120,7 @@
      "guix.scm" "manifest.scm" "akku.manifest")))
 
 (defun my-eglot-ensure ()
-  "Run `eglot-ensure', except in lisp modes with no language server."
+  "Run `eglot-ensure', except in Lisp modes with no language server."
   (unless (derived-mode-p 'lisp-data-mode)
     (eglot-ensure)))
 
@@ -711,3 +717,6 @@ ace-window would otherwise jump to the other window."
 ;; (load (expand-file-name "extras/scheme.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/typescript.el" user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/zig.el"        user-emacs-directory) :noerror :nomessage)
+
+(provide 'init)
+;;; init.el ends here
