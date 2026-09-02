@@ -139,7 +139,8 @@ startup, :config only when the package finally loads."
               my-text-scale-repeat-map my-winner-repeat-map))
   (init-test--eval-def 'defvar-keymap km))
 (dolist (fn '(my-text-scale-reset my-window-resize
-              my-edit-init-file my-reload-init-file))
+              my-edit-init-file my-reload-init-file
+              my-restore-gc-defaults))
   (init-test--eval-def 'defun fn))
 
 (defun init-test--normal (key) (keymap-lookup meow-normal-state-keymap key))
@@ -437,6 +438,19 @@ grab-color default."
 (ert-deftest init-test/given-my-reload-init-file-then-it-is-an-interactive-command ()
   (should (commandp 'my-reload-init-file)))
 
+(ert-deftest init-test/given-my-restore-gc-defaults-then-it-is-a-plain-function ()
+  "Named (not anonymous) so `add-hook' can de-dupe it across reloads."
+  (should (fboundp 'my-restore-gc-defaults))
+  (should-not (commandp 'my-restore-gc-defaults)))
+
+(ert-deftest init-test/given-repeated-reloads-then-the-gc-restore-hook-does-not-duplicate ()
+  "my-reload-init-file re-evaluates init.el; a named hook function lets
+add-hook de-dupe instead of stacking a fresh anonymous lambda each time."
+  (let ((emacs-startup-hook nil))
+    (add-hook 'emacs-startup-hook #'my-restore-gc-defaults)
+    (add-hook 'emacs-startup-hook #'my-restore-gc-defaults)
+    (should (equal emacs-startup-hook '(my-restore-gc-defaults)))))
+
 ;;; ================================================= config invariants
 (ert-deftest init-test/given-the-config-then-M-SPC-reaches-the-leader-from-insert ()
   (should (eq (keymap-lookup (current-global-map) "M-SPC") 'meow-keypad)))
@@ -481,7 +495,9 @@ grab-color default."
   "early-init.el cranks gc-cons-threshold to the max for a fast startup; this
 hook drops it back to a sane 16 MB once `emacs-startup-hook' fires."
   (should (init-test--declares '(setq gc-cons-threshold (* 16 1024 1024)
-                                        gc-cons-percentage 0.1))))
+                                        gc-cons-percentage 0.1)))
+  (should (init-test--declares
+           '(add-hook 'emacs-startup-hook #'my-restore-gc-defaults))))
 
 (ert-deftest init-test/given-startup-over-then-file-name-handlers-are-restored ()
   "early-init.el emptied file-name-handler-alist; restore the stashed value

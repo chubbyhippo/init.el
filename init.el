@@ -23,12 +23,14 @@
 
 ;;; Code:
 
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024)
-                  gc-cons-percentage 0.1)
-            (when (boundp 'my--file-name-handler-alist)
-              (setq file-name-handler-alist my--file-name-handler-alist))))
+(defun my-restore-gc-defaults ()
+  "Lower the GC ceiling back down and restore the stashed file handler alist."
+  (setq gc-cons-threshold (* 16 1024 1024)
+        gc-cons-percentage 0.1)
+  (when (boundp 'my--file-name-handler-alist)
+    (setq file-name-handler-alist my--file-name-handler-alist)))
+
+(add-hook 'emacs-startup-hook #'my-restore-gc-defaults)
 
 ;;; Built-in
 (require 'winner)
@@ -57,7 +59,6 @@
   (setq custom-file (locate-user-emacs-file "custom.el"))
   (load custom-file 'noerror)
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  ;; Keep backups, autosaves, and lockfiles out of project trees.
   (let ((backup-dir (expand-file-name "var/backup/" user-emacs-directory))
         (auto-save-dir (expand-file-name "var/auto-save/" user-emacs-directory))
         (lock-dir (expand-file-name "var/lock/" user-emacs-directory)))

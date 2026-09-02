@@ -14,12 +14,14 @@ editor plugins port.
 * Prelude — hand the GC ceiling back
 
 #+begin_src elisp
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 16 1024 1024)
-                  gc-cons-percentage 0.1)
-            (when (boundp 'my--file-name-handler-alist)
-              (setq file-name-handler-alist my--file-name-handler-alist))))
+(defun my-restore-gc-defaults ()
+  "Lower the GC ceiling back down and restore the stashed file handler alist."
+  (setq gc-cons-threshold (* 16 1024 1024)
+        gc-cons-percentage 0.1)
+  (when (boundp 'my--file-name-handler-alist)
+    (setq file-name-handler-alist my--file-name-handler-alist)))
+
+(add-hook 'emacs-startup-hook #'my-restore-gc-defaults)
 #+end_src
 
 =early-init.el= cranked =gc-cons-threshold= / =gc-cons-percentage= and emptied
