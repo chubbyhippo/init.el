@@ -575,6 +575,10 @@ without the mode that honors it, so it is added to minibuffer-setup-hook."
   (should (init-test--declares '(keymap-global-set "C-c b m" #'bookmark-set)))
   (should (init-test--declares '("C-c b j" . consult-bookmark))))
 
+(ert-deftest init-test/given-a-bookmark-then-list-is-on-C-c-b-l ()
+  "The C-c b bookmark prefix's list command (l → bookmark-bmenu-list)."
+  (should (init-test--declares '(keymap-global-set "C-c b l" #'bookmark-bmenu-list))))
+
 (ert-deftest init-test/given-the-config-then-C-c-e-m-edits-init-and-C-c-e-M-reloads-it ()
   "The C-c e config prefix splits edit (m, lowercase) from reload (M, uppercase)."
   (should (init-test--declares '(keymap-global-set "C-c e m" #'my-edit-init-file)))

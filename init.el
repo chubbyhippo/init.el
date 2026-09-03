@@ -51,6 +51,7 @@
   (keymap-global-set "C-c f" #'find-file)
   (keymap-global-set "C-c k" #'kill-current-buffer)
   (keymap-global-set "C-c b m" #'bookmark-set)
+  (keymap-global-set "C-c b l" #'bookmark-bmenu-list)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
   (windmove-default-keybindings)

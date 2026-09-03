@@ -77,14 +77,16 @@ so the config still loads on older Emacs, and it coexists happily with corfu
 (keymap-global-set "C-c f" #'find-file)
 (keymap-global-set "C-c k" #'kill-current-buffer)
 (keymap-global-set "C-c b m" #'bookmark-set)
+(keymap-global-set "C-c b l" #'bookmark-bmenu-list)
 (keymap-global-set "C-z"   #'undo-only)
 (keymap-global-set "C-S-z" #'undo-redo)
 #+end_src
 
-Note the bookmark split: =C-c b m= = *make/set* a bookmark; the *jump* half,
-=C-c b j= → =consult-bookmark=, is defined in the consult block.  =C-z= /
-=C-S-z= are a familiar undo/redo pair (=undo-only= never re-does, so it can't
-walk back *into* a redo branch by accident).
+Note the bookmark split: =C-c b m= = *make/set* a bookmark, =C-c b l= = *list*
+(=bookmark-bmenu-list=); the *jump* half, =C-c b j= → =consult-bookmark=, is
+defined in the consult block.  =C-z= / =C-S-z= are a familiar undo/redo pair
+(=undo-only= never re-does, so it can't walk back *into* a redo branch by
+accident).
 
 #+begin_src elisp
 (windmove-default-keybindings)

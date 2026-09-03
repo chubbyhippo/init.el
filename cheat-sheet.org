@@ -374,6 +374,7 @@ config enables =eat-eshell-visual-command-mode=, so visual commands such as
 | C-c k                         | kill-current-buffer | Close current                                                                     |
 | C-c b m                       | bookmark-set        | Set bookmark                                                                      |
 | C-c b j                       | consult-bookmark    | Jump bookmark                                                                     |
+| C-c b l                       | bookmark-bmenu-list | List bookmarks                                                                    |
 | C-c r                         | consult-ripgrep     | Project/global ripgrep                                                            |
 | C-c w …                  | my-window-map       | Window prefix (see below)                                                         |
 | C-c a                         | org-agenda          | Org agenda                                                                        |
