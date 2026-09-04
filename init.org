@@ -209,21 +209,21 @@ one of them be recognized as a project root too.
 (use-package eglot
   :hook (prog-mode . my-eglot-ensure)
   :bind (:map eglot-mode-map
-         ("C-c C-e r n" . eglot-rename)
-         ("C-c C-e f o" . eglot-format-buffer)
-         ("C-c C-e o i" . eglot-code-action-organize-imports)
-         ("C-c C-e i n" . eglot-code-action-inline)
-         ("C-c C-e a"   . eglot-code-actions)
-         ("C-c C-e e"   . eglot-code-action-extract)
-         ("C-c C-e w"   . eglot-code-action-rewrite)
-         ("C-c C-e q"   . eglot-code-action-quickfix)
-         ("C-c C-e d"   . eglot-find-declaration)
-         ("C-c C-e I"   . eglot-find-implementation)
-         ("C-c C-e t"   . eglot-find-typeDefinition)
-         ("C-c C-e R"   . eglot-reconnect)
-         ("C-c C-e S"   . eglot-shutdown-all)
-         ("C-c C-e l"   . eglot-list-connections)
-         ("C-c C-e L"   . eglot-events-buffer))
+         ("C-c j r n" . eglot-rename)
+         ("C-c j f o" . eglot-format-buffer)
+         ("C-c j o i" . eglot-code-action-organize-imports)
+         ("C-c j i n" . eglot-code-action-inline)
+         ("C-c j a"   . eglot-code-actions)
+         ("C-c j e"   . eglot-code-action-extract)
+         ("C-c j w"   . eglot-code-action-rewrite)
+         ("C-c j q"   . eglot-code-action-quickfix)
+         ("C-c j d"   . eglot-find-declaration)
+         ("C-c j I"   . eglot-find-implementation)
+         ("C-c j t"   . eglot-find-typeDefinition)
+         ("C-c j R"   . eglot-reconnect)
+         ("C-c j S"   . eglot-shutdown-all)
+         ("C-c j l"   . eglot-list-connections)
+         ("C-c j L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full)))
@@ -240,28 +240,28 @@ which is a measurable performance drag.
 ** LSP command keybindings
 
 =eglot-mode-map= ships nearly empty (only an eldoc remap), so its commands are
-=M-x=-only unless bound.  =C-c f= and =C-c r= are already taken globally
-(=find-file=, =consult-ripgrep=), so the LSP commands live under a fresh
-=C-c C-e= prefix, bound in =eglot-mode-map= — buffer-local to eglot, so they
-never shadow anything outside an LSP-managed buffer:
+=M-x=-only unless bound.  The LSP commands live under a fresh =C-c j= prefix
+(=j= is unclaimed everywhere else in this config), bound in =eglot-mode-map=
+— buffer-local to eglot, so they never shadow anything outside an
+LSP-managed buffer:
 
-| key           | command                                | ideameow analog                      |
-|---------------+-----------------------------------------+---------------------------------------|
-| =C-c C-e r n= | =eglot-rename=                          | =SPC r n= → RenameElement             |
-| =C-c C-e f o= | =eglot-format-buffer=                   | =SPC f m/o= → ReformatCode            |
-| =C-c C-e o i= | =eglot-code-action-organize-imports=    | (no discrete platform action)        |
-| =C-c C-e i n= | =eglot-code-action-inline=              | (no discrete platform action)        |
-| =C-c C-e a=   | =eglot-code-actions= (prefix-arg: kind)  | =SPC s I= → ShowIntentionActions      |
-| =C-c C-e e=   | =eglot-code-action-extract=             | (no discrete platform action)        |
-| =C-c C-e w=   | =eglot-code-action-rewrite=             | (no discrete platform action)        |
-| =C-c C-e q=   | =eglot-code-action-quickfix=            | (no discrete platform action)        |
-| =C-c C-e d=   | =eglot-find-declaration=                | =SPC m .= → GotoDeclaration           |
-| =C-c C-e I=   | =eglot-find-implementation=             | =SPC g i= / =SPC j i= → GotoImplementation |
-| =C-c C-e t=   | =eglot-find-typeDefinition=             | (no discrete platform action)        |
-| =C-c C-e R=   | =eglot-reconnect=                       | =SPC s v= → ReloadRc (loose)          |
-| =C-c C-e S=   | =eglot-shutdown-all=                    | (no analog)                          |
-| =C-c C-e l=   | =eglot-list-connections=                | (no analog)                          |
-| =C-c C-e L=   | =eglot-events-buffer=                   | (no analog)                          |
+| key         | command                                | ideameow analog                      |
+|-------------+-----------------------------------------+---------------------------------------|
+| =C-c j r n= | =eglot-rename=                          | =SPC r n= → RenameElement             |
+| =C-c j f o= | =eglot-format-buffer=                   | =SPC f m/o= → ReformatCode            |
+| =C-c j o i= | =eglot-code-action-organize-imports=    | (no discrete platform action)        |
+| =C-c j i n= | =eglot-code-action-inline=              | (no discrete platform action)        |
+| =C-c j a=   | =eglot-code-actions= (prefix-arg: kind)  | =SPC s I= → ShowIntentionActions      |
+| =C-c j e=   | =eglot-code-action-extract=             | (no discrete platform action)        |
+| =C-c j w=   | =eglot-code-action-rewrite=             | (no discrete platform action)        |
+| =C-c j q=   | =eglot-code-action-quickfix=            | (no discrete platform action)        |
+| =C-c j d=   | =eglot-find-declaration=                | =SPC m .= → GotoDeclaration           |
+| =C-c j I=   | =eglot-find-implementation=             | =SPC g i= / =SPC j i= → GotoImplementation |
+| =C-c j t=   | =eglot-find-typeDefinition=             | (no discrete platform action)        |
+| =C-c j R=   | =eglot-reconnect=                       | =SPC s v= → ReloadRc (loose)          |
+| =C-c j S=   | =eglot-shutdown-all=                    | (no analog)                          |
+| =C-c j l=   | =eglot-list-connections=                | (no analog)                          |
+| =C-c j L=   | =eglot-events-buffer=                   | (no analog)                          |
 
 ** Give elisp buffers flymake instead
 

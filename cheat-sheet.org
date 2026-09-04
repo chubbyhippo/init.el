@@ -598,27 +598,28 @@ Magit uses Meow MOTION state, so these single-key bindings remain available.
 
 ** LSP (Eglot) & diagnostics
 Eglot auto-starts on =prog-mode= (except lisp-data derivatives). Its commands
-sit under =C-c C-e= in =eglot-mode-map= (buffer-local to LSP-managed buffers;
-=C-c f= / =C-c r= are already taken globally by find-file / consult-ripgrep).
+sit under a fresh =C-c j= prefix in =eglot-mode-map= (buffer-local to
+LSP-managed buffers; =j= is unclaimed everywhere else in this config, so
+nothing else is shadowed).
 
 | Key           | Command                              | Description               |
 |---------------+---------------------------------------+----------------------------|
 | M-x eglot     | eglot                                 | Start server manually     |
-| C-c C-e r n   | eglot-rename                          | Rename symbol              |
-| C-c C-e f o   | eglot-format-buffer                   | Format whole buffer        |
-| C-c C-e o i   | eglot-code-action-organize-imports    | Organize imports           |
-| C-c C-e i n   | eglot-code-action-inline              | Inline code action         |
-| C-c C-e a     | eglot-code-actions                    | All code actions (prefix arg: kind) |
-| C-c C-e e     | eglot-code-action-extract             | Extract code action        |
-| C-c C-e w     | eglot-code-action-rewrite             | Rewrite code action        |
-| C-c C-e q     | eglot-code-action-quickfix            | Quickfix code action       |
-| C-c C-e d     | eglot-find-declaration                 | Find declaration           |
-| C-c C-e I     | eglot-find-implementation              | Find implementation        |
-| C-c C-e t     | eglot-find-typeDefinition              | Find type definition       |
-| C-c C-e R     | eglot-reconnect                        | Reconnect                  |
-| C-c C-e S     | eglot-shutdown-all                     | Stop all servers           |
-| C-c C-e l     | eglot-list-connections                 | List connections           |
-| C-c C-e L     | eglot-events-buffer                    | Open LSP events log        |
+| C-c j r n     | eglot-rename                          | Rename symbol              |
+| C-c j f o     | eglot-format-buffer                   | Format whole buffer        |
+| C-c j o i     | eglot-code-action-organize-imports    | Organize imports           |
+| C-c j i n     | eglot-code-action-inline              | Inline code action         |
+| C-c j a       | eglot-code-actions                    | All code actions (prefix arg: kind) |
+| C-c j e       | eglot-code-action-extract             | Extract code action        |
+| C-c j w       | eglot-code-action-rewrite             | Rewrite code action        |
+| C-c j q       | eglot-code-action-quickfix            | Quickfix code action       |
+| C-c j d       | eglot-find-declaration                 | Find declaration           |
+| C-c j I       | eglot-find-implementation              | Find implementation        |
+| C-c j t       | eglot-find-typeDefinition              | Find type definition       |
+| C-c j R       | eglot-reconnect                        | Reconnect                  |
+| C-c j S       | eglot-shutdown-all                     | Stop all servers           |
+| C-c j l       | eglot-list-connections                 | List connections           |
+| C-c j L       | eglot-events-buffer                    | Open LSP events log        |
 | M-x eglot-format | eglot-format                        | Format region              |
 | M-x flymake-show-buffer-diagnostics  | flymake-show-buffer-diagnostics | List buffer diagnostics |
 | M-x flymake-show-project-diagnostics | flymake-show-project-diagnostics | Project diagnostics |
@@ -774,7 +775,7 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | Reload config     | C-c e M                         |
 | Actions on thing  | C-.                             |
 | Undo tree         | C-x u                           |
-| LSP rename/format | C-c C-e r n / C-c C-e f o       |
+| LSP rename/format | C-c j r n / C-c j f o           |
 | Debug             | M-x dape                        |
 | All bindings      | C-h b or C-h B                  |
 )
