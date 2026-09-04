@@ -621,24 +621,26 @@ every elisp buffer (no LSP here); my-eglot-ensure skips lisp-data-mode descendan
 
 (ert-deftest init-test/given-eglot-then-its-commands-sit-under-a-buffer-local-prefix ()
   "eglot's own mode-map starts nearly empty (only the eldoc remap); the LSP
-commands live under a fresh C-c j prefix (j is unclaimed everywhere else in
-init.el), scoped to eglot-mode-map so they never leak into non-eglot
-buffers or shadow the existing C-c a/c/e/f/l/r/w bindings."
-  (dolist (binding '(("C-c j r n" . eglot-rename)
-                      ("C-c j f o" . eglot-format-buffer)
-                      ("C-c j o i" . eglot-code-action-organize-imports)
-                      ("C-c j i n" . eglot-code-action-inline)
-                      ("C-c j a"   . eglot-code-actions)
-                      ("C-c j e"   . eglot-code-action-extract)
-                      ("C-c j w"   . eglot-code-action-rewrite)
-                      ("C-c j q"   . eglot-code-action-quickfix)
-                      ("C-c j d"   . eglot-find-declaration)
-                      ("C-c j I"   . eglot-find-implementation)
-                      ("C-c j t"   . eglot-find-typeDefinition)
-                      ("C-c j R"   . eglot-reconnect)
-                      ("C-c j S"   . eglot-shutdown-all)
-                      ("C-c j l"   . eglot-list-connections)
-                      ("C-c j L"   . eglot-events-buffer)))
+commands live under a fresh C-c i prefix (i is unclaimed everywhere else in
+init.el -- meow's leader IS mode-specific-map, so this also had to dodge
+every letter meow-leader-define-key already claims), scoped to
+eglot-mode-map so they never leak into non-eglot buffers or shadow the
+existing C-c a/b/c/e/f/j/k/l/o/p/r/s/w bindings."
+  (dolist (binding '(("C-c i r n" . eglot-rename)
+                      ("C-c i f o" . eglot-format-buffer)
+                      ("C-c i o i" . eglot-code-action-organize-imports)
+                      ("C-c i i n" . eglot-code-action-inline)
+                      ("C-c i a"   . eglot-code-actions)
+                      ("C-c i e"   . eglot-code-action-extract)
+                      ("C-c i w"   . eglot-code-action-rewrite)
+                      ("C-c i q"   . eglot-code-action-quickfix)
+                      ("C-c i d"   . eglot-find-declaration)
+                      ("C-c i I"   . eglot-find-implementation)
+                      ("C-c i t"   . eglot-find-typeDefinition)
+                      ("C-c i R"   . eglot-reconnect)
+                      ("C-c i S"   . eglot-shutdown-all)
+                      ("C-c i l"   . eglot-list-connections)
+                      ("C-c i L"   . eglot-events-buffer)))
     (should (init-test--declares binding))))
 
 (ert-deftest init-test/given-the-leader-nav-keys-then-flymake-jumps-are-autoloaded ()
