@@ -138,6 +138,22 @@
 (use-package eglot
   :ensure nil
   :hook (prog-mode . my-eglot-ensure)
+  :bind (:map eglot-mode-map
+         ("C-c C-e r n" . eglot-rename)
+         ("C-c C-e f o" . eglot-format-buffer)
+         ("C-c C-e o i" . eglot-code-action-organize-imports)
+         ("C-c C-e i n" . eglot-code-action-inline)
+         ("C-c C-e a"   . eglot-code-actions)
+         ("C-c C-e e"   . eglot-code-action-extract)
+         ("C-c C-e w"   . eglot-code-action-rewrite)
+         ("C-c C-e q"   . eglot-code-action-quickfix)
+         ("C-c C-e d"   . eglot-find-declaration)
+         ("C-c C-e I"   . eglot-find-implementation)
+         ("C-c C-e t"   . eglot-find-typeDefinition)
+         ("C-c C-e R"   . eglot-reconnect)
+         ("C-c C-e S"   . eglot-shutdown-all)
+         ("C-c C-e l"   . eglot-list-connections)
+         ("C-c C-e L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full)))

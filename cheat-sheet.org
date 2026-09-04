@@ -597,21 +597,33 @@ ace-window letters: =a s d f g h j k l=.
 Magit uses Meow MOTION state, so these single-key bindings remain available.
 
 ** LSP (Eglot) & diagnostics
-Eglot auto-starts on =prog-mode= (except lisp-data derivatives). No custom eglot keys; use M-x or embark.
+Eglot auto-starts on =prog-mode= (except lisp-data derivatives). Its commands
+sit under =C-c C-e= in =eglot-mode-map= (buffer-local to LSP-managed buffers;
+=C-c f= / =C-c r= are already taken globally by find-file / consult-ripgrep).
 
-| Command / key                        | Description             |
-|--------------------------------------+-------------------------|
-| M-x eglot                            | Start server manually   |
-| M-x eglot-rename                     | Rename symbol           |
-| M-x eglot-code-actions               | Code actions            |
-| M-x eglot-format                     | Format buffer/region    |
-| M-x eglot-format-buffer              | Format whole buffer     |
-| M-x eglot-shutdown                   | Stop server             |
-| M-x eglot-reconnect                  | Reconnect               |
-| M-x flymake-show-buffer-diagnostics  | List buffer diagnostics |
-| M-x flymake-show-project-diagnostics | Project diagnostics     |
-| SPC . e / SPC , e                    | Next/prev Flymake error |
-| xref via consult                     | Definitions/refs UI     |
+| Key           | Command                              | Description               |
+|---------------+---------------------------------------+----------------------------|
+| M-x eglot     | eglot                                 | Start server manually     |
+| C-c C-e r n   | eglot-rename                          | Rename symbol              |
+| C-c C-e f o   | eglot-format-buffer                   | Format whole buffer        |
+| C-c C-e o i   | eglot-code-action-organize-imports    | Organize imports           |
+| C-c C-e i n   | eglot-code-action-inline              | Inline code action         |
+| C-c C-e a     | eglot-code-actions                    | All code actions (prefix arg: kind) |
+| C-c C-e e     | eglot-code-action-extract             | Extract code action        |
+| C-c C-e w     | eglot-code-action-rewrite             | Rewrite code action        |
+| C-c C-e q     | eglot-code-action-quickfix            | Quickfix code action       |
+| C-c C-e d     | eglot-find-declaration                 | Find declaration           |
+| C-c C-e I     | eglot-find-implementation              | Find implementation        |
+| C-c C-e t     | eglot-find-typeDefinition              | Find type definition       |
+| C-c C-e R     | eglot-reconnect                        | Reconnect                  |
+| C-c C-e S     | eglot-shutdown-all                     | Stop all servers           |
+| C-c C-e l     | eglot-list-connections                 | List connections           |
+| C-c C-e L     | eglot-events-buffer                    | Open LSP events log        |
+| M-x eglot-format | eglot-format                        | Format region              |
+| M-x flymake-show-buffer-diagnostics  | flymake-show-buffer-diagnostics | List buffer diagnostics |
+| M-x flymake-show-project-diagnostics | flymake-show-project-diagnostics | Project diagnostics |
+| SPC . e / SPC , e | -                                  | Next/prev Flymake error    |
+| xref via consult | -                                    | Definitions/refs UI        |
 
 ** Diff-HL
 | Key        | Command               | Description |
@@ -762,7 +774,7 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | Reload config     | C-c e M                         |
 | Actions on thing  | C-.                             |
 | Undo tree         | C-x u                           |
-| LSP rename/format | M-x eglot-rename / eglot-format |
+| LSP rename/format | C-c C-e r n / C-c C-e f o       |
 | Debug             | M-x dape                        |
 | All bindings      | C-h b or C-h B                  |
 )
