@@ -338,9 +338,10 @@ grab-color default."
   "Spelled out so keypad translation does not drop it."
   (should (eq (init-test--leader "s") 'consult-line)))
 
-(ert-deftest init-test/given-the-leader-then-r-is-consult-ripgrep ()
-  "Leader-first project search; matches the global C-c r bind."
-  (should (eq (init-test--leader "r") 'consult-ripgrep)))
+(ert-deftest init-test/given-the-leader-then-r-g-is-consult-ripgrep ()
+  "Nested under r (shared with eglot's rename/rewrite) so C-c r can stay a
+prefix; matches the global C-c r g bind."
+  (should (eq (init-test--leader "r g") 'consult-ripgrep)))
 
 (ert-deftest init-test/given-the-leader-then-b-b-is-consult-buffer ()
   "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
@@ -620,27 +621,28 @@ every elisp buffer (no LSP here); my-eglot-ensure skips lisp-data-mode descendan
   (should (init-test--declares '(eglot-events-buffer-config '(:size 0 :format full)))))
 
 (ert-deftest init-test/given-eglot-then-its-commands-sit-under-a-buffer-local-prefix ()
-  "eglot's own mode-map starts nearly empty (only the eldoc remap); the LSP
-commands live under a fresh C-c i prefix (i is unclaimed everywhere else in
-init.el -- meow's leader IS mode-specific-map, so this also had to dodge
-every letter meow-leader-define-key already claims), scoped to
-eglot-mode-map so they never leak into non-eglot buffers or shadow the
-existing C-c a/b/c/e/f/j/k/l/o/p/r/s/w bindings."
-  (dolist (binding '(("C-c i r n" . eglot-rename)
-                      ("C-c i f o" . eglot-format-buffer)
-                      ("C-c i o i" . eglot-code-action-organize-imports)
-                      ("C-c i i n" . eglot-code-action-inline)
-                      ("C-c i a"   . eglot-code-actions)
-                      ("C-c i e"   . eglot-code-action-extract)
-                      ("C-c i w"   . eglot-code-action-rewrite)
-                      ("C-c i q"   . eglot-code-action-quickfix)
-                      ("C-c i d"   . eglot-find-declaration)
-                      ("C-c i I"   . eglot-find-implementation)
-                      ("C-c i t"   . eglot-find-typeDefinition)
-                      ("C-c i R"   . eglot-reconnect)
-                      ("C-c i S"   . eglot-shutdown-all)
-                      ("C-c i l"   . eglot-list-connections)
-                      ("C-c i L"   . eglot-events-buffer)))
+  "eglot's own mode-map starts nearly empty (only the eldoc remap); its
+commands are bound directly under C-c, sharing four prefixes with existing
+commands: r with consult-ripgrep (relocated to r g) hosts rename/rewrite
+(r n/r w); e with expreg/edit-init (e e/e m/e M) hosts extract (e x); c with
+org-capture hosts code-actions (c a); l with org-store-link hosts
+list-connections (l c). c and l alone are unreachable as direct commands
+while eglot-mode is active -- the same trade-off as r and e."
+  (dolist (binding '(("C-c r n" . eglot-rename)
+                      ("C-c f o" . eglot-format-buffer)
+                      ("C-c o i" . eglot-code-action-organize-imports)
+                      ("C-c i n" . eglot-code-action-inline)
+                      ("C-c c a" . eglot-code-actions)
+                      ("C-c e x" . eglot-code-action-extract)
+                      ("C-c r w" . eglot-code-action-rewrite)
+                      ("C-c q"   . eglot-code-action-quickfix)
+                      ("C-c d"   . eglot-find-declaration)
+                      ("C-c I"   . eglot-find-implementation)
+                      ("C-c t"   . eglot-find-typeDefinition)
+                      ("C-c R"   . eglot-reconnect)
+                      ("C-c S"   . eglot-shutdown-all)
+                      ("C-c l c" . eglot-list-connections)
+                      ("C-c L"   . eglot-events-buffer)))
     (should (init-test--declares binding))))
 
 (ert-deftest init-test/given-the-leader-nav-keys-then-flymake-jumps-are-autoloaded ()

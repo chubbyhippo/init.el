@@ -74,7 +74,7 @@ so the config still loads on older Emacs, and it coexists happily with corfu
 ** Keybindings set globally here
 
 #+begin_src elisp
-(keymap-global-set "C-c f" #'find-file)
+(keymap-global-set "C-c f f" #'find-file)
 (keymap-global-set "C-c k" #'kill-current-buffer)
 (keymap-global-set "C-c b m" #'bookmark-set)
 (keymap-global-set "C-c b l" #'bookmark-bmenu-list)
@@ -209,21 +209,21 @@ one of them be recognized as a project root too.
 (use-package eglot
   :hook (prog-mode . my-eglot-ensure)
   :bind (:map eglot-mode-map
-         ("C-c i r n" . eglot-rename)
-         ("C-c i f o" . eglot-format-buffer)
-         ("C-c i o i" . eglot-code-action-organize-imports)
-         ("C-c i i n" . eglot-code-action-inline)
-         ("C-c i a"   . eglot-code-actions)
-         ("C-c i e"   . eglot-code-action-extract)
-         ("C-c i w"   . eglot-code-action-rewrite)
-         ("C-c i q"   . eglot-code-action-quickfix)
-         ("C-c i d"   . eglot-find-declaration)
-         ("C-c i I"   . eglot-find-implementation)
-         ("C-c i t"   . eglot-find-typeDefinition)
-         ("C-c i R"   . eglot-reconnect)
-         ("C-c i S"   . eglot-shutdown-all)
-         ("C-c i l"   . eglot-list-connections)
-         ("C-c i L"   . eglot-events-buffer))
+         ("C-c r n" . eglot-rename)
+         ("C-c f o" . eglot-format-buffer)
+         ("C-c o i" . eglot-code-action-organize-imports)
+         ("C-c i n" . eglot-code-action-inline)
+         ("C-c c a" . eglot-code-actions)
+         ("C-c e x" . eglot-code-action-extract)
+         ("C-c r w" . eglot-code-action-rewrite)
+         ("C-c q"   . eglot-code-action-quickfix)
+         ("C-c d"   . eglot-find-declaration)
+         ("C-c I"   . eglot-find-implementation)
+         ("C-c t"   . eglot-find-typeDefinition)
+         ("C-c R"   . eglot-reconnect)
+         ("C-c S"   . eglot-shutdown-all)
+         ("C-c l c" . eglot-list-connections)
+         ("C-c L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-config '(:size 0 :format full)))
@@ -239,31 +239,35 @@ which is a measurable performance drag.
 
 ** LSP command keybindings
 
-=eglot-mode-map= ships nearly empty (only an eldoc remap), so its commands are
-=M-x=-only unless bound.  The LSP commands live under a fresh =C-c i= prefix
-(=i= is unclaimed everywhere else in this config — note that meow's leader
-IS =mode-specific-map=, i.e. =SPC X= is literally =C-c X=, so this had to
-avoid every letter already used by =meow-leader-define-key= too, not just
-the explicit =C-c= binds), bound in =eglot-mode-map= — buffer-local to
-eglot, so they never shadow anything outside an LSP-managed buffer:
+=eglot-mode-map= ships nearly empty (only an eldoc remap), so its commands
+are =M-x=-only unless bound.  They sit directly under =C-c=, reusing four
+existing prefixes rather than claiming a dedicated one: =r= (shared with
+=consult-ripgrep=, relocated to =r g= to make room) hosts =r n= (rename) and
+=r w= (rewrite); =e= (already a prefix for =e e= expreg-expand / =e m= /
+=e M= edit-init) gains a sibling leaf =e x= (extract); =c= (already
+=org-capture=) gains =c a= (code actions); =l= (already =org-store-link=)
+gains =l c= (list connections).  Nesting under =c=/=l= still makes =C-c c=
+and =C-c l= alone unreachable as direct commands while eglot-mode is
+active — the same shadow =a=/=l= had before, just relabeled with mnemonic
+letters (=c a= = "code action", =l c= = "list connections"):
 
-| key         | command                                | ideameow analog                      |
-|-------------+-----------------------------------------+---------------------------------------|
-| =C-c i r n= | =eglot-rename=                          | =SPC r n= → RenameElement             |
-| =C-c i f o= | =eglot-format-buffer=                   | =SPC f m/o= → ReformatCode            |
-| =C-c i o i= | =eglot-code-action-organize-imports=    | (no discrete platform action)        |
-| =C-c i i n= | =eglot-code-action-inline=              | (no discrete platform action)        |
-| =C-c i a=   | =eglot-code-actions= (prefix-arg: kind)  | =SPC s I= → ShowIntentionActions      |
-| =C-c i e=   | =eglot-code-action-extract=             | (no discrete platform action)        |
-| =C-c i w=   | =eglot-code-action-rewrite=             | (no discrete platform action)        |
-| =C-c i q=   | =eglot-code-action-quickfix=            | (no discrete platform action)        |
-| =C-c i d=   | =eglot-find-declaration=                | =SPC m .= → GotoDeclaration           |
-| =C-c i I=   | =eglot-find-implementation=             | =SPC g i= / =SPC j i= → GotoImplementation |
-| =C-c i t=   | =eglot-find-typeDefinition=             | (no discrete platform action)        |
-| =C-c i R=   | =eglot-reconnect=                       | =SPC s v= → ReloadRc (loose)          |
-| =C-c i S=   | =eglot-shutdown-all=                    | (no analog)                          |
-| =C-c i l=   | =eglot-list-connections=                | (no analog)                          |
-| =C-c i L=   | =eglot-events-buffer=                   | (no analog)                          |
+| key       | command                                | ideameow analog                      |
+|-----------+-----------------------------------------+---------------------------------------|
+| =C-c r n= | =eglot-rename=                          | =SPC r n= → RenameElement             |
+| =C-c f o= | =eglot-format-buffer=                   | =SPC f m/o= → ReformatCode            |
+| =C-c o i= | =eglot-code-action-organize-imports=    | (no discrete platform action)        |
+| =C-c i n= | =eglot-code-action-inline=              | (no discrete platform action)        |
+| =C-c c a= | =eglot-code-actions= (prefix-arg: kind)  | =SPC s I= → ShowIntentionActions      |
+| =C-c e x= | =eglot-code-action-extract=             | (no discrete platform action)        |
+| =C-c r w= | =eglot-code-action-rewrite=             | (no discrete platform action)        |
+| =C-c q=   | =eglot-code-action-quickfix=            | (no discrete platform action)        |
+| =C-c d=   | =eglot-find-declaration=                | =SPC m .= → GotoDeclaration           |
+| =C-c I=   | =eglot-find-implementation=             | =SPC g i= / =SPC j i= → GotoImplementation |
+| =C-c t=   | =eglot-find-typeDefinition=             | (no discrete platform action)        |
+| =C-c R=   | =eglot-reconnect=                       | =SPC s v= → ReloadRc (loose)          |
+| =C-c S=   | =eglot-shutdown-all=                    | (no analog)                          |
+| =C-c l c= | =eglot-list-connections=                | (no analog)                          |
+| =C-c L=   | =eglot-events-buffer=                   | (no analog)                          |
 
 ** Give elisp buffers flymake instead
 
@@ -611,7 +615,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("/" . meow-keypad-describe-key)
  '("?" . meow-cheatsheet)
  '("s"   . consult-line)
- '("r"   . consult-ripgrep)
+ '("r g" . consult-ripgrep)
  '("b b" . consult-buffer)
  '("e e" . expreg-expand)
  '("p f" . project-find-file)
@@ -631,8 +635,10 @@ Key facts to internalise:
   So =SPC s= is literally =C-c s=.  This is why a bare =b= here would clobber
   the =C-c b= bookmark prefix — so buffers live one key deeper at =b b=,
   completing the =SPC b= group (=b m= set / =b j= jump / =b b= buffers).
-- =s= (=consult-line=) and =r= (=consult-ripgrep=) are *spelled out* so keypad
-  translation doesn't drop them.  =r= also matches the global =C-c r= bind.
+- =s= (=consult-line=) and =r g= (=consult-ripgrep=) are *spelled out* so
+  keypad translation doesn't drop them.  =r= also matches the global =C-c r=
+  prefix, now shared with eglot's rename/rewrite (=r n=/=r w=) -- ripgrep
+  moved to =r g= to make room.
 - =p f= / =p p= are the project find-file / switch-project pair (leader-first
   mirrors of =C-x p f= / =C-x p p=).
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so

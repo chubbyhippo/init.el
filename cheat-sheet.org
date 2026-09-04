@@ -370,12 +370,12 @@ config enables =eat-eshell-visual-command-mode=, so visual commands such as
 ** Global keys (added or remapped)
 | Key                           | Command             | Notes                                                                             |
 |-------------------------------+---------------------+-----------------------------------------------------------------------------------|
-| C-c f                         | find-file           | User alias                                                                        |
+| C-c f f                       | find-file           | User alias                                                                        |
 | C-c k                         | kill-current-buffer | Close current                                                                     |
 | C-c b m                       | bookmark-set        | Set bookmark                                                                      |
 | C-c b j                       | consult-bookmark    | Jump bookmark                                                                     |
 | C-c b l                       | bookmark-bmenu-list | List bookmarks                                                                    |
-| C-c r                         | consult-ripgrep     | Project/global ripgrep                                                            |
+| C-c r g                       | consult-ripgrep     | Project/global ripgrep                                                            |
 | C-c w …                  | my-window-map       | Window prefix (see below)                                                         |
 | C-c a                         | org-agenda          | Org agenda                                                                        |
 | C-c c                         | org-capture         | Org capture                                                                       |
@@ -466,7 +466,7 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 |--------------+--------------------------+--------------------------|
 | SPC 0–9 | meow-digit-argument      | Count prefix             |
 | SPC s        | consult-line             | Search buffer lines      |
-| SPC r        | consult-ripgrep          | Project/global ripgrep   |
+| SPC r g      | consult-ripgrep          | Project/global ripgrep   |
 | SPC b b      | consult-buffer           | Switch buffer            |
 | SPC e e      | expreg-expand            | Expand region            |
 | SPC p f      | project-find-file        | Find file in project     |
@@ -598,28 +598,32 @@ Magit uses Meow MOTION state, so these single-key bindings remain available.
 
 ** LSP (Eglot) & diagnostics
 Eglot auto-starts on =prog-mode= (except lisp-data derivatives). Its commands
-sit under a fresh =C-c i= prefix in =eglot-mode-map= (buffer-local to
-LSP-managed buffers; =i= is unclaimed everywhere else in this config, so
-nothing else is shadowed).
+sit directly under =C-c= (buffer-local via =eglot-mode-map=), reusing four
+existing prefixes: rename/rewrite nest as =r n=/=r w= alongside ripgrep
+(moved to =r g=); extract nests as =e x= alongside expreg-expand/edit-init
+(=e e=/=e m=/=e M=); code-actions nests as =c a= alongside org-capture;
+list-connections nests as =l c= alongside org-store-link. =C-c c= and
+=C-c l= alone are unreachable as direct commands while eglot-mode is
+active (same trade-off as the other shared prefixes).
 
 | Key           | Command                              | Description               |
 |---------------+---------------------------------------+----------------------------|
 | M-x eglot     | eglot                                 | Start server manually     |
-| C-c i r n     | eglot-rename                          | Rename symbol              |
-| C-c i f o     | eglot-format-buffer                   | Format whole buffer        |
-| C-c i o i     | eglot-code-action-organize-imports    | Organize imports           |
-| C-c i i n     | eglot-code-action-inline              | Inline code action         |
-| C-c i a       | eglot-code-actions                    | All code actions (prefix arg: kind) |
-| C-c i e       | eglot-code-action-extract             | Extract code action        |
-| C-c i w       | eglot-code-action-rewrite             | Rewrite code action        |
-| C-c i q       | eglot-code-action-quickfix            | Quickfix code action       |
-| C-c i d       | eglot-find-declaration                 | Find declaration           |
-| C-c i I       | eglot-find-implementation              | Find implementation        |
-| C-c i t       | eglot-find-typeDefinition              | Find type definition       |
-| C-c i R       | eglot-reconnect                        | Reconnect                  |
-| C-c i S       | eglot-shutdown-all                     | Stop all servers           |
-| C-c i l       | eglot-list-connections                 | List connections           |
-| C-c i L       | eglot-events-buffer                    | Open LSP events log        |
+| C-c r n       | eglot-rename                          | Rename symbol              |
+| C-c f o       | eglot-format-buffer                   | Format whole buffer        |
+| C-c o i       | eglot-code-action-organize-imports    | Organize imports           |
+| C-c i n       | eglot-code-action-inline              | Inline code action         |
+| C-c c a       | eglot-code-actions                    | All code actions (prefix arg: kind) |
+| C-c e x       | eglot-code-action-extract             | Extract code action        |
+| C-c r w       | eglot-code-action-rewrite             | Rewrite code action        |
+| C-c q         | eglot-code-action-quickfix            | Quickfix code action       |
+| C-c d         | eglot-find-declaration                 | Find declaration           |
+| C-c I         | eglot-find-implementation              | Find implementation        |
+| C-c t         | eglot-find-typeDefinition              | Find type definition       |
+| C-c R         | eglot-reconnect                        | Reconnect                  |
+| C-c S         | eglot-shutdown-all                     | Stop all servers           |
+| C-c l c       | eglot-list-connections                 | List connections           |
+| C-c L         | eglot-events-buffer                    | Open LSP events log        |
 | M-x eglot-format | eglot-format                        | Format region              |
 | M-x flymake-show-buffer-diagnostics  | flymake-show-buffer-diagnostics | List buffer diagnostics |
 | M-x flymake-show-project-diagnostics | flymake-show-project-diagnostics | Project diagnostics |
@@ -762,11 +766,11 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 * Quick reference — “where do I…?”
 | Task              | Keys                            |
 |-------------------+---------------------------------|
-| Open file         | C-x C-f or C-c f                |
+| Open file         | C-x C-f or C-c f f              |
 | Save              | C-x C-s                         |
 | Switch buffer     | C-x b / SPC b b                 |
 | Search in buffer  | M-s l / SPC s / C-s             |
-| Search project    | M-s r / C-c r                   |
+| Search project    | M-s r / C-c r g                 |
 | Git status        | C-x g                           |
 | Windows           | C-c w … or S-arrows        |
 | Jump on screen    | M-o / Normal S or Q             |
@@ -775,7 +779,7 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 | Reload config     | C-c e M                         |
 | Actions on thing  | C-.                             |
 | Undo tree         | C-x u                           |
-| LSP rename/format | C-c i r n / C-c i f o           |
+| LSP rename/format | C-c r n / C-c f o               |
 | Debug             | M-x dape                        |
 | All bindings      | C-h b or C-h B                  |
 )
