@@ -343,6 +343,59 @@ grab-color default."
 prefix; matches the global C-c r g bind."
   (should (eq (init-test--leader "r g") 'consult-ripgrep)))
 
+(ert-deftest init-test/given-the-leader-then-r-n-is-eglot-rename ()
+  "SPC r n is a direct shortcut for eglot-rename, skipping the C-c c a-style
+keypad spelling."
+  (should (eq (init-test--leader "r n") 'eglot-rename)))
+
+(ert-deftest init-test/given-the-leader-then-eglot-refactor-actions-join-the-r-prefix ()
+  "eglot-mode-map is buffer-local, so its own C-c bindings never reach the
+shared mode-specific-map leader on their own; rewrite/extract/quickfix/actions
+join r n/r g as siblings under the same prefix."
+  (should (eq (init-test--leader "r w") 'eglot-code-action-rewrite))
+  (should (eq (init-test--leader "r x") 'eglot-code-action-extract))
+  (should (eq (init-test--leader "r q") 'eglot-code-action-quickfix))
+  (should (eq (init-test--leader "r a") 'eglot-code-actions)))
+
+(ert-deftest init-test/given-the-leader-then-r-a-is-not-c-a ()
+  "eglot's raw binding is C-c c a, but c is already a leaf command elsewhere
+on mode-specific-map (org-capture, see the org use-package block); nesting
+c a on the shared leader would have silently clobbered it, so code-actions
+moved to r a instead and my-meow-setup itself must leave the bare c key alone."
+  (should (init-test--declares '("C-c c" . org-capture)))
+  (should-not (init-test--leader "c"))
+  (should (eq (init-test--leader "r a") 'eglot-code-actions)))
+
+(ert-deftest init-test/given-the-leader-then-f-o-is-eglot-format-buffer ()
+  "Joins the existing f prefix (C-c f f = find-file) without touching it."
+  (should (eq (init-test--leader "f o") 'eglot-format-buffer))
+  (should-not (init-test--leader "f f")))
+
+(ert-deftest init-test/given-the-leader-then-i-group-is-eglot-import-actions ()
+  "SPC i o / i n mirror C-c o i / C-c i n under a dedicated i (imports) prefix
+instead of nesting under org's o, since o a/o c/o l are already leaves there."
+  (should (eq (init-test--leader "i o") 'eglot-code-action-organize-imports))
+  (should (eq (init-test--leader "i n") 'eglot-code-action-inline)))
+
+(ert-deftest init-test/given-the-leader-then-g-group-is-eglot-goto-commands ()
+  "SPC g d/i/t mirror C-c d / C-c I / C-c t under a fresh g (goto) prefix."
+  (should (eq (init-test--leader "g d") 'eglot-find-declaration))
+  (should (eq (init-test--leader "g i") 'eglot-find-implementation))
+  (should (eq (init-test--leader "g t") 'eglot-find-typeDefinition)))
+
+(ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
+  "eglot's raw list-connections lives at C-c l c, but l is already a leaf
+command elsewhere on mode-specific-map (org-store-link); nesting there would
+have clobbered it, so reconnect/shutdown-all/list-connections/events-buffer
+all moved to a capital L prefix instead, and my-meow-setup itself must leave
+the bare l key alone."
+  (should (init-test--declares '("C-c l" . org-store-link)))
+  (should-not (init-test--leader "l"))
+  (should (eq (init-test--leader "L r") 'eglot-reconnect))
+  (should (eq (init-test--leader "L s") 'eglot-shutdown-all))
+  (should (eq (init-test--leader "L c") 'eglot-list-connections))
+  (should (eq (init-test--leader "L e") 'eglot-events-buffer)))
+
 (ert-deftest init-test/given-the-leader-then-b-b-is-consult-buffer ()
   "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
   (should (eq (init-test--leader "b b") 'consult-buffer)))
@@ -627,6 +680,7 @@ while eglot-mode is active -- the same trade-off as r and e."
                       ("C-c o i" . eglot-code-action-organize-imports)
                       ("C-c i n" . eglot-code-action-inline)
                       ("C-c c a" . eglot-code-actions)
+                      ("M-RET"   . eglot-code-actions)
                       ("C-c e x" . eglot-code-action-extract)
                       ("C-c r w" . eglot-code-action-rewrite)
                       ("C-c q"   . eglot-code-action-quickfix)

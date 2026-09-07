@@ -606,29 +606,37 @@ list-connections nests as =l c= alongside org-store-link. =C-c c= and
 =C-c l= alone are unreachable as direct commands while eglot-mode is
 active (same trade-off as the other shared prefixes).
 
-| Key           | Command                              | Description               |
-|---------------+---------------------------------------+----------------------------|
-| M-x eglot     | eglot                                 | Start server manually     |
-| C-c r n       | eglot-rename                          | Rename symbol              |
-| C-c f o       | eglot-format-buffer                   | Format whole buffer        |
-| C-c o i       | eglot-code-action-organize-imports    | Organize imports           |
-| C-c i n       | eglot-code-action-inline              | Inline code action         |
-| C-c c a       | eglot-code-actions                    | All code actions (prefix arg: kind) |
-| C-c e x       | eglot-code-action-extract             | Extract code action        |
-| C-c r w       | eglot-code-action-rewrite             | Rewrite code action        |
-| C-c q         | eglot-code-action-quickfix            | Quickfix code action       |
-| C-c d         | eglot-find-declaration                 | Find declaration           |
-| C-c I         | eglot-find-implementation              | Find implementation        |
-| C-c t         | eglot-find-typeDefinition              | Find type definition       |
-| C-c R         | eglot-reconnect                        | Reconnect                  |
-| C-c S         | eglot-shutdown-all                     | Stop all servers           |
-| C-c l c       | eglot-list-connections                 | List connections           |
-| C-c L         | eglot-events-buffer                    | Open LSP events log        |
-| M-x eglot-format | eglot-format                        | Format region              |
-| M-x flymake-show-buffer-diagnostics  | flymake-show-buffer-diagnostics | List buffer diagnostics |
-| M-x flymake-show-project-diagnostics | flymake-show-project-diagnostics | Project diagnostics |
-| SPC . e / SPC , e | -                                  | Next/prev Flymake error    |
-| xref via consult | -                                    | Definitions/refs UI        |
+Every command below is also promoted onto the Meow leader (=SPC ...=), since
+=eglot-mode-map= is buffer-local and doesn't automatically inherit the
+leader's shared =mode-specific-map=. =c a= and =l c= couldn't be mirrored
+verbatim there (=c=/=l= are already leaf commands on the leader), so they
+moved to =r a= and to a new =L= ("LSP") prefix alongside the other
+session-management commands.
+
+| Key           | Leader (SPC) | Command                              | Description               |
+|---------------+---------------+---------------------------------------+----------------------------|
+| M-x eglot     | -             | eglot                                 | Start server manually     |
+| C-c r n       | r n           | eglot-rename                          | Rename symbol              |
+| C-c f o       | f o           | eglot-format-buffer                   | Format whole buffer        |
+| C-c o i       | i o           | eglot-code-action-organize-imports    | Organize imports           |
+| C-c i n       | i n           | eglot-code-action-inline              | Inline code action         |
+| C-c c a       | r a           | eglot-code-actions                    | All code actions (prefix arg: kind) |
+| M-RET         | -             | eglot-code-actions                    | Same, IntelliJ Alt+Enter muscle memory |
+| C-c e x       | r x           | eglot-code-action-extract             | Extract code action        |
+| C-c r w       | r w           | eglot-code-action-rewrite             | Rewrite code action        |
+| C-c q         | r q           | eglot-code-action-quickfix            | Quickfix code action       |
+| C-c d         | g d           | eglot-find-declaration                 | Find declaration           |
+| C-c I         | g i           | eglot-find-implementation              | Find implementation        |
+| C-c t         | g t           | eglot-find-typeDefinition              | Find type definition       |
+| C-c R         | L r           | eglot-reconnect                        | Reconnect                  |
+| C-c S         | L s           | eglot-shutdown-all                     | Stop all servers           |
+| C-c l c       | L c           | eglot-list-connections                 | List connections           |
+| C-c L         | L e           | eglot-events-buffer                    | Open LSP events log        |
+| M-x eglot-format | -          | eglot-format                        | Format region               |
+| M-x flymake-show-buffer-diagnostics  | - | flymake-show-buffer-diagnostics | List buffer diagnostics |
+| M-x flymake-show-project-diagnostics | - | flymake-show-project-diagnostics | Project diagnostics |
+| SPC . e / SPC , e | -         | -                                  | Next/prev Flymake error    |
+| xref via consult | -          | -                                    | Definitions/refs UI        |
 
 ** Diff-HL
 | Key        | Command               | Description |
