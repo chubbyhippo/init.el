@@ -467,6 +467,20 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC 0–9 | meow-digit-argument      | Count prefix             |
 | SPC s        | consult-line             | Search buffer lines      |
 | SPC r g      | consult-ripgrep          | Project/global ripgrep   |
+| SPC r n      | eglot-rename             | Rename symbol            |
+| SPC r w      | eglot-code-action-rewrite | Rewrite code action     |
+| SPC r x      | eglot-code-action-extract | Extract code action     |
+| SPC r q      | eglot-code-action-quickfix | Quickfix code action   |
+| SPC r a      | eglot-code-actions       | All code actions         |
+| SPC f o      | eglot-format-buffer      | Format whole buffer      |
+| SPC i n      | eglot-code-action-inline | Inline code action       |
+| SPC g d      | eglot-find-declaration   | Find declaration         |
+| SPC g i      | eglot-find-implementation | Find implementation     |
+| SPC g t      | eglot-find-typeDefinition | Find type definition    |
+| SPC L r      | eglot-reconnect          | Reconnect LSP server      |
+| SPC L s      | eglot-shutdown-all       | Stop all LSP servers      |
+| SPC L c      | eglot-list-connections   | List LSP connections      |
+| SPC L e      | eglot-events-buffer      | Open LSP events log       |
 | SPC b b      | consult-buffer           | Switch buffer            |
 | SPC e e      | expreg-expand            | Expand region            |
 | SPC p f      | project-find-file        | Find file in project     |
@@ -474,6 +488,7 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC o a      | org-agenda               | Org agenda               |
 | SPC o c      | org-capture              | Org capture              |
 | SPC o l      | org-store-link           | Org store link           |
+| SPC o i      | eglot-code-action-organize-imports | Organize imports |
 | SPC . c      | diff-hl-next-hunk        | Next VCS hunk            |
 | SPC , c      | diff-hl-previous-hunk    | Prev VCS hunk            |
 | SPC . e      | flymake-goto-next-error  | Next diagnostic          |
@@ -618,7 +633,7 @@ session-management commands.
 | M-x eglot     | -             | eglot                                 | Start server manually     |
 | C-c r n       | r n           | eglot-rename                          | Rename symbol              |
 | C-c f o       | f o           | eglot-format-buffer                   | Format whole buffer        |
-| C-c o i       | i o           | eglot-code-action-organize-imports    | Organize imports           |
+| C-c o i       | o i           | eglot-code-action-organize-imports    | Organize imports           |
 | C-c i n       | i n           | eglot-code-action-inline              | Inline code action         |
 | C-c c a       | r a           | eglot-code-actions                    | All code actions (prefix arg: kind) |
 | M-RET         | -             | eglot-code-actions                    | Same, IntelliJ Alt+Enter muscle memory |

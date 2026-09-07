@@ -371,10 +371,16 @@ moved to r a instead and my-meow-setup itself must leave the bare c key alone."
   (should (eq (init-test--leader "f o") 'eglot-format-buffer))
   (should-not (init-test--leader "f f")))
 
-(ert-deftest init-test/given-the-leader-then-i-group-is-eglot-import-actions ()
-  "SPC i o / i n mirror C-c o i / C-c i n under a dedicated i (imports) prefix
-instead of nesting under org's o, since o a/o c/o l are already leaves there."
-  (should (eq (init-test--leader "i o") 'eglot-code-action-organize-imports))
+(ert-deftest init-test/given-the-leader-then-organize-imports-joins-the-o-prefix ()
+  "SPC o i mirrors C-c o i verbatim, joining the existing o (org) prefix --
+same trick as r/f sharing eglot commands with ripgrep/find-file -- rather
+than introducing a whole new prefix for a single command."
+  (should (eq (init-test--leader "o i") 'eglot-code-action-organize-imports))
+  (should (eq (init-test--leader "o a") 'org-agenda)))
+
+(ert-deftest init-test/given-the-leader-then-i-n-is-eglot-code-action-inline ()
+  "SPC i n mirrors C-c i n verbatim; no sibling needed since
+organize-imports now lives under o instead, so i hosts only this one leaf."
   (should (eq (init-test--leader "i n") 'eglot-code-action-inline)))
 
 (ert-deftest init-test/given-the-leader-then-g-group-is-eglot-goto-commands ()

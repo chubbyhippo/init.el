@@ -260,7 +260,7 @@ letters (=c a= = "code action", =l c= = "list connections"):
 |-----------+-----------------------------------------+-------------------------+---------------------------------------|
 | =C-c r n= | =eglot-rename=                          | =r n=                   | =SPC r n= → RenameElement             |
 | =C-c f o= | =eglot-format-buffer=                   | =f o=                   | =SPC f m/o= → ReformatCode            |
-| =C-c o i= | =eglot-code-action-organize-imports=    | =i o=                   | (no discrete platform action)        |
+| =C-c o i= | =eglot-code-action-organize-imports=    | =o i=                   | (no discrete platform action)        |
 | =C-c i n= | =eglot-code-action-inline=              | =i n=                   | (no discrete platform action)        |
 | =C-c c a= | =eglot-code-actions= (prefix-arg: kind)  | =r a=                   | =SPC s I= → ShowIntentionActions      |
 | =M-RET=   | =eglot-code-actions=                    | (direct key, no leader) | Alt+Enter → ShowIntentionActions     |
@@ -634,7 +634,6 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("r q" . eglot-code-action-quickfix)
  '("r a" . eglot-code-actions)
  '("f o" . eglot-format-buffer)
- '("i o" . eglot-code-action-organize-imports)
  '("i n" . eglot-code-action-inline)
  '("g d" . eglot-find-declaration)
  '("g i" . eglot-find-implementation)
@@ -650,6 +649,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("o a" . org-agenda)
  '("o c" . org-capture)
  '("o l" . org-store-link)
+ '("o i" . eglot-code-action-organize-imports)
  '(", c" . diff-hl-previous-hunk)
  '(", e" . flymake-goto-prev-error)
  '(". c" . diff-hl-next-hunk)
@@ -675,11 +675,15 @@ Key facts to internalise:
   (=org-capture=), so it lives at =r a= instead; =C-c l c= (list connections)
   would have clobbered =C-c l= (=org-store-link=), so the whole
   reconnect/shutdown/list-connections/events-buffer group got its own prefix
-  at capital =L= (=L r=/=L s=/=L c=/=L e=). Import actions got a fresh =i=
-  prefix (=i o=/=i n=) and the three "find" commands a =g= ("goto") prefix
-  (=g d=/=g i=/=g t=); =f o= (format) simply joins the existing =f= prefix
-  next to =f f= (=find-file=). =M-RET= (=eglot-code-actions=) needs no leader
-  entry: it's already a direct key everywhere eglot is active.
+  at capital =L= (=L r=/=L s=/=L c=/=L e=). Organize-imports keeps its raw
+  letters verbatim at =o i=, joining the existing =o= org prefix (=o a=/=o c=/
+  =o l=) exactly like =r=/=f= already share eglot commands with ripgrep/
+  find-file; its sibling =eglot-code-action-inline= keeps a lone =i n= (no
+  point folding a single leaf into a whole new prefix). The three "find"
+  commands get a =g= ("goto") prefix (=g d=/=g i=/=g t=); =f o= (format)
+  simply joins the existing =f= prefix next to =f f= (=find-file=). =M-RET=
+  (=eglot-code-actions=) needs no leader entry: it's already a direct key
+  everywhere eglot is active.
 - =p f= / =p p= are the project find-file / switch-project pair (leader-first
   mirrors of =C-x p f= / =C-x p p=).
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so
