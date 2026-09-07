@@ -256,24 +256,24 @@ and =C-c l= alone unreachable as direct commands while eglot-mode is
 active — the same shadow =a=/=l= had before, just relabeled with mnemonic
 letters (=c a= = "code action", =l c= = "list connections"):
 
-| key       | command                                | leader (=SPC ...=)     | ideameow analog                      |
-|-----------+-----------------------------------------+-------------------------+---------------------------------------|
-| =C-c r n= | =eglot-rename=                          | =r n=                   | =SPC r n= → RenameElement             |
-| =C-c f o= | =eglot-format-buffer=                   | =f o=                   | =SPC f m/o= → ReformatCode            |
-| =C-c o i= | =eglot-code-action-organize-imports=    | =o i=                   | (no discrete platform action)        |
-| =C-c i n= | =eglot-code-action-inline=              | =i n=                   | (no discrete platform action)        |
-| =C-c c a= | =eglot-code-actions= (prefix-arg: kind)  | =r a=                   | =SPC s I= → ShowIntentionActions      |
-| =M-RET=   | =eglot-code-actions=                    | (direct key, no leader) | Alt+Enter → ShowIntentionActions     |
-| =C-c e x= | =eglot-code-action-extract=             | =r x=                   | (no discrete platform action)        |
-| =C-c r w= | =eglot-code-action-rewrite=             | =r w=                   | (no discrete platform action)        |
-| =C-c q=   | =eglot-code-action-quickfix=            | =r q=                   | (no discrete platform action)        |
-| =C-c d=   | =eglot-find-declaration=                | =g d=                   | =SPC m .= → GotoDeclaration           |
+| key       | command                                 | leader (=SPC ...=)      | ideameow analog                                 |
+|-----------+-----------------------------------------+-------------------------+-------------------------------------------------|
+| =C-c r n= | =eglot-rename=                          | =r n=                   | =SPC r n= → RenameElement                  |
+| =C-c f o= | =eglot-format-buffer=                   | =f o=                   | =SPC f m/o= → ReformatCode                 |
+| =C-c o i= | =eglot-code-action-organize-imports=    | =o i=                   | (no discrete platform action)                   |
+| =C-c i n= | =eglot-code-action-inline=              | =i n=                   | (no discrete platform action)                   |
+| =C-c c a= | =eglot-code-actions= (prefix-arg: kind) | =r a=                   | =SPC s I= → ShowIntentionActions           |
+| =M-RET=   | =eglot-code-actions=                    | (direct key, no leader) | Alt+Enter → ShowIntentionActions           |
+| =C-c e x= | =eglot-code-action-extract=             | =r x=                   | (no discrete platform action)                   |
+| =C-c r w= | =eglot-code-action-rewrite=             | =r w=                   | (no discrete platform action)                   |
+| =C-c q=   | =eglot-code-action-quickfix=            | =r q=                   | (no discrete platform action)                   |
+| =C-c d=   | =eglot-find-declaration=                | =g d=                   | =SPC m .= → GotoDeclaration                |
 | =C-c I=   | =eglot-find-implementation=             | =g i=                   | =SPC g i= / =SPC j i= → GotoImplementation |
-| =C-c t=   | =eglot-find-typeDefinition=             | =g t=                   | (no discrete platform action)        |
-| =C-c R=   | =eglot-reconnect=                       | =L r=                   | =SPC s v= → ReloadRc (loose)          |
-| =C-c S=   | =eglot-shutdown-all=                    | =L s=                   | (no analog)                          |
-| =C-c l c= | =eglot-list-connections=                | =L c=                   | (no analog)                          |
-| =C-c L=   | =eglot-events-buffer=                   | =L e=                   | (no analog)                          |
+| =C-c t=   | =eglot-find-typeDefinition=             | =g t=                   | (no discrete platform action)                   |
+| =C-c R=   | =eglot-reconnect=                       | =L r=                   | =SPC s v= → ReloadRc (loose)               |
+| =C-c S=   | =eglot-shutdown-all=                    | =L s=                   | (no analog)                                     |
+| =C-c l c= | =eglot-list-connections=                | =L c=                   | (no analog)                                     |
+| =C-c L=   | =eglot-events-buffer=                   | =L e=                   | (no analog)                                     |
 
 =r a=, =r w=, =r x= and =r q= extend the leader's existing =r= (rename)
 prefix; =c a= and =l c= could not be mirrored verbatim on the leader because
