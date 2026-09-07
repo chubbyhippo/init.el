@@ -416,7 +416,9 @@ config enables =eat-eshell-visual-command-mode=, so visual commands such as
 Enabled built-ins (no extra keys): =repeat-mode=, =which-key-mode=,
 =winner-mode=, =electric-pair-mode=, =savehist=, =save-place=,
 =global-auto-revert-mode=, =recentf-mode=, =pixel-scroll-precision-mode=,
-=global-so-long-mode=, =context-menu-mode=, optional =global-completion-preview-mode=.
+=global-so-long-mode=, =context-menu-mode=, optional =global-completion-preview-mode=,
+=xterm-mouse-mode= (terminal frames only — click/drag/wheel via mouse tracking
+codes; GUI frames already have mouse support natively).
 
 ** Isearch extras (consult)
 | Key (in isearch) | Command                 | Description        |

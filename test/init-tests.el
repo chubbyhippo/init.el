@@ -865,4 +865,10 @@ command map and check-key is off because the keypad's final key `c' is not a mem
   (should (init-test--declares '(unless (display-graphic-p)
                                   (corfu-terminal-mode 1)))))
 
+(ert-deftest init-test/given-a-terminal-frame-then-the-mouse-is-enabled ()
+  "GUI frames already support the mouse natively; xterm-mouse-mode teaches a
+tty to decode click/drag/wheel escape sequences from the terminal emulator."
+  (should (init-test--declares '(unless (display-graphic-p)
+                                  (xterm-mouse-mode 1)))))
+
 ;;; init-tests.el ends here

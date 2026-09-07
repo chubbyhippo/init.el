@@ -45,6 +45,8 @@
   (repeat-mode 1)
   (which-key-mode 1)
   (pixel-scroll-precision-mode 1)
+  (unless (display-graphic-p)
+    (xterm-mouse-mode 1))
   (savehist-mode 1)
   (save-place-mode 1)
   (electric-pair-mode 1)

@@ -47,6 +47,8 @@ collects the global modes, keys, and settings; the rest are small
 (repeat-mode 1)
 (which-key-mode 1)
 (pixel-scroll-precision-mode 1)
+(unless (display-graphic-p)
+  (xterm-mouse-mode 1))
 (savehist-mode 1)
 (save-place-mode 1)
 (electric-pair-mode 1)
@@ -59,6 +61,12 @@ collects the global modes, keys, and settings; the rest are small
   key instead of the full chord.  Many maps below rely on this.
 - =which-key-mode= — pops a menu of what each prefix key can do next.
 - =pixel-scroll-precision-mode= — smooth pixel-wise scrolling.
+- =xterm-mouse-mode= — click-to-move-point, drag-to-select, and wheel
+  scrolling inside a terminal emulator (GUI frames already get this for
+  free, hence the =display-graphic-p= guard — same pattern as
+  =diff-hl-margin-mode= and =corfu-terminal-mode= below).  Requires a
+  terminal that reports mouse events (most modern ones, incl. xterm, iTerm2,
+  Windows Terminal and tmux with =set -g mouse on=); it's a no-op otherwise.
 - =savehist= / =save-place= — remember minibuffer history and cursor position
   across sessions.
 - =electric-pair-mode= — auto-insert matching brackets/quotes.
