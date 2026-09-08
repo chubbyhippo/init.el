@@ -34,4 +34,21 @@ exec "$EMACS" -Q --batch \
   --eval "(setq package-user-dir \"$elpa\")" \
   -l "$here/early-init-tests.el" \
   -l "$here/init-tests.el" \
+  -l "$here/extras/common-tests.el" \
+  -l "$here/extras/clojure-tests.el" \
+  -l "$here/extras/cobol-tests.el" \
+  -l "$here/extras/cpp-tests.el" \
+  -l "$here/extras/elixir-tests.el" \
+  -l "$here/extras/erlang-tests.el" \
+  -l "$here/extras/go-tests.el" \
+  -l "$here/extras/haskell-tests.el" \
+  -l "$here/extras/html-tests.el" \
+  -l "$here/extras/java-tests.el" \
+  -l "$here/extras/perl-tests.el" \
+  -l "$here/extras/python-tests.el" \
+  -l "$here/extras/ruby-tests.el" \
+  -l "$here/extras/rust-tests.el" \
+  -l "$here/extras/scheme-tests.el" \
+  -l "$here/extras/typescript-tests.el" \
+  -l "$here/extras/zig-tests.el" \
   -f ert-run-tests-batch-and-exit
