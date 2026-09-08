@@ -35,7 +35,7 @@ Discover anything live: =C-h b= (buffer bindings), =C-h k= (describe key),
 | C-x C-f | find-file                  | Open / visit file                                   |
 | C-x C-s | save-buffer                | Save current buffer                                 |
 | C-x C-w | write-file                 | Save as…                                       |
-| C-x s   | save-some-buffers          | Save many buffers                                   |
+| C-x s   | project-save-some-buffers  | Save many buffers (project-scoped, overridden)      |
 | C-x C-c | save-buffers-kill-terminal | Exit Emacs                                          |
 | C-x b   | switch-to-buffer           | Switch buffer (overridden → consult-buffer)    |
 | C-x C-b | list-buffers               | Buffer list (overridden → consult-buffer)      |
@@ -475,6 +475,7 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC r q      | eglot-code-action-quickfix         | Quickfix code action     |
 | SPC r a      | eglot-code-actions                 | All code actions         |
 | SPC f o      | eglot-format-buffer                | Format whole buffer      |
+| SPC f s      | save-buffer                        | Save buffer (runs format-on-save) |
 | SPC i n      | eglot-code-action-inline           | Inline code action       |
 | SPC g d      | eglot-find-declaration             | Find declaration         |
 | SPC g i      | eglot-find-implementation          | Find implementation      |

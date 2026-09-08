@@ -370,6 +370,13 @@ with it; my-meow-setup still must leave the bare c key (org-capture) alone."
   (should (eq (init-test--leader "f o") 'eglot-format-buffer))
   (should-not (init-test--leader "f f")))
 
+(ert-deftest init-test/given-the-leader-then-f-s-is-save-buffer ()
+  "f s saves unconditionally so before-save-hook (format-on-save layers like
+extras/go.el) always fires, unlike SPC x s's C-x s project-save-some-buffers
+keypad fallback which prompts per buffer and can skip declined saves."
+  (should (eq (init-test--leader "f s") 'save-buffer))
+  (should-not (init-test--leader "f f")))
+
 (ert-deftest init-test/given-the-leader-then-organize-imports-joins-the-o-prefix ()
   "SPC o i mirrors C-c o i verbatim, joining the existing o (org) prefix --
 same trick as r/f sharing eglot commands with ripgrep/find-file -- rather

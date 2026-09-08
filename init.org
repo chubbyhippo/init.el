@@ -641,6 +641,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("r q" . eglot-code-action-quickfix)
  '("r a" . eglot-code-actions)
  '("f o" . eglot-format-buffer)
+ '("f s" . save-buffer)
  '("i n" . eglot-code-action-inline)
  '("g d" . eglot-find-declaration)
  '("g i" . eglot-find-implementation)
@@ -689,7 +690,12 @@ Key facts to internalise:
   =eglot-code-action-inline= keeps a lone =i n= (no point folding a single
   leaf into a whole new prefix). The three "find" commands get a =g=
   ("goto") prefix (=g d=/=g i=/=g t=); =f o= (format) simply joins the
-  existing =f= prefix next to =f f= (=find-file=). =M-RET=
+  existing =f= prefix next to =f f= (=find-file=). =f s= (=save-buffer=)
+  joins the same =f= prefix: =SPC x s= only reaches =C-x s=
+  (=project-save-some-buffers=) through keypad translation, which prompts
+  per buffer and skips =before-save-hook= (and therefore format-on-save
+  hooks like the Go layer's) for anything you decline; =f s= runs
+  =save-buffer= unconditionally so =before-save-hook= always fires. =M-RET=
   (=eglot-code-actions=) needs no leader entry beyond its existing =r a=
   mirror: it's already a direct key everywhere eglot is active.
 - =p f= / =p p= are the project find-file / switch-project pair (leader-first

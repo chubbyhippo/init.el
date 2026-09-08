@@ -538,6 +538,7 @@ would take the major mode's own capf with it."
      '("r q" . eglot-code-action-quickfix)
      '("r a" . eglot-code-actions)
      '("f o" . eglot-format-buffer)
+     '("f s" . save-buffer)
      '("i n" . eglot-code-action-inline)
      '("g d" . eglot-find-declaration)
      '("g i" . eglot-find-implementation)
