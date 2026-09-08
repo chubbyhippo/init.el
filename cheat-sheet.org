@@ -615,20 +615,20 @@ Magit uses Meow MOTION state, so these single-key bindings remain available.
 
 ** LSP (Eglot) & diagnostics
 Eglot auto-starts on =prog-mode= (except lisp-data derivatives). Its commands
-sit directly under =C-c= (buffer-local via =eglot-mode-map=), reusing four
+sit directly under =C-c= (buffer-local via =eglot-mode-map=), reusing three
 existing prefixes: rename/rewrite nest as =r n=/=r w= alongside ripgrep
 (moved to =r g=); extract nests as =e x= alongside expreg-expand/edit-init
-(=e e=/=e m=/=e M=); code-actions nests as =c a= alongside org-capture;
-list-connections nests as =l c= alongside org-store-link. =C-c c= and
-=C-c l= alone are unreachable as direct commands while eglot-mode is
-active (same trade-off as the other shared prefixes).
+(=e e=/=e m=/=e M=); list-connections nests as =l c= alongside
+org-store-link. =C-c l= alone is unreachable as a direct command while
+eglot-mode is active (same trade-off as the other shared prefixes).
+=eglot-code-actions= has no raw =C-c= binding at all — it's only reachable
+via =M-RET= or the leader's =r a=.
 
 Every command below is also promoted onto the Meow leader (=SPC ...=), since
 =eglot-mode-map= is buffer-local and doesn't automatically inherit the
-leader's shared =mode-specific-map=. =c a= and =l c= couldn't be mirrored
-verbatim there (=c=/=l= are already leaf commands on the leader), so they
-moved to =r a= and to a new =L= ("LSP") prefix alongside the other
-session-management commands.
+leader's shared =mode-specific-map=. =l c= couldn't be mirrored verbatim
+there (=l= is already a leaf command on the leader), so it moved to a new
+=L= ("LSP") prefix alongside the other session-management commands.
 
 | Key                                  | Leader (SPC) | Command                            | Description                            |
 |--------------------------------------+--------------+------------------------------------+----------------------------------------|
@@ -637,7 +637,7 @@ session-management commands.
 | C-c f o                              | f o          | eglot-format-buffer                | Format whole buffer                    |
 | C-c o i                              | o i          | eglot-code-action-organize-imports | Organize imports                       |
 | C-c i n                              | i n          | eglot-code-action-inline           | Inline code action                     |
-| C-c c a                              | r a          | eglot-code-actions                 | All code actions (prefix arg: kind)    |
+| (none)                               | r a          | eglot-code-actions                 | All code actions (prefix arg: kind)    |
 | M-RET                                | -            | eglot-code-actions                 | Same, IntelliJ Alt+Enter muscle memory |
 | C-c e x                              | r x          | eglot-code-action-extract          | Extract code action                    |
 | C-c r w                              | r w          | eglot-code-action-rewrite          | Rewrite code action                    |

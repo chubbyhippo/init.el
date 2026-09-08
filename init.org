@@ -225,7 +225,6 @@ one of them be recognized as a project root too.
          ("C-c f o" . eglot-format-buffer)
          ("C-c o i" . eglot-code-action-organize-imports)
          ("C-c i n" . eglot-code-action-inline)
-         ("C-c c a" . eglot-code-actions)
          ("M-RET"   . eglot-code-actions)
          ("C-c e x" . eglot-code-action-extract)
          ("C-c r w" . eglot-code-action-rewrite)
@@ -253,16 +252,17 @@ which is a measurable performance drag.
 ** LSP command keybindings
 
 =eglot-mode-map= ships nearly empty (only an eldoc remap), so its commands
-are =M-x=-only unless bound.  They sit directly under =C-c=, reusing four
+are =M-x=-only unless bound.  They sit directly under =C-c=, reusing three
 existing prefixes rather than claiming a dedicated one: =r= (shared with
 =consult-ripgrep=, relocated to =r g= to make room) hosts =r n= (rename) and
 =r w= (rewrite); =e= (already a prefix for =e e= expreg-expand / =e m= /
-=e M= edit-init) gains a sibling leaf =e x= (extract); =c= (already
-=org-capture=) gains =c a= (code actions); =l= (already =org-store-link=)
-gains =l c= (list connections).  Nesting under =c=/=l= still makes =C-c c=
-and =C-c l= alone unreachable as direct commands while eglot-mode is
-active — the same shadow =a=/=l= had before, just relabeled with mnemonic
-letters (=c a= = "code action", =l c= = "list connections"):
+=e M= edit-init) gains a sibling leaf =e x= (extract); =l= (already
+=org-store-link=) gains =l c= (list connections).  Nesting under =l= still
+makes =C-c l= alone unreachable as a direct command while eglot-mode is
+active — the same shadow =l= had before, just relabeled with a mnemonic
+letter (=l c= = "list connections"). =eglot-code-actions= has no raw =C-c=
+binding at all anymore; it's only reachable via =M-RET= or the leader's
+=r a=:
 
 | key       | command                                 | leader (=SPC ...=)      | ideameow analog                                 |
 |-----------+-----------------------------------------+-------------------------+-------------------------------------------------|
@@ -270,7 +270,7 @@ letters (=c a= = "code action", =l c= = "list connections"):
 | =C-c f o= | =eglot-format-buffer=                   | =f o=                   | =SPC f m/o= → ReformatCode                 |
 | =C-c o i= | =eglot-code-action-organize-imports=    | =o i=                   | (no discrete platform action)                   |
 | =C-c i n= | =eglot-code-action-inline=              | =i n=                   | (no discrete platform action)                   |
-| =C-c c a= | =eglot-code-actions= (prefix-arg: kind) | =r a=                   | =SPC s I= → ShowIntentionActions           |
+| (none)    | =eglot-code-actions= (prefix-arg: kind) | =r a=                   | =SPC s I= → ShowIntentionActions           |
 | =M-RET=   | =eglot-code-actions=                    | (direct key, no leader) | Alt+Enter → ShowIntentionActions           |
 | =C-c e x= | =eglot-code-action-extract=             | =r x=                   | (no discrete platform action)                   |
 | =C-c r w= | =eglot-code-action-rewrite=             | =r w=                   | (no discrete platform action)                   |
@@ -284,10 +284,9 @@ letters (=c a= = "code action", =l c= = "list connections"):
 | =C-c L=   | =eglot-events-buffer=                   | =L e=                   | (no analog)                                     |
 
 =r a=, =r w=, =r x= and =r q= extend the leader's existing =r= (rename)
-prefix; =c a= and =l c= could not be mirrored verbatim on the leader because
-plain =c= and =l= are already leaf commands there (=org-capture=,
-=org-store-link=) — see "The leader is the C-c map" below for why that
-collides and how it's resolved.
+prefix; =l c= could not be mirrored verbatim on the leader because plain
+=l= is already a leaf command there (=org-store-link=) — see "The leader is
+the C-c map" below for why that collides and how it's resolved.
 
 ** Give elisp buffers flymake instead
 
@@ -677,21 +676,22 @@ Key facts to internalise:
 - All of =eglot-mode-map='s commands are mirrored here too, since that map is
   buffer-local and does *not* automatically show up on the shared
   =mode-specific-map= leader the way a plain global =:bind= does (see "LSP
-  command keybindings" above).  Two of eglot's raw =C-c= letters could *not*
-  be reused verbatim because the plain letter is already a leaf command on
-  this same map: =C-c c a= (code actions) would have clobbered =C-c c=
-  (=org-capture=), so it lives at =r a= instead; =C-c l c= (list connections)
-  would have clobbered =C-c l= (=org-store-link=), so the whole
-  reconnect/shutdown/list-connections/events-buffer group got its own prefix
-  at capital =L= (=L r=/=L s=/=L c=/=L e=). Organize-imports keeps its raw
-  letters verbatim at =o i=, joining the existing =o= org prefix (=o a=/=o c=/
-  =o l=) exactly like =r=/=f= already share eglot commands with ripgrep/
-  find-file; its sibling =eglot-code-action-inline= keeps a lone =i n= (no
-  point folding a single leaf into a whole new prefix). The three "find"
-  commands get a =g= ("goto") prefix (=g d=/=g i=/=g t=); =f o= (format)
-  simply joins the existing =f= prefix next to =f f= (=find-file=). =M-RET=
-  (=eglot-code-actions=) needs no leader entry: it's already a direct key
-  everywhere eglot is active.
+  command keybindings" above).  =eglot-code-actions= has no raw =C-c=
+  binding to mirror at all — it only exists as =M-RET= and the leader's
+  =r a=.  One of eglot's remaining raw =C-c= letters still could *not* be
+  reused verbatim because the plain letter is already a leaf command on
+  this same map: =C-c l c= (list connections) would have clobbered =C-c l=
+  (=org-store-link=), so the whole reconnect/shutdown/list-connections/
+  events-buffer group got its own prefix at capital =L= (=L r=/=L s=/=L c=/
+  =L e=). Organize-imports keeps its raw letters verbatim at =o i=, joining
+  the existing =o= org prefix (=o a=/=o c=/=o l=) exactly like =r=/=f=
+  already share eglot commands with ripgrep/find-file; its sibling
+  =eglot-code-action-inline= keeps a lone =i n= (no point folding a single
+  leaf into a whole new prefix). The three "find" commands get a =g=
+  ("goto") prefix (=g d=/=g i=/=g t=); =f o= (format) simply joins the
+  existing =f= prefix next to =f f= (=find-file=). =M-RET=
+  (=eglot-code-actions=) needs no leader entry beyond its existing =r a=
+  mirror: it's already a direct key everywhere eglot is active.
 - =p f= / =p p= are the project find-file / switch-project pair (leader-first
   mirrors of =C-x p f= / =C-x p p=).
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so

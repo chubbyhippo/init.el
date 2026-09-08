@@ -148,7 +148,6 @@
          ("C-c f o" . eglot-format-buffer)
          ("C-c o i" . eglot-code-action-organize-imports)
          ("C-c i n" . eglot-code-action-inline)
-         ("C-c c a" . eglot-code-actions)
          ("M-RET"   . eglot-code-actions)
          ("C-c e x" . eglot-code-action-extract)
          ("C-c r w" . eglot-code-action-rewrite)

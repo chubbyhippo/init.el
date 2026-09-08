@@ -344,7 +344,7 @@ prefix; matches the global C-c r g bind."
   (should (eq (init-test--leader "r g") 'consult-ripgrep)))
 
 (ert-deftest init-test/given-the-leader-then-r-n-is-eglot-rename ()
-  "SPC r n is a direct shortcut for eglot-rename, skipping the C-c c a-style
+  "SPC r n is a direct shortcut for eglot-rename, skipping the raw C-c
 keypad spelling."
   (should (eq (init-test--leader "r n") 'eglot-rename)))
 
@@ -357,11 +357,10 @@ join r n/r g as siblings under the same prefix."
   (should (eq (init-test--leader "r q") 'eglot-code-action-quickfix))
   (should (eq (init-test--leader "r a") 'eglot-code-actions)))
 
-(ert-deftest init-test/given-the-leader-then-r-a-is-not-c-a ()
-  "eglot's raw binding is C-c c a, but c is already a leaf command elsewhere
-on mode-specific-map (org-capture, see the org use-package block); nesting
-c a on the shared leader would have silently clobbered it, so code-actions
-moved to r a instead and my-meow-setup itself must leave the bare c key alone."
+(ert-deftest init-test/given-the-leader-then-r-a-is-eglot-code-actions ()
+  "eglot-code-actions has no raw C-c binding at all -- it only exists as
+M-RET and the leader's r a -- so nothing on mode-specific-map can collide
+with it; my-meow-setup still must leave the bare c key (org-capture) alone."
   (should (init-test--declares '("C-c c" . org-capture)))
   (should-not (init-test--leader "c"))
   (should (eq (init-test--leader "r a") 'eglot-code-actions)))
@@ -675,17 +674,17 @@ every elisp buffer (no LSP here); my-eglot-ensure skips lisp-data-mode descendan
 
 (ert-deftest init-test/given-eglot-then-its-commands-sit-under-a-buffer-local-prefix ()
   "eglot's own mode-map starts nearly empty (only the eldoc remap); its
-commands are bound directly under C-c, sharing four prefixes with existing
+commands are bound directly under C-c, sharing three prefixes with existing
 commands: r with consult-ripgrep (relocated to r g) hosts rename/rewrite
-(r n/r w); e with expreg/edit-init (e e/e m/e M) hosts extract (e x); c with
-org-capture hosts code-actions (c a); l with org-store-link hosts
-list-connections (l c). c and l alone are unreachable as direct commands
-while eglot-mode is active -- the same trade-off as r and e."
+(r n/r w); e with expreg/edit-init (e e/e m/e M) hosts extract (e x); l with
+org-store-link hosts list-connections (l c). l alone is unreachable as a
+direct command while eglot-mode is active -- the same trade-off as r and e.
+eglot-code-actions has no raw C-c binding at all; it's only reachable via
+M-RET or the leader's r a."
   (dolist (binding '(("C-c r n" . eglot-rename)
                       ("C-c f o" . eglot-format-buffer)
                       ("C-c o i" . eglot-code-action-organize-imports)
                       ("C-c i n" . eglot-code-action-inline)
-                      ("C-c c a" . eglot-code-actions)
                       ("M-RET"   . eglot-code-actions)
                       ("C-c e x" . eglot-code-action-extract)
                       ("C-c r w" . eglot-code-action-rewrite)
@@ -698,6 +697,12 @@ while eglot-mode is active -- the same trade-off as r and e."
                       ("C-c l c" . eglot-list-connections)
                       ("C-c L"   . eglot-events-buffer)))
     (should (init-test--declares binding))))
+
+(ert-deftest init-test/given-eglot-then-c-a-is-not-a-raw-binding ()
+  "eglot-code-actions previously had a raw C-c c a binding that clobbered
+C-c c (org-capture); it was removed entirely rather than kept around, since
+M-RET and the leader's r a already cover it."
+  (should-not (init-test--declares '("C-c c a" . eglot-code-actions))))
 
 (ert-deftest init-test/given-the-leader-nav-keys-then-flymake-jumps-are-autoloaded ()
   "flymake is not preloaded and its nav commands carry no autoload cookie, so
