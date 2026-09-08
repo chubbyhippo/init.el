@@ -517,6 +517,7 @@ Meow keypad also types vanilla =C-x= / =C-c= sequences after SPC (e.g. SPC x g â
 | e / E    | meow-next-word/symbol         | Next word/symbol      |
 | b / B    | meow-back-word/symbol         | Prev word/symbol      |
 | f / t    | meow-find / meow-till         | Find / till char      |
+| F / T    | meow-find/till-expand         | Extend to/up-to char   |
 | x / X    | meow-line / meow-goto-line    | Line select / goto    |
 | o / O    | meow-block / meow-to-block    | Block select          |
 | a / i    | meow-append / meow-insert     | Enter INSERT          |

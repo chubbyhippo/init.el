@@ -716,9 +716,17 @@ signature changes (the sibling plugins mirror them):
 '("S" . avy-goto-char-timer)   ; jump to any visible char
 '("Q" . avy-goto-line)         ; jump to any visible line
 '("X" . meow-goto-line)        ; X keeps goto-line (S/Q took the avy jumps)
+'("F" . meow-find-expand)      ; F extends the selection to a char
+'("T" . meow-till-expand)      ; T extends the selection up to a char
 '("'" . repeat)                ; repeat the last command
 '("<escape>" . ignore)
 #+end_src
+
+Meow's own suggested layout leaves =F=/=T= unbound; =f=/=t= (=meow-find=/
+=meow-till=) always start a fresh selection, which drops any selection you
+already grew with =w e e e=. =F=/=T= call the *-expand variants instead, so
+after growing a selection with =e=/=w= you can reach for =F"= or =T;= to grow
+it further out to that delimiter rather than replacing it.
 
 Otherwise: =h/j/k/l= are the directional motions, =i=/=a= insert/append,
 =x= marks the line, digits =0..9= expand the selection.

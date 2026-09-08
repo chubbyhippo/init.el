@@ -166,6 +166,15 @@ startup, :config only when the package finally loads."
   "S/Q take the avy jumps; X keeps goto-line."
   (should (eq (init-test--normal "X") 'meow-goto-line)))
 
+(ert-deftest init-test/given-normal-state-then-F-and-T-expand-find-and-till ()
+  "meow's own suggested layout leaves F/T unbound; this config uses them to
+extend the current selection to a char (e.g. after w e e e, F\" / T; grows the
+selection to/up-to that delimiter) instead of replacing it like plain f/t do."
+  (should (eq (init-test--normal "f") 'meow-find))
+  (should (eq (init-test--normal "F") 'meow-find-expand))
+  (should (eq (init-test--normal "t") 'meow-till))
+  (should (eq (init-test--normal "T") 'meow-till-expand)))
+
 (ert-deftest init-test/given-avy-then-its-lead-face-matches-ideameow-overlay-color ()
   "Same #2ECC71/#ffffff as ideameow's .ideameowrc overlay-color/overlay-text-color."
   (should (init-test--declares '(set-face-attribute 'avy-lead-face nil
