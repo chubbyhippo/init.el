@@ -552,6 +552,7 @@ would take the major mode's own capf with it."
      '("e e" . expreg-expand)
      '("p f" . project-find-file)
      '("p p" . project-switch-project)
+     '("p e" . project-eshell)
      '("o a" . org-agenda)
      '("o c" . org-capture)
      '("o l" . org-store-link)

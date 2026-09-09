@@ -430,9 +430,10 @@ the bare l key alone."
   (should (eq (init-test--leader "e e") 'expreg-expand)))
 
 (ert-deftest init-test/given-the-leader-then-p-group-is-project-navigation ()
-  "SPC p f / p p mirror C-x p f / C-x p p without the C-x detour."
+  "SPC p f / p p / p e mirror C-x p f / C-x p p / C-x p e without the C-x detour."
   (should (eq (init-test--leader "p f") 'project-find-file))
-  (should (eq (init-test--leader "p p") 'project-switch-project)))
+  (should (eq (init-test--leader "p p") 'project-switch-project))
+  (should (eq (init-test--leader "p e") 'project-eshell)))
 
 (ert-deftest init-test/given-the-leader-then-o-group-is-org-entry-points ()
   "SPC o a / o c / o l mirror C-c a / C-c c / C-c l."

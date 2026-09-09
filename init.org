@@ -655,6 +655,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("e e" . expreg-expand)
  '("p f" . project-find-file)
  '("p p" . project-switch-project)
+ '("p e" . project-eshell)
  '("o a" . org-agenda)
  '("o c" . org-capture)
  '("o l" . org-store-link)
@@ -700,8 +701,8 @@ Key facts to internalise:
   =save-buffer= unconditionally so =before-save-hook= always fires. =M-RET=
   (=eglot-code-actions=) needs no leader entry beyond its existing =r a=
   mirror: it's already a direct key everywhere eglot is active.
-- =p f= / =p p= are the project find-file / switch-project pair (leader-first
-  mirrors of =C-x p f= / =C-x p p=).
+- =p f= / =p p= / =p e= are the project find-file / switch-project /
+  eshell trio (leader-first mirrors of =C-x p f= / =C-x p p= / =C-x p e=).
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so
   =SPC x b= already reaches =consult-buffer= through the =C-x C-b=
   translation — a leader entry there would be dead weight.
