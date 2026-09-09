@@ -656,6 +656,13 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("p f" . project-find-file)
  '("p p" . project-switch-project)
  '("p e" . project-eshell)
+ '("p g" . project-find-regexp)
+ '("p d" . project-dired)
+ '("p c" . project-compile)
+ '("p k" . project-kill-buffers)
+ '("p v" . project-vc-dir)
+ '("p b" . project-switch-to-buffer)
+ '("p s" . project-shell)
  '("o a" . org-agenda)
  '("o c" . org-capture)
  '("o l" . org-store-link)
@@ -701,8 +708,12 @@ Key facts to internalise:
   =save-buffer= unconditionally so =before-save-hook= always fires. =M-RET=
   (=eglot-code-actions=) needs no leader entry beyond its existing =r a=
   mirror: it's already a direct key everywhere eglot is active.
-- =p f= / =p p= / =p e= are the project find-file / switch-project /
-  eshell trio (leader-first mirrors of =C-x p f= / =C-x p p= / =C-x p e=).
+- =p f= / =p p= / =p e= / =p g= / =p d= / =p c= / =p k= / =p v= / =p b= /
+  =p s= are leader-first mirrors of the whole =project.el= =C-x p= prefix:
+  find-file, switch-project, eshell, find-regexp (grep), dired, compile,
+  kill-buffers, vc-dir, switch-to-buffer, and shell — one letter per raw
+  =C-x p= letter, no renumbering needed since none of them collide with an
+  existing leader group.
 - There is deliberately *no* =x b= entry: =x= is a keypad START key, so
   =SPC x b= already reaches =consult-buffer= through the =C-x C-b=
   translation — a leader entry there would be dead weight.

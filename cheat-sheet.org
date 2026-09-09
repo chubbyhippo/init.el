@@ -490,6 +490,13 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC p f      | project-find-file                  | Find file in project     |
 | SPC p p      | project-switch-project             | Switch project           |
 | SPC p e      | project-eshell                     | Open project eshell      |
+| SPC p g      | project-find-regexp                | Grep across project      |
+| SPC p d      | project-dired                      | Dired at project root    |
+| SPC p c      | project-compile                    | Compile project          |
+| SPC p k      | project-kill-buffers               | Kill project buffers     |
+| SPC p v      | project-vc-dir                     | VC status for project    |
+| SPC p b      | project-switch-to-buffer            | Switch project buffer    |
+| SPC p s      | project-shell                       | Open project shell       |
 | SPC o a      | org-agenda                         | Org agenda               |
 | SPC o c      | org-capture                        | Org capture              |
 | SPC o l      | org-store-link                     | Org store link           |
