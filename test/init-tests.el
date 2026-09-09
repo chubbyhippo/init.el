@@ -404,6 +404,10 @@ organize-imports now lives under o instead, so i hosts only this one leaf."
   (should (eq (init-test--leader "g i") 'eglot-find-implementation))
   (should (eq (init-test--leader "g t") 'eglot-find-typeDefinition)))
 
+(ert-deftest init-test/given-the-leader-then-g-g-is-magit-status ()
+  "SPC g g mirrors C-x g, joining the goto prefix's other g d/i/t leaves."
+  (should (eq (init-test--leader "g g") 'magit-status)))
+
 (ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
   "eglot's raw list-connections lives at C-c l c, but l is already a leaf
 command elsewhere on mode-specific-map (org-store-link); nesting there would

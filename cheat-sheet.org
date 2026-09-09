@@ -480,6 +480,7 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC g d      | eglot-find-declaration             | Find declaration         |
 | SPC g i      | eglot-find-implementation          | Find implementation      |
 | SPC g t      | eglot-find-typeDefinition          | Find type definition     |
+| SPC g g      | magit-status                       | Open Magit status        |
 | SPC L r      | eglot-reconnect                    | Reconnect LSP server     |
 | SPC L s      | eglot-shutdown-all                 | Stop all LSP servers     |
 | SPC L c      | eglot-list-connections             | List LSP connections     |
