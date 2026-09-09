@@ -62,6 +62,10 @@
   (windmove-default-keybindings)
   (winner-mode 1)
   (setq read-process-output-max (* 1024 1024))
+  (setq fast-but-imprecise-scrolling t
+        redisplay-skip-fontification-on-input t
+        jit-lock-defer-time 0.1
+        inhibit-compacting-font-caches t)
   (setq custom-file (locate-user-emacs-file "custom.el"))
   (load custom-file 'noerror)
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)

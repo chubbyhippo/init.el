@@ -620,6 +620,16 @@ runs happily alongside corfu."
 LSP responses arrive in fewer chunks — snappier eglot."
   (should (init-test--declares '(setq read-process-output-max (* 1024 1024)))))
 
+(ert-deftest init-test/given-the-config-then-redisplay-favors-speed-over-precision ()
+  "The four scrolling/fontification/font-cache knobs the Emacs manual and
+NEWS.25.2 themselves recommend for a smoother, less stuttery redisplay --
+not community folklore like scroll-conservatively or bidi-display-reordering,
+which the manual/docstring explicitly do NOT endorse for performance."
+  (should (init-test--declares '(setq fast-but-imprecise-scrolling t
+                                  redisplay-skip-fontification-on-input t
+                                  jit-lock-defer-time 0.1
+                                  inhibit-compacting-font-caches t))))
+
 (ert-deftest init-test/given-customize-then-its-writes-go-to-a-separate-file ()
   "M-x customize saves are redirected to custom.el so they never rewrite this
 hand-curated init.el."

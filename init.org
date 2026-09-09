@@ -118,6 +118,37 @@ Raise the process read buffer from the 64 KB default to 1 MB.  Large LSP
 responses then arrive in far fewer chunks — noticeably snappier eglot.
 
 #+begin_src elisp
+(setq fast-but-imprecise-scrolling t
+      redisplay-skip-fontification-on-input t
+      jit-lock-defer-time 0.1
+      inhibit-compacting-font-caches t)
+#+end_src
+
+Four redisplay knobs the manual and NEWS themselves recommend for
+smoother scrolling/typing, each with its official source and tradeoff:
+
+- =fast-but-imprecise-scrolling= — manual §Scrolling: skip fontifying
+  newly-revealed text while scrolling fast; the tradeoff is the displayed
+  region can be briefly imprecise.
+- =redisplay-skip-fontification-on-input= — manual §Scrolling, offered as
+  an alternative/companion to the above: skip fontification entirely while
+  input is pending, so a burst of scroll/keys doesn't stall on syntax
+  highlighting.
+- =jit-lock-defer-time= — manual §Scrolling suggests =0.1=-=0.25=
+  explicitly: defer fontification until Emacs has been idle this long, so
+  typing doesn't block on font-lock.
+- =inhibit-compacting-font-caches= — NEWS.25.2's own wording almost
+  verbatim: don't compact font caches on GC, trading memory for avoiding
+  re-opening large fonts (e.g. the Nerd Font glyphs) during redisplay;
+  already Emacs's own default on MS-Windows.
+
+Deliberately *not* set: =bidi-display-reordering= (the docstring itself
+says disabling it is "not supported" — =bidi-paragraph-direction= is the
+sanctioned lever instead) and a large =scroll-conservatively= (a UX/
+behavioral variable, not a documented performance knob; the "set it to
+101 for smooth scrolling" advice is Emacs-wiki folklore, not official).
+
+#+begin_src elisp
 (setq custom-file (locate-user-emacs-file "custom.el"))
 (load custom-file 'noerror)
 #+end_src
