@@ -643,6 +643,8 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("f o" . eglot-format-buffer)
  '("f s" . save-buffer)
  '("i n" . eglot-code-action-inline)
+ '("i i" . consult-imenu)
+ '("i m" . consult-imenu-multi)
  '("g d" . eglot-find-declaration)
  '("g i" . eglot-find-implementation)
  '("g t" . eglot-find-typeDefinition)
@@ -697,8 +699,11 @@ Key facts to internalise:
   the existing =o= org prefix (=o a=/=o c=/=o l=) exactly like =r=/=f=
   already share eglot commands with ripgrep/find-file; its sibling
   =eglot-code-action-inline= keeps a lone =i n= (no point folding a single
-  leaf into a whole new prefix). The three "find" commands get a =g=
-  ("goto") prefix (=g d=/=g i=/=g t=), which also hosts =g g=
+  leaf into a whole new prefix on its own), and now shares that =i= prefix
+  with Consult's =i i= (=consult-imenu=) / =i m= (=consult-imenu-multi=) --
+  imenu was configured nowhere before, so it rides along on the smallest
+  existing prefix rather than spawning a new one. The three "find" commands
+  get a =g= ("goto") prefix (=g d=/=g i=/=g t=), which also hosts =g g=
   (=magit-status=, mirroring raw =C-x g=); =f o= (format) simply joins the
   existing =f= prefix next to =f f= (=find-file=). =f s= (=save-buffer=)
   joins the same =f= prefix: =SPC x s= only reaches =C-x s=

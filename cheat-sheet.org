@@ -477,6 +477,8 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC f o      | eglot-format-buffer                | Format whole buffer      |
 | SPC f s      | save-buffer                        | Save buffer (runs format-on-save) |
 | SPC i n      | eglot-code-action-inline           | Inline code action       |
+| SPC i i      | consult-imenu                      | Jump via imenu           |
+| SPC i m      | consult-imenu-multi                | Jump via imenu (project) |
 | SPC g d      | eglot-find-declaration             | Find declaration         |
 | SPC g i      | eglot-find-implementation          | Find implementation      |
 | SPC g t      | eglot-find-typeDefinition          | Find type definition     |

@@ -540,6 +540,8 @@ would take the major mode's own capf with it."
      '("f o" . eglot-format-buffer)
      '("f s" . save-buffer)
      '("i n" . eglot-code-action-inline)
+     '("i i" . consult-imenu)
+     '("i m" . consult-imenu-multi)
      '("g d" . eglot-find-declaration)
      '("g i" . eglot-find-implementation)
      '("g t" . eglot-find-typeDefinition)

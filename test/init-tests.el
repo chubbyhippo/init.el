@@ -394,9 +394,15 @@ than introducing a whole new prefix for a single command."
   (should (eq (init-test--leader "o a") 'org-agenda)))
 
 (ert-deftest init-test/given-the-leader-then-i-n-is-eglot-code-action-inline ()
-  "SPC i n mirrors C-c i n verbatim; no sibling needed since
-organize-imports now lives under o instead, so i hosts only this one leaf."
+  "SPC i n mirrors C-c i n verbatim; organize-imports lives under o instead,
+so i is otherwise free for consult-imenu to ride along on."
   (should (eq (init-test--leader "i n") 'eglot-code-action-inline)))
+
+(ert-deftest init-test/given-the-leader-then-i-group-also-hosts-consult-imenu ()
+  "SPC i i / i m are consult-imenu / consult-imenu-multi, sharing the i
+prefix with eglot-code-action-inline rather than spawning a new prefix."
+  (should (eq (init-test--leader "i i") 'consult-imenu))
+  (should (eq (init-test--leader "i m") 'consult-imenu-multi)))
 
 (ert-deftest init-test/given-the-leader-then-g-group-is-eglot-goto-commands ()
   "SPC g d/i/t mirror C-c d / C-c I / C-c t under a fresh g (goto) prefix."
