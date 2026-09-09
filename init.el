@@ -549,7 +549,7 @@ would take the major mode's own capf with it."
      '("g d" . eglot-find-declaration)
      '("g i" . eglot-find-implementation)
      '("g t" . eglot-find-typeDefinition)
-     '("g g" . magit-status)
+     '("v c" . magit-status)
      '("L r" . eglot-reconnect)
      '("L s" . eglot-shutdown-all)
      '("L c" . eglot-list-connections)

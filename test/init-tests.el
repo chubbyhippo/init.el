@@ -410,9 +410,9 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "g i") 'eglot-find-implementation))
   (should (eq (init-test--leader "g t") 'eglot-find-typeDefinition)))
 
-(ert-deftest init-test/given-the-leader-then-g-g-is-magit-status ()
-  "SPC g g mirrors C-x g, joining the goto prefix's other g d/i/t leaves."
-  (should (eq (init-test--leader "g g") 'magit-status)))
+(ert-deftest init-test/given-the-leader-then-v-c-is-magit-status ()
+  "SPC v c runs magit-status under the v (version control) prefix."
+  (should (eq (init-test--leader "v c") 'magit-status)))
 
 (ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
   "eglot's raw list-connections lives at C-c l c, but l is already a leaf

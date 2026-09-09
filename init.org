@@ -679,7 +679,7 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("g d" . eglot-find-declaration)
  '("g i" . eglot-find-implementation)
  '("g t" . eglot-find-typeDefinition)
- '("g g" . magit-status)
+ '("v c" . magit-status)
  '("L r" . eglot-reconnect)
  '("L s" . eglot-shutdown-all)
  '("L c" . eglot-list-connections)
@@ -734,9 +734,10 @@ Key facts to internalise:
   with Consult's =i i= (=consult-imenu=) / =i m= (=consult-imenu-multi=) --
   imenu was configured nowhere before, so it rides along on the smallest
   existing prefix rather than spawning a new one. The three "find" commands
-  get a =g= ("goto") prefix (=g d=/=g i=/=g t=), which also hosts =g g=
-  (=magit-status=, mirroring raw =C-x g=); =f o= (format) simply joins the
-  existing =f= prefix next to =f f= (=find-file=). =f s= (=save-buffer=)
+  get a =g= ("goto") prefix (=g d=/=g i=/=g t=); =v c= provides a conflict-free
+  leader binding for =magit-status= under the =v= (version control) prefix;
+  =f o= (format) simply joins the existing =f= prefix next to =f f=
+  (=find-file=). =f s= (=save-buffer=)
   joins the same =f= prefix: =SPC x s= only reaches =C-x s=
   (=project-save-some-buffers=) through keypad translation, which prompts
   per buffer and skips =before-save-hook= (and therefore format-on-save
