@@ -306,9 +306,9 @@ binding at all anymore; it's only reachable via =M-RET= or the leader's
 | =C-c e x= | =eglot-code-action-extract=             | =r x=                   | (no discrete platform action)                   |
 | =C-c r w= | =eglot-code-action-rewrite=             | =r w=                   | (no discrete platform action)                   |
 | =C-c q=   | =eglot-code-action-quickfix=            | =r q=                   | (no discrete platform action)                   |
-| =C-c d=   | =eglot-find-declaration=                | =g d=                   | =SPC m .= → GotoDeclaration                |
-| =C-c I=   | =eglot-find-implementation=             | =g i=                   | =SPC g i= / =SPC j i= → GotoImplementation |
-| =C-c t=   | =eglot-find-typeDefinition=             | =g t=                   | (no discrete platform action)                   |
+| =C-c d=   | =eglot-find-declaration=                | =j d=                   | =SPC m .= → GotoDeclaration                |
+| =C-c I=   | =eglot-find-implementation=             | =j i=                   | =SPC g i= / =SPC j i= → GotoImplementation |
+| =C-c t=   | =eglot-find-typeDefinition=             | =j t=                   | (no discrete platform action)                   |
 | =C-c R=   | =eglot-reconnect=                       | =L r=                   | =SPC s v= → ReloadRc (loose)               |
 | =C-c S=   | =eglot-shutdown-all=                    | =L s=                   | (no analog)                                     |
 | =C-c l c= | =eglot-list-connections=                | =L c=                   | (no analog)                                     |
@@ -676,9 +676,9 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("i n" . eglot-code-action-inline)
  '("i i" . consult-imenu)
  '("i m" . consult-imenu-multi)
- '("g d" . eglot-find-declaration)
- '("g i" . eglot-find-implementation)
- '("g t" . eglot-find-typeDefinition)
+ '("j d" . eglot-find-declaration)
+ '("j i" . eglot-find-implementation)
+ '("j t" . eglot-find-typeDefinition)
  '("v c" . magit-status)
  '("v b" . magit-blame)
  '("v l" . magit-log)
@@ -738,7 +738,7 @@ Key facts to internalise:
   with Consult's =i i= (=consult-imenu=) / =i m= (=consult-imenu-multi=) --
   imenu was configured nowhere before, so it rides along on the smallest
   existing prefix rather than spawning a new one. The three "find" commands
-  get a =g= ("goto") prefix (=g d=/=g i=/=g t=); =v= provides conflict-free
+  get a =j= ("jump/goto") prefix (=j d=/=j i=/=j t=); =v= provides conflict-free
   leader bindings for Magit / version control (=v c= =magit-status=, =v b=
   =magit-blame=, =v l= =magit-log=, =v d= =magit-diff=, =v f=
   =magit-file-dispatch=); =f o= (format) simply joins the existing =f= prefix

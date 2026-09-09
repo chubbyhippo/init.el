@@ -404,11 +404,11 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "i i") 'consult-imenu))
   (should (eq (init-test--leader "i m") 'consult-imenu-multi)))
 
-(ert-deftest init-test/given-the-leader-then-g-group-is-eglot-goto-commands ()
-  "SPC g d/i/t mirror C-c d / C-c I / C-c t under a fresh g (goto) prefix."
-  (should (eq (init-test--leader "g d") 'eglot-find-declaration))
-  (should (eq (init-test--leader "g i") 'eglot-find-implementation))
-  (should (eq (init-test--leader "g t") 'eglot-find-typeDefinition)))
+(ert-deftest init-test/given-the-leader-then-j-group-is-eglot-goto-commands ()
+  "SPC j d/i/t mirror C-c d / C-c I / C-c t under a j (jump/goto) prefix."
+  (should (eq (init-test--leader "j d") 'eglot-find-declaration))
+  (should (eq (init-test--leader "j i") 'eglot-find-implementation))
+  (should (eq (init-test--leader "j t") 'eglot-find-typeDefinition)))
 
 (ert-deftest init-test/given-the-leader-then-v-group-is-version-control ()
   "SPC v c/b/l/d/f run Magit commands under the v (version control) prefix."

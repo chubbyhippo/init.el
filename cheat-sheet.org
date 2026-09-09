@@ -479,9 +479,9 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC i n      | eglot-code-action-inline           | Inline code action       |
 | SPC i i      | consult-imenu                      | Jump via imenu           |
 | SPC i m      | consult-imenu-multi                | Jump via imenu (project) |
-| SPC g d      | eglot-find-declaration             | Find declaration         |
-| SPC g i      | eglot-find-implementation          | Find implementation      |
-| SPC g t      | eglot-find-typeDefinition          | Find type definition     |
+| SPC j d      | eglot-find-declaration             | Find declaration         |
+| SPC j i      | eglot-find-implementation          | Find implementation      |
+| SPC j t      | eglot-find-typeDefinition          | Find type definition     |
 | SPC v c      | magit-status                       | Open Magit status        |
 | SPC v b      | magit-blame                        | Magit blame              |
 | SPC v l      | magit-log                          | Magit log                |
@@ -659,9 +659,9 @@ there (=l= is already a leaf command on the leader), so it moved to a new
 | C-c e x                              | r x          | eglot-code-action-extract          | Extract code action                    |
 | C-c r w                              | r w          | eglot-code-action-rewrite          | Rewrite code action                    |
 | C-c q                                | r q          | eglot-code-action-quickfix         | Quickfix code action                   |
-| C-c d                                | g d          | eglot-find-declaration             | Find declaration                       |
-| C-c I                                | g i          | eglot-find-implementation          | Find implementation                    |
-| C-c t                                | g t          | eglot-find-typeDefinition          | Find type definition                   |
+| C-c d                                | j d          | eglot-find-declaration             | Find declaration                       |
+| C-c I                                | j i          | eglot-find-implementation          | Find implementation                    |
+| C-c t                                | j t          | eglot-find-typeDefinition          | Find type definition                   |
 | C-c R                                | L r          | eglot-reconnect                    | Reconnect                              |
 | C-c S                                | L s          | eglot-shutdown-all                 | Stop all servers                       |
 | C-c l c                              | L c          | eglot-list-connections             | List connections                       |
