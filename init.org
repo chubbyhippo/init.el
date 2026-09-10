@@ -684,6 +684,17 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("v l" . magit-log)
  '("v d" . magit-diff)
  '("v f" . magit-file-dispatch)
+ '("v P" . magit-push)
+ '("v p" . magit-pull)
+ '("v m" . magit-merge)
+ '("v M" . magit-remote)
+ '("v r" . magit-rebase)
+ '("v t" . magit-tag)
+ '("v s" . magit-status)
+ '("v S" . magit-stash)
+ '("v C" . magit-commit)
+ '("v R" . magit-reset)
+ '("v w" . magit-worktree)
  '("L r" . eglot-reconnect)
  '("L s" . eglot-shutdown-all)
  '("L c" . eglot-list-connections)
@@ -739,9 +750,15 @@ Key facts to internalise:
   imenu was configured nowhere before, so it rides along on the smallest
   existing prefix rather than spawning a new one. The three "find" commands
   get a =j= ("jump/goto") prefix (=j d=/=j i=/=j t=); =v= provides conflict-free
-  leader bindings for Magit / version control (=v c= =magit-status=, =v b=
+  leader bindings for Magit / version control (=v c=/=v s= =magit-status=, =v b=
   =magit-blame=, =v l= =magit-log=, =v d= =magit-diff=, =v f=
-  =magit-file-dispatch=); =f o= (format) simply joins the existing =f= prefix
+  =magit-file-dispatch=). The rest of =v= mirrors Magit's own
+  =magit-dispatch= letters wherever they were still free: =v P=
+  =magit-push=, =v p= =magit-pull=, =v m= =magit-merge=, =v M=
+  =magit-remote=, =v r= =magit-rebase=, =v t= =magit-tag=, =v S=
+  =magit-stash=, =v R= =magit-reset=, =v w= =magit-worktree=; =v C=
+  =magit-commit= gets a capital since lowercase =c=/=s= already point at
+  status; =f o= (format) simply joins the existing =f= prefix
   next to =f f= (=find-file=). =f s= (=save-buffer=)
   joins the same =f= prefix: =SPC x s= only reaches =C-x s=
   (=project-save-some-buffers=) through keypad translation, which prompts

@@ -418,6 +418,20 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "v d") 'magit-diff))
   (should (eq (init-test--leader "v f") 'magit-file-dispatch)))
 
+(ert-deftest init-test/given-the-leader-then-v-group-has-more-magit-mnemonics ()
+  "SPC v P/p/m/M/r/t/s/S/C/R/w mirror magit-dispatch's own letters where free."
+  (should (eq (init-test--leader "v P") 'magit-push))
+  (should (eq (init-test--leader "v p") 'magit-pull))
+  (should (eq (init-test--leader "v m") 'magit-merge))
+  (should (eq (init-test--leader "v M") 'magit-remote))
+  (should (eq (init-test--leader "v r") 'magit-rebase))
+  (should (eq (init-test--leader "v t") 'magit-tag))
+  (should (eq (init-test--leader "v s") 'magit-status))
+  (should (eq (init-test--leader "v S") 'magit-stash))
+  (should (eq (init-test--leader "v C") 'magit-commit))
+  (should (eq (init-test--leader "v R") 'magit-reset))
+  (should (eq (init-test--leader "v w") 'magit-worktree)))
+
 (ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
   "eglot's raw list-connections lives at C-c l c, but l is already a leaf
 command elsewhere on mode-specific-map (org-store-link); nesting there would

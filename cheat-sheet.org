@@ -487,6 +487,17 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC v l      | magit-log                          | Magit log                |
 | SPC v d      | magit-diff                         | Magit diff               |
 | SPC v f      | magit-file-dispatch                | Magit file dispatch      |
+| SPC v P      | magit-push                         | Magit push               |
+| SPC v p      | magit-pull                         | Magit pull                |
+| SPC v m      | magit-merge                        | Magit merge               |
+| SPC v M      | magit-remote                       | Magit remote              |
+| SPC v r      | magit-rebase                       | Magit rebase              |
+| SPC v t      | magit-tag                          | Magit tag                 |
+| SPC v s      | magit-status                       | Magit status (alt. to v c) |
+| SPC v S      | magit-stash                        | Magit stash               |
+| SPC v C      | magit-commit                       | Magit commit              |
+| SPC v R      | magit-reset                        | Magit reset               |
+| SPC v w      | magit-worktree                     | Magit worktree            |
 | SPC L r      | eglot-reconnect                    | Reconnect LSP server     |
 | SPC L s      | eglot-shutdown-all                 | Stop all LSP servers     |
 | SPC L c      | eglot-list-connections             | List LSP connections     |
@@ -629,6 +640,10 @@ ace-window letters: =a s d f g h j k l=.
 4. Press =C-c C-k= (=with-editor-cancel=) to discard the message and abort the commit.
 
 Magit uses Meow MOTION state, so these single-key bindings remain available.
+
+=SPC v P/p/m/M/r/t/s/S/C/R/w= (see leader table above) reach push/pull/merge/
+remote/rebase/tag/status/stash/commit/reset/worktree directly from any
+buffer, without opening =magit-status= first.
 
 ** LSP (Eglot) & diagnostics
 Eglot auto-starts on =prog-mode= (except lisp-data derivatives). Its commands
