@@ -676,10 +676,10 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("i n" . eglot-code-action-inline)
  '("i i" . consult-imenu)
  '("i m" . consult-imenu-multi)
- '("j d" . eglot-find-declaration)
+ '("j d" . xref-find-definitions)
+ '("j D" . eglot-find-declaration)
  '("j i" . eglot-find-implementation)
  '("j t" . eglot-find-typeDefinition)
- '("j f" . xref-find-definitions)
  '("j r" . xref-find-references)
  '("j a" . xref-find-apropos)
  '("j b" . xref-go-back)
@@ -753,11 +753,13 @@ Key facts to internalise:
   with Consult's =i i= (=consult-imenu=) / =i m= (=consult-imenu-multi=) --
   imenu was configured nowhere before, so it rides along on the smallest
   existing prefix rather than spawning a new one. The three "find" commands
-  get a =j= ("jump/goto") prefix (=j d=/=j i=/=j t=). Eglot only defines
+  get a =j= ("jump/goto") prefix (=j D=/=j i=/=j t=). Eglot only defines
  those three "find" commands of its own (it delegates references,
  definitions, apropos, and marker-stack navigation to plain xref), and
  xref's own default keys (=M-.= etc.) are unbound / shadowed by
- =embark-dwim=, so =j= also picks up =j f= (=xref-find-definitions=),
+ =embark-dwim=, so =j d= (=xref-find-definitions=) takes the plain letter
+ since that's the far more common lookup, bumping Eglot's declaration
+ finder to =j D=; =j= also picks up
  =j r= (=xref-find-references=), =j a= (=xref-find-apropos=), and =j b=
  (=xref-go-back=); =v= provides conflict-free
   leader bindings for Magit / version control (=v c=/=v s= =magit-status=, =v b=

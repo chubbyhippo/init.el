@@ -405,14 +405,16 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "i m") 'consult-imenu-multi)))
 
 (ert-deftest init-test/given-the-leader-then-j-group-is-eglot-goto-commands ()
-  "SPC j d/i/t mirror C-c d / C-c I / C-c t under a j (jump/goto) prefix."
-  (should (eq (init-test--leader "j d") 'eglot-find-declaration))
+  "SPC j D/i/t mirror C-c d / C-c I / C-c t under a j (jump/goto) prefix."
+  (should (eq (init-test--leader "j D") 'eglot-find-declaration))
   (should (eq (init-test--leader "j i") 'eglot-find-implementation))
   (should (eq (init-test--leader "j t") 'eglot-find-typeDefinition)))
 
 (ert-deftest init-test/given-the-leader-then-j-group-also-hosts-xref ()
-  "Eglot has no find-references/apropos/back of its own; xref fills the j group."
-  (should (eq (init-test--leader "j f") 'xref-find-definitions))
+  "Eglot has no find-references/apropos/back of its own; xref fills the j group.
+ xref-find-definitions is the far more common lookup, so it takes j d,
+ bumping Eglot's declaration finder to j D."
+  (should (eq (init-test--leader "j d") 'xref-find-definitions))
   (should (eq (init-test--leader "j r") 'xref-find-references))
   (should (eq (init-test--leader "j a") 'xref-find-apropos))
   (should (eq (init-test--leader "j b") 'xref-go-back)))
