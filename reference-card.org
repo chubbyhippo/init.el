@@ -9,6 +9,8 @@ keys replace many motion/edit defaults while INSERT keeps vanilla Emacs editing.
 Discover anything live: =C-h b= (buffer bindings), =C-h k= (describe key),
 =C-h w= (where-is), =C-h m= (mode help), =C-h B= (embark-bindings, searchable).
 
+See =init.org= for the literate source and the WHY behind every binding here.
+
 * Built-in Emacs (essential)
 ** Help
 | Key         | Command              | Description                    |

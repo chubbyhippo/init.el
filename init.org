@@ -1006,6 +1006,8 @@ that has no server at all.
 * See also
 
 - =early-init.org= — study guide for the pre-startup file.
+- =reference-card.org= — the printable keybinding reference (built-in Emacs,
+  this config, and every =extras/= layer).
 - =test/init-tests.el= — the ERT suite that pins these conventions and WHYs;
   every "why" above has a matching =given … then …= spec.
 - =README.org= — the curl-to-Emacs bootstrap.
