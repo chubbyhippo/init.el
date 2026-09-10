@@ -347,6 +347,91 @@ grab-color default."
   "Spelled out so keypad translation does not drop it."
   (should (eq (init-test--leader "s") 'consult-line)))
 
+(ert-deftest init-test/given-the-leader-then-b-b-is-consult-buffer ()
+  "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
+  (should (eq (init-test--leader "b b") 'consult-buffer)))
+
+(ert-deftest init-test/given-the-leader-then-e-e-is-expreg-expand ()
+  "SPC e e expands region."
+  (should (eq (init-test--leader "e e") 'expreg-expand)))
+
+(ert-deftest init-test/given-the-leader-then-f-o-is-eglot-format-buffer ()
+  "Joins the existing f prefix (C-c f f = find-file) without touching it."
+  (should (eq (init-test--leader "f o") 'eglot-format-buffer))
+  (should-not (init-test--leader "f f")))
+
+(ert-deftest init-test/given-the-leader-then-f-s-is-save-buffer ()
+  "f s saves unconditionally so before-save-hook (format-on-save layers like
+extras/go.el) always fires, unlike SPC x s's C-x s project-save-some-buffers
+keypad fallback which prompts per buffer and can skip declined saves."
+  (should (eq (init-test--leader "f s") 'save-buffer))
+  (should-not (init-test--leader "f f")))
+
+(ert-deftest init-test/given-the-leader-then-i-group-also-hosts-consult-imenu ()
+  "SPC i i / i m are consult-imenu / consult-imenu-multi, sharing the i
+prefix with eglot-code-action-inline rather than spawning a new prefix."
+  (should (eq (init-test--leader "i i") 'consult-imenu))
+  (should (eq (init-test--leader "i m") 'consult-imenu-multi)))
+
+(ert-deftest init-test/given-the-leader-then-i-n-is-eglot-code-action-inline ()
+  "SPC i n mirrors C-c i n verbatim; organize-imports lives under o instead,
+so i is otherwise free for consult-imenu to ride along on."
+  (should (eq (init-test--leader "i n") 'eglot-code-action-inline)))
+
+(ert-deftest init-test/given-the-leader-then-j-group-also-hosts-xref ()
+  "Eglot has no find-references/apropos/back of its own; xref fills the j group.
+ xref-find-definitions is the far more common lookup, so it takes j d,
+ bumping Eglot's declaration finder to j D."
+  (should (eq (init-test--leader "j d") 'xref-find-definitions))
+  (should (eq (init-test--leader "j r") 'xref-find-references))
+  (should (eq (init-test--leader "j a") 'xref-find-apropos))
+  (should (eq (init-test--leader "j b") 'xref-go-back)))
+
+(ert-deftest init-test/given-the-leader-then-j-group-is-eglot-goto-commands ()
+  "SPC j D/i/t mirror C-c d / C-c I / C-c t under a j (jump/goto) prefix."
+  (should (eq (init-test--leader "j D") 'eglot-find-declaration))
+  (should (eq (init-test--leader "j i") 'eglot-find-implementation))
+  (should (eq (init-test--leader "j t") 'eglot-find-typeDefinition)))
+
+(ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
+  "eglot's raw list-connections lives at C-c l c, but l is already a leaf
+command elsewhere on mode-specific-map (org-store-link); nesting there would
+have clobbered it, so reconnect/shutdown-all/list-connections/events-buffer
+all moved to a capital L prefix instead, and my-meow-setup itself must leave
+the bare l key alone."
+  (should (init-test--declares '("C-c l" . org-store-link)))
+  (should-not (init-test--leader "l"))
+  (should (eq (init-test--leader "L r") 'eglot-reconnect))
+  (should (eq (init-test--leader "L s") 'eglot-shutdown-all))
+  (should (eq (init-test--leader "L c") 'eglot-list-connections))
+  (should (eq (init-test--leader "L e") 'eglot-events-buffer)))
+
+(ert-deftest init-test/given-the-leader-then-o-group-is-org-entry-points ()
+  "SPC o a / o c / o l mirror C-c a / C-c c / C-c l."
+  (should (eq (init-test--leader "o a") 'org-agenda))
+  (should (eq (init-test--leader "o c") 'org-capture))
+  (should (eq (init-test--leader "o l") 'org-store-link)))
+
+(ert-deftest init-test/given-the-leader-then-organize-imports-joins-the-o-prefix ()
+  "SPC o i mirrors C-c o i verbatim, joining the existing o (org) prefix --
+same trick as r/f sharing eglot commands with ripgrep/find-file -- rather
+than introducing a whole new prefix for a single command."
+  (should (eq (init-test--leader "o i") 'eglot-code-action-organize-imports))
+  (should (eq (init-test--leader "o a") 'org-agenda)))
+
+(ert-deftest init-test/given-the-leader-then-p-group-is-project-navigation ()
+  "SPC p f/p/e/g/d/c/k/v/b/s mirror the whole C-x p prefix without the C-x detour."
+  (should (eq (init-test--leader "p f") 'project-find-file))
+  (should (eq (init-test--leader "p p") 'project-switch-project))
+  (should (eq (init-test--leader "p e") 'project-eshell))
+  (should (eq (init-test--leader "p g") 'project-find-regexp))
+  (should (eq (init-test--leader "p d") 'project-dired))
+  (should (eq (init-test--leader "p c") 'project-compile))
+  (should (eq (init-test--leader "p k") 'project-kill-buffers))
+  (should (eq (init-test--leader "p v") 'project-vc-dir))
+  (should (eq (init-test--leader "p b") 'project-switch-to-buffer))
+  (should (eq (init-test--leader "p s") 'project-shell)))
+
 (ert-deftest init-test/given-the-leader-then-r-g-is-consult-ripgrep ()
   "Nested under r (shared with eglot's rename/rewrite) so C-c r can stay a
 prefix; matches the global C-c r g bind."
@@ -374,51 +459,6 @@ with it; my-meow-setup still must leave the bare c key (org-capture) alone."
   (should-not (init-test--leader "c"))
   (should (eq (init-test--leader "r a") 'eglot-code-actions)))
 
-(ert-deftest init-test/given-the-leader-then-f-o-is-eglot-format-buffer ()
-  "Joins the existing f prefix (C-c f f = find-file) without touching it."
-  (should (eq (init-test--leader "f o") 'eglot-format-buffer))
-  (should-not (init-test--leader "f f")))
-
-(ert-deftest init-test/given-the-leader-then-f-s-is-save-buffer ()
-  "f s saves unconditionally so before-save-hook (format-on-save layers like
-extras/go.el) always fires, unlike SPC x s's C-x s project-save-some-buffers
-keypad fallback which prompts per buffer and can skip declined saves."
-  (should (eq (init-test--leader "f s") 'save-buffer))
-  (should-not (init-test--leader "f f")))
-
-(ert-deftest init-test/given-the-leader-then-organize-imports-joins-the-o-prefix ()
-  "SPC o i mirrors C-c o i verbatim, joining the existing o (org) prefix --
-same trick as r/f sharing eglot commands with ripgrep/find-file -- rather
-than introducing a whole new prefix for a single command."
-  (should (eq (init-test--leader "o i") 'eglot-code-action-organize-imports))
-  (should (eq (init-test--leader "o a") 'org-agenda)))
-
-(ert-deftest init-test/given-the-leader-then-i-n-is-eglot-code-action-inline ()
-  "SPC i n mirrors C-c i n verbatim; organize-imports lives under o instead,
-so i is otherwise free for consult-imenu to ride along on."
-  (should (eq (init-test--leader "i n") 'eglot-code-action-inline)))
-
-(ert-deftest init-test/given-the-leader-then-i-group-also-hosts-consult-imenu ()
-  "SPC i i / i m are consult-imenu / consult-imenu-multi, sharing the i
-prefix with eglot-code-action-inline rather than spawning a new prefix."
-  (should (eq (init-test--leader "i i") 'consult-imenu))
-  (should (eq (init-test--leader "i m") 'consult-imenu-multi)))
-
-(ert-deftest init-test/given-the-leader-then-j-group-is-eglot-goto-commands ()
-  "SPC j D/i/t mirror C-c d / C-c I / C-c t under a j (jump/goto) prefix."
-  (should (eq (init-test--leader "j D") 'eglot-find-declaration))
-  (should (eq (init-test--leader "j i") 'eglot-find-implementation))
-  (should (eq (init-test--leader "j t") 'eglot-find-typeDefinition)))
-
-(ert-deftest init-test/given-the-leader-then-j-group-also-hosts-xref ()
-  "Eglot has no find-references/apropos/back of its own; xref fills the j group.
- xref-find-definitions is the far more common lookup, so it takes j d,
- bumping Eglot's declaration finder to j D."
-  (should (eq (init-test--leader "j d") 'xref-find-definitions))
-  (should (eq (init-test--leader "j r") 'xref-find-references))
-  (should (eq (init-test--leader "j a") 'xref-find-apropos))
-  (should (eq (init-test--leader "j b") 'xref-go-back)))
-
 (ert-deftest init-test/given-the-leader-then-v-group-is-version-control ()
   "SPC v c/b/l/d/f run Magit commands under the v (version control) prefix."
   (should (eq (init-test--leader "v c") 'magit-status))
@@ -440,46 +480,6 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "v C") 'magit-commit))
   (should (eq (init-test--leader "v R") 'magit-reset))
   (should (eq (init-test--leader "v w") 'magit-worktree)))
-
-(ert-deftest init-test/given-the-leader-then-L-group-is-eglot-session-management ()
-  "eglot's raw list-connections lives at C-c l c, but l is already a leaf
-command elsewhere on mode-specific-map (org-store-link); nesting there would
-have clobbered it, so reconnect/shutdown-all/list-connections/events-buffer
-all moved to a capital L prefix instead, and my-meow-setup itself must leave
-the bare l key alone."
-  (should (init-test--declares '("C-c l" . org-store-link)))
-  (should-not (init-test--leader "l"))
-  (should (eq (init-test--leader "L r") 'eglot-reconnect))
-  (should (eq (init-test--leader "L s") 'eglot-shutdown-all))
-  (should (eq (init-test--leader "L c") 'eglot-list-connections))
-  (should (eq (init-test--leader "L e") 'eglot-events-buffer)))
-
-(ert-deftest init-test/given-the-leader-then-b-b-is-consult-buffer ()
-  "One key deeper so a bare b does not clobber the C-c b bookmark prefix."
-  (should (eq (init-test--leader "b b") 'consult-buffer)))
-
-(ert-deftest init-test/given-the-leader-then-e-e-is-expreg-expand ()
-  "SPC e e expands region."
-  (should (eq (init-test--leader "e e") 'expreg-expand)))
-
-(ert-deftest init-test/given-the-leader-then-p-group-is-project-navigation ()
-  "SPC p f/p/e/g/d/c/k/v/b/s mirror the whole C-x p prefix without the C-x detour."
-  (should (eq (init-test--leader "p f") 'project-find-file))
-  (should (eq (init-test--leader "p p") 'project-switch-project))
-  (should (eq (init-test--leader "p e") 'project-eshell))
-  (should (eq (init-test--leader "p g") 'project-find-regexp))
-  (should (eq (init-test--leader "p d") 'project-dired))
-  (should (eq (init-test--leader "p c") 'project-compile))
-  (should (eq (init-test--leader "p k") 'project-kill-buffers))
-  (should (eq (init-test--leader "p v") 'project-vc-dir))
-  (should (eq (init-test--leader "p b") 'project-switch-to-buffer))
-  (should (eq (init-test--leader "p s") 'project-shell)))
-
-(ert-deftest init-test/given-the-leader-then-o-group-is-org-entry-points ()
-  "SPC o a / o c / o l mirror C-c a / C-c c / C-c l."
-  (should (eq (init-test--leader "o a") 'org-agenda))
-  (should (eq (init-test--leader "o c") 'org-capture))
-  (should (eq (init-test--leader "o l") 'org-store-link)))
 
 (ert-deftest init-test/given-the-leader-then-comma-and-dot-groups-navigate-hunks-and-errors ()
   "SPC ,/. c = previous/next hunk (diff-hl); ,/. e = error (flymake)."
