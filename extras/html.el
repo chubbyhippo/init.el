@@ -32,8 +32,10 @@
   :custom
   (css-indent-offset 2))
 
+(declare-function my-eglot-ensure "init" ())
+
 (use-package sgml-mode
   :ensure nil
-  :hook (html-mode . eglot-ensure)
+  :hook (html-mode . my-eglot-ensure)
   :custom
   (sgml-basic-offset 2))

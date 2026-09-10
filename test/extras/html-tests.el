@@ -72,8 +72,10 @@
 ;;; ================================================================= html.el
 (ert-deftest extras-test/given-html-then-html-mode-gets-the-missing-eglot-hook ()
   "html-mode derives from text-mode, so init.el's prog-mode hook never fires
-for it; this file's whole reason to exist is patching that gap directly."
-  (should (member '(html-mode . eglot-ensure)
+for it; this file's whole reason to exist is patching that gap directly.
+It hooks my-eglot-ensure (not raw eglot-ensure) for consistency with every
+other integration point in the repo."
+  (should (member '(html-mode . my-eglot-ensure)
                   (extras-test--use-package-section "html.el" 'sgml-mode :hook)))
   (should (member '(sgml-basic-offset 2)
                   (extras-test--use-package-section "html.el" 'sgml-mode :custom))))
