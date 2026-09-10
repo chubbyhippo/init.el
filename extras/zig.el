@@ -21,9 +21,6 @@
   :ensure t
   :mode "\\.zig\\'")
 
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs '(zig-mode . ("zls"))))
-
 (use-package dape
   :ensure t
   :commands (dape dape-breakpoint-toggle)

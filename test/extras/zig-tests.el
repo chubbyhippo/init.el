@@ -39,8 +39,8 @@
 ;; ELPA-only: zig-mode is on NonGNU ELPA, dape on GNU ELPA; eglot is built in.
 ;;
 ;; zig-mode auto-binds .zig and derives from prog-mode, so eglot attaches via
-;; init.el's prog-mode hook. eglot has no Zig entry, so this layer points it
-;; at zls.
+;; init.el's prog-mode hook. Eglot already ships a built-in zls entry for
+;; zig-mode/zig-ts-mode, so this layer does not need to register one itself.
 ;;
 ;; dape ships no Zig config, so one is registered as an lldb-dap config (needs
 ;; LLVM's lldb-dap). M-x dape → `zig-lldb'; tweak :program to your built
@@ -54,10 +54,15 @@
 (ert-deftest extras-test/given-zig-then-zig-mode-is-bound-to-dot-zig ()
   (should (member "\\.zig\\'" (extras-test--use-package-section "zig.el" 'zig-mode :mode))))
 
-(ert-deftest extras-test/given-zig-then-eglot-learns-zls ()
-  (let ((eglot-server-programs nil))
-    (extras-test--eval-with-eval-after-load "zig.el" 'eglot)
-    (should (equal (cdr (assoc 'zig-mode eglot-server-programs)) '("zls")))))
+(ert-deftest extras-test/given-zig-then-eglot-already-knows-zls-natively ()
+  "Eglot's own default table covers zig-mode/zig-ts-mode; extras/zig.el
+must not re-register a redundant eglot-server-programs entry."
+  (should (require 'eglot))
+  (let ((entry (cl-find-if (lambda (e) (member 'zig-mode (ensure-list (car e))))
+                           eglot-server-programs)))
+    (should entry)
+    (should (equal (cdr entry) '("zls"))))
+  (should-not (extras-test--declares "zig.el" '(add-to-list 'eglot-server-programs))))
 
 (ert-deftest extras-test/given-zig-then-dape-gets-an-lldb-dap-config ()
   (let ((dape-configs nil))
