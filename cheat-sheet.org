@@ -231,6 +231,10 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | C-M-.     | xref-find-apropos     | Apropos definitions                                            |
 | M-x imenu | imenu                 | Jump by outline/index                                          |
 
+=SPC j f/r/a/b= mirror these onto the leader (=M-.= is shadowed by
+=embark-dwim= globally, so =j f= is the reliable way to reach
+=xref-find-definitions= from the leader).
+
 ** Org-mode (built-in major mode keys; globals also in init.el)
 | Key             | Command                 | Description             |
 |-----------------+-------------------------+-------------------------|
@@ -482,6 +486,10 @@ Cape: =cape-dabbrev=, =cape-file=, =cape-keyword= on CAPF; eglot merged via =my-
 | SPC j d      | eglot-find-declaration             | Find declaration         |
 | SPC j i      | eglot-find-implementation          | Find implementation      |
 | SPC j t      | eglot-find-typeDefinition          | Find type definition     |
+| SPC j f      | xref-find-definitions              | Find definitions (xref)  |
+| SPC j r      | xref-find-references               | Find references (xref)   |
+| SPC j a      | xref-find-apropos                  | Find symbol apropos      |
+| SPC j b      | xref-go-back                       | Jump back (xref)          |
 | SPC v c      | magit-status                       | Open Magit status        |
 | SPC v b      | magit-blame                        | Magit blame              |
 | SPC v l      | magit-log                          | Magit log                |

@@ -679,6 +679,10 @@ still work.  Hit =SPC= in NORMAL to pop the *leader* (the command menu).
  '("j d" . eglot-find-declaration)
  '("j i" . eglot-find-implementation)
  '("j t" . eglot-find-typeDefinition)
+ '("j f" . xref-find-definitions)
+ '("j r" . xref-find-references)
+ '("j a" . xref-find-apropos)
+ '("j b" . xref-go-back)
  '("v c" . magit-status)
  '("v b" . magit-blame)
  '("v l" . magit-log)
@@ -749,7 +753,13 @@ Key facts to internalise:
   with Consult's =i i= (=consult-imenu=) / =i m= (=consult-imenu-multi=) --
   imenu was configured nowhere before, so it rides along on the smallest
   existing prefix rather than spawning a new one. The three "find" commands
-  get a =j= ("jump/goto") prefix (=j d=/=j i=/=j t=); =v= provides conflict-free
+  get a =j= ("jump/goto") prefix (=j d=/=j i=/=j t=). Eglot only defines
+ those three "find" commands of its own (it delegates references,
+ definitions, apropos, and marker-stack navigation to plain xref), and
+ xref's own default keys (=M-.= etc.) are unbound / shadowed by
+ =embark-dwim=, so =j= also picks up =j f= (=xref-find-definitions=),
+ =j r= (=xref-find-references=), =j a= (=xref-find-apropos=), and =j b=
+ (=xref-go-back=); =v= provides conflict-free
   leader bindings for Magit / version control (=v c=/=v s= =magit-status=, =v b=
   =magit-blame=, =v l= =magit-log=, =v d= =magit-diff=, =v f=
   =magit-file-dispatch=). The rest of =v= mirrors Magit's own

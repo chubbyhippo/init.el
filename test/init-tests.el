@@ -410,6 +410,13 @@ prefix with eglot-code-action-inline rather than spawning a new prefix."
   (should (eq (init-test--leader "j i") 'eglot-find-implementation))
   (should (eq (init-test--leader "j t") 'eglot-find-typeDefinition)))
 
+(ert-deftest init-test/given-the-leader-then-j-group-also-hosts-xref ()
+  "Eglot has no find-references/apropos/back of its own; xref fills the j group."
+  (should (eq (init-test--leader "j f") 'xref-find-definitions))
+  (should (eq (init-test--leader "j r") 'xref-find-references))
+  (should (eq (init-test--leader "j a") 'xref-find-apropos))
+  (should (eq (init-test--leader "j b") 'xref-go-back)))
+
 (ert-deftest init-test/given-the-leader-then-v-group-is-version-control ()
   "SPC v c/b/l/d/f run Magit commands under the v (version control) prefix."
   (should (eq (init-test--leader "v c") 'magit-status))
