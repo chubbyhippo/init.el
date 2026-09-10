@@ -987,21 +987,27 @@ at the bottom of =init.el= to enable one:
 Most follow one pattern: a built-in tree-sitter major mode (guarded by
 =treesit-language-available-p=) + eglot (hooked globally from =init.el=) +
 dape for debugging.  The exceptions (clojure, cobol, erlang, haskell, html,
-perl, scheme) and each file's external-binary requirements are documented in
-their own headers — haskell and cobol are the languages with no built-in mode
-at all, so even the major mode comes from ELPA; html is the opposite extreme
-(every mode is built in, and the layer exists only because the HTML modes
-derive from =text-mode=, so the prog-mode eglot hook above never reaches them);
-perl stays on built-in =cperl-mode= (no =perl-ts-mode=) and skips dape in
-favour of =M-x perldb=, same "no standard DAP" call as erlang.
+json, markdown, perl, scheme, yaml) and each file's external-binary
+requirements are documented in their own headers — haskell and cobol are the
+languages with no built-in mode at all, so even the major mode comes from
+ELPA (markdown joins them: Emacs core has no Markdown mode of its own,
+tree-sitter or otherwise, until Emacs 32); html, json, and yaml are the
+opposite extreme (every mode is built in, though json-ts-mode and
+yaml-ts-mode still need their :mode keyword set explicitly, since their own
+auto-mode-alist registration isn't autoload-cookied); markdown-mode and
+yaml-ts-mode join html in deriving from =text-mode=, so the prog-mode eglot
+hook above never reaches them either; perl stays on built-in =cperl-mode=
+(no =perl-ts-mode=) and skips dape in favour of =M-x perldb=, same "no
+standard DAP" call as erlang; json and yaml skip dape outright, since
+neither is executable code.
 
-The eglot hook is the seam those last two pull on from opposite sides.  html
-adds the hook the mode never gets; cobol *withholds* it — =cobol-mode= is a
-prog-mode child, so the hook fires whether or not a server exists, and an
-absent one warns on every file opened.  So =extras/cobol.el= advises
-=my-eglot-ensure= to stand down in COBOL buffers until =superbol-free= is on
-PATH, the same lever =extras/scheme.el= pulls unconditionally for a language
-that has no server at all.
+The eglot hook is the seam those last two pull on from opposite sides.  html,
+markdown, and yaml add the hook the mode never gets; cobol *withholds* it —
+=cobol-mode= is a prog-mode child, so the hook fires whether or not a server
+exists, and an absent one warns on every file opened.  So =extras/cobol.el=
+advises =my-eglot-ensure= to stand down in COBOL buffers until
+=superbol-free= is on PATH, the same lever =extras/scheme.el= pulls
+unconditionally for a language that has no server at all.
 
 * See also
 

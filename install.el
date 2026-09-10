@@ -33,12 +33,16 @@
                     "extras/haskell.el"
                     "extras/html.el"
                     "extras/java.el"
+                    "extras/json.el"
+                    "extras/markdown.el"
                     "extras/perl.el"
+                    "extras/php.el"
                     "extras/python.el"
                     "extras/ruby.el"
                     "extras/rust.el"
                     "extras/scheme.el"
                     "extras/typescript.el"
+                    "extras/yaml.el"
                     "extras/zig.el"))
       (let ((dest (expand-file-name file dir)))
         (make-directory (file-name-directory dest) t)  ; create dir / extras/ as needed
