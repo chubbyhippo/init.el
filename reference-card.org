@@ -1,8 +1,8 @@
-#+title: Emacs Shortcuts Cheat Sheet
+#+title: Emacs Shortcuts Reference Card
 #+subtitle: Built-in Emacs + this config (init.el) + extras/
 #+options: toc:2 num:nil
 
-This sheet covers (1) essential *built-in* GNU Emacs keys, (2) every binding
+This card covers (1) essential *built-in* GNU Emacs keys, (2) every binding
 defined in =init.el=, and (3) language extras under =extras/=. Meow normal-state
 keys replace many motion/edit defaults while INSERT keeps vanilla Emacs editing.
 
