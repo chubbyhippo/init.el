@@ -791,6 +791,7 @@ ace-window would otherwise jump to the other window."
 ;; (load (expand-file-name "extras/html.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/java.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/json.el"       user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/kotlin.el"     user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/markdown.el"   user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/perl.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/php.el"        user-emacs-directory) :noerror :nomessage)

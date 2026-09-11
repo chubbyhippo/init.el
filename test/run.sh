@@ -45,6 +45,7 @@ exec "$EMACS" -Q --batch \
   -l "$here/extras/html-tests.el" \
   -l "$here/extras/java-tests.el" \
   -l "$here/extras/json-tests.el" \
+  -l "$here/extras/kotlin-tests.el" \
   -l "$here/extras/markdown-tests.el" \
   -l "$here/extras/perl-tests.el" \
   -l "$here/extras/php-tests.el" \
