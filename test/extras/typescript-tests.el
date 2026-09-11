@@ -53,6 +53,19 @@
 ;;     wired as `prettier-format-on-save-mode' via reformatter.el;
 ;;     `eglot-format-buffer' would call tsserver's own formatter instead,
 ;;     which isn't Prettier-aware.
+;;   - React Native / Expo (optional, activates only IF the project uses
+;;     them) — `my-typescript-run-dev-server' (C-c C-s / M-x) reads the
+;;     nearest package.json upward from `default-directory' and shells out
+;;     to whichever CLI it finds as a dependency or devDependency: `expo
+;;     start' if `expo' is declared (checked first, since an Expo project
+;;     also depends on react-native transitively so both would otherwise
+;;     match), else `react-native start' if `react-native' is declared,
+;;     else a `user-error' — a plain React/Node project is left alone. Runs
+;;     through `compile' with its COMINT argument non-nil so Metro's
+;;     interactive keys (r reload, a/i open Android/iOS, m menu, ...) keep
+;;     working inside the compile buffer, unlike a plain (non-comint) one.
+;;     Both CLIs go through `my-typescript--npm-bin' too, same as ESLint
+;;     and Prettier.
 ;;
 ;; All four npm-backed tools above (typescript-language-server, ESLint,
 ;; Prettier, and the tsx/ts-node runtimes dape launches) go through
@@ -71,6 +84,14 @@
 ;;   - js-debug-ts-node needs `ts-node' and js-debug-tsx needs `tsx' on PATH (`npm i -g tsx ts-node').
 ;;     To debug TypeScript without either, attach to `node --inspect' with
 ;;     js-debug-node-attach, or debug the compiled output with js-debug-node and a source map.
+;;   - NO React Native / Expo / Hermes config exists, and none is added here:
+;;     modern RN debugging (RN >= 0.73) speaks the Chrome DevTools Protocol
+;;     directly over a websocket Metro's inspector proxy exposes, not DAP —
+;;     Microsoft's vscode-react-native bridges CDP<->DAP via its own fork of
+;;     js-debug, but it drives VS Code's extension APIs (device/app picking,
+;;     starting Metro, the CDP handshake) to get there, so it is not a
+;;     portable binary dape could just launch. Use React Native DevTools
+;;     (Chrome/Edge's own devtools, which RN >= 0.76 opens for you) instead.
 ;;
 ;; ELPA-only: dape is on GNU ELPA, reformatter is on NonGNU ELPA; the major
 ;; modes and eglot are built in. (typescript-mode / tide / lsp-* /
@@ -145,6 +166,102 @@
         (my-typescript-eslint-check)))
     (should (string-match-p "\\`eslint " compile-command-used))
     (should (string-match-p "app\\.ts" compile-command-used))))
+
+(ert-deftest extras-test/given-typescript-then-project-package-json-parses-the-nearest-file ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (let ((root (make-temp-file "ts-pkg" t)))
+    (unwind-protect
+        (progn
+          (with-temp-file (expand-file-name "package.json" root)
+            (insert "{\"dependencies\": {\"react\": \"^18.0.0\"}}"))
+          (should (equal (alist-get 'react
+                                    (alist-get 'dependencies
+                                               (my-typescript--project-package-json root)))
+                        "^18.0.0")))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-project-package-json-is-nil-without-one ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (let ((root (make-temp-file "ts-no-pkg" t)))
+    (unwind-protect
+        (let ((default-directory temporary-file-directory))
+          (should-not (my-typescript--project-package-json root)))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-has-dep-p-checks-both-dependency-fields ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-has-dep-p)
+  (let ((root (make-temp-file "ts-deps" t)))
+    (unwind-protect
+        (progn
+          (with-temp-file (expand-file-name "package.json" root)
+            (insert "{\"dependencies\": {\"react-native\": \"^0.74.0\"},
+                      \"devDependencies\": {\"prettier\": \"^3.0.0\"}}"))
+          (should (my-typescript--project-has-dep-p 'react-native root))
+          (should (my-typescript--project-has-dep-p 'prettier root))
+          (should-not (my-typescript--project-has-dep-p 'expo root)))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-run-dev-server-prefers-expo-when-both-are-present ()
+  "Expo apps also depend on react-native transitively, so expo must be
+checked first or an Expo project would incorrectly run `react-native start'."
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-has-dep-p)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript-run-dev-server)
+  (let ((root (make-temp-file "ts-expo" t)) used-cmd used-comint)
+    (unwind-protect
+        (progn
+          (with-temp-file (expand-file-name "package.json" root)
+            (insert "{\"dependencies\": {\"expo\": \"^51.0.0\", \"react-native\": \"^0.74.0\"}}"))
+          (let ((default-directory root))
+            (cl-letf (((symbol-function 'compile)
+                       (lambda (cmd &optional comint)
+                         (setq used-cmd cmd used-comint comint))))
+              (my-typescript-run-dev-server)))
+          (should (equal used-cmd "expo start"))
+          (should used-comint))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-run-dev-server-falls-back-to-react-native ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-has-dep-p)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript-run-dev-server)
+  (let ((root (make-temp-file "ts-rn" t)) used-cmd used-comint)
+    (unwind-protect
+        (progn
+          (with-temp-file (expand-file-name "package.json" root)
+            (insert "{\"dependencies\": {\"react-native\": \"^0.74.0\"}}"))
+          (let ((default-directory root))
+            (cl-letf (((symbol-function 'compile)
+                       (lambda (cmd &optional comint)
+                         (setq used-cmd cmd used-comint comint))))
+              (my-typescript-run-dev-server)))
+          (should (equal used-cmd "react-native start"))
+          (should used-comint))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-run-dev-server-errors-without-either ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-package-json)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--project-has-dep-p)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript-run-dev-server)
+  (let ((root (make-temp-file "ts-plain" t)))
+    (unwind-protect
+        (progn
+          (with-temp-file (expand-file-name "package.json" root)
+            (insert "{\"dependencies\": {\"react\": \"^18.0.0\"}}"))
+          (let ((default-directory root))
+            (should-error (my-typescript-run-dev-server) :type 'user-error)))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-run-dev-server-is-bound-in-every-js-ts-mode ()
+  (should (extras-test--declares "typescript.el" '("C-c C-s" . my-typescript-run-dev-server)))
+  (should (extras-test--subform-p '("C-c C-s" . my-typescript-run-dev-server)
+                                  (car (extras-test--use-package-section "typescript.el" 'js :bind))))
+  (should (extras-test--subform-p '("C-c C-s" . my-typescript-run-dev-server)
+                                  (car (extras-test--use-package-section "typescript.el" 'typescript-ts-mode :bind)))))
 
 (ert-deftest extras-test/given-typescript-then-js-and-ts-map-to-their-tree-sitter-modes ()
   (should (extras-test--declares "typescript.el" '("\\.m?js\\'" . js-ts-mode)))

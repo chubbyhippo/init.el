@@ -839,9 +839,12 @@ PostgreSQL, SQLite3, MSSQL, H2 and Vertica per-connection — configure the
 dialect in =~/.config/sqls/config.yml=, not here.
 
 ** TypeScript / JS (=extras/typescript.el=)
-| Command  | Description                  |
-|----------+------------------------------|
-| M-x dape | =js-debug-*= (Node / Chrome) |
+| Command                        | Description                            |
+|---------------------------------+-----------------------------------------|
+| C-c C-l                        | ESLint check (compile buffer)          |
+| C-c C-s / M-x run-dev-server   | Expo/React Native dev server, if the   |
+|                                 | project's package.json declares either |
+| M-x dape                       | =js-debug-*= (Node / Chrome)           |
 
 ** YAML (=extras/yaml.el=)
 Adds the missing eglot hook (yaml-ts-mode derives from =text-mode=); no

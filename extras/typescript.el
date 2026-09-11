@@ -46,9 +46,43 @@
   (compile (format "%s %s" (my-typescript--npm-bin "eslint")
                     (shell-quote-argument buffer-file-name))))
 
+(defun my-typescript--project-package-json (&optional dir)
+  "Parse the nearest package.json above DIR (or `default-directory') --
+nil if there is none, or it fails to parse."
+  (when-let* ((root (locate-dominating-file (or dir default-directory) "package.json")))
+    (with-temp-buffer
+      (insert-file-contents (expand-file-name "package.json" root))
+      (ignore-errors
+        (if (fboundp 'json-parse-buffer)
+            (json-parse-buffer :object-type 'alist :array-type 'list)
+          (require 'json)
+          (goto-char (point-min))
+          (json-read))))))
+
+(defun my-typescript--project-has-dep-p (dep &optional dir)
+  "Non-nil if DEP (a symbol) is a dependency or devDependency of the project
+containing DIR (or `default-directory')."
+  (when-let* ((pkg (my-typescript--project-package-json dir)))
+    (or (alist-get dep (alist-get 'dependencies pkg))
+        (alist-get dep (alist-get 'devDependencies pkg)))))
+
+(defun my-typescript-run-dev-server ()
+  "Start this project's Expo or React Native dev server, whichever its
+package.json declares -- Expo takes priority, since an Expo project also
+depends on react-native transitively.  Runs in a comint-backed `compile'
+buffer so Metro's interactive keys (r/a/i/m/...) still work."
+  (interactive)
+  (cond
+   ((my-typescript--project-has-dep-p 'expo)
+    (compile (format "%s start" (my-typescript--npm-bin "expo")) t))
+   ((my-typescript--project-has-dep-p 'react-native)
+    (compile (format "%s start" (my-typescript--npm-bin "react-native")) t))
+   (t (user-error "Neither react-native nor expo found in this project's package.json"))))
+
 (use-package js
   :ensure nil
-  :bind (:map js-ts-mode-map ("C-c C-l" . my-typescript-eslint-check))
+  :bind (:map js-ts-mode-map ("C-c C-l" . my-typescript-eslint-check)
+              ("C-c C-s" . my-typescript-run-dev-server))
   :hook (js-ts-mode . prettier-format-on-save-mode)
   :init
   (when (and (require 'treesit nil t) (treesit-available-p))
@@ -88,7 +122,9 @@
       (add-to-list 'major-mode-remap-alist '(typescript-tsx-mode . tsx-ts-mode))
       (add-to-list 'auto-mode-alist '("\\.tsx\\'" . tsx-ts-mode))))
   :bind (:map typescript-ts-mode-map ("C-c C-l" . my-typescript-eslint-check)
-         :map tsx-ts-mode-map ("C-c C-l" . my-typescript-eslint-check))
+              ("C-c C-s" . my-typescript-run-dev-server)
+         :map tsx-ts-mode-map ("C-c C-l" . my-typescript-eslint-check)
+              ("C-c C-s" . my-typescript-run-dev-server))
   :hook ((typescript-ts-mode tsx-ts-mode) . prettier-format-on-save-mode)
   :custom
   (typescript-ts-mode-indent-offset 2))
