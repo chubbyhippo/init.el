@@ -175,24 +175,6 @@ selection to/up-to that delimiter) instead of replacing it like plain f/t do."
   (should (eq (init-test--normal "t") 'meow-till))
   (should (eq (init-test--normal "T") 'meow-till-expand)))
 
-(ert-deftest init-test/given-avy-then-its-lead-face-matches-ideameow-overlay-color ()
-  "Same #2ECC71/#ffffff as ideameow's .ideameowrc overlay-color/overlay-text-color."
-  (should (init-test--declares '(set-face-attribute 'avy-lead-face nil
-                                                     :background "#2ECC71"
-                                                     :foreground "#ffffff"))))
-
-(ert-deftest init-test/given-ace-window-then-its-hint-is-green-without-a-background ()
-  "ace-window draws C-c w w and C-c w r hints with its own `aw-leading-char-face',
-which defaults to plain red and inherits nothing from avy — so it needs its own
-green.  It must stay FOREGROUND-only: `aw--overlay-str' appends a newline when
-the hint lands at end of line, and a newline inside a display string makes Emacs
-pad the rest of the line with the face, turning any background into a
-full-width bar."
-  (should (init-test--declares '(set-face-attribute 'aw-leading-char-face nil
-                                                     :background 'unspecified
-                                                     :foreground "#2ECC71"
-                                                     :weight 'bold))))
-
 (ert-deftest init-test/given-normal-state-then-G-is-meow-grab ()
   (should (eq (init-test--normal "G") 'meow-grab)))
 
@@ -631,6 +613,12 @@ so tramp/compression handlers work after startup."
   (should (init-test--declares '(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 130)))
   (should (init-test--declares '(setq-default line-spacing 0.2))))
 
+(ert-deftest init-test/given-a-terminal-frame-then-the-mouse-is-enabled ()
+  "GUI frames already support the mouse natively; xterm-mouse-mode teaches a
+tty to decode click/drag/wheel escape sequences from the terminal emulator."
+  (should (init-test--declares '(unless (display-graphic-p)
+                                  (xterm-mouse-mode 1)))))
+
 (ert-deftest init-test/given-a-pathological-file-then-so-long-mode-guards-it ()
   "Files with pathologically long lines (minified JS, logs) wedge Emacs;
 global-so-long-mode neutralizes them."
@@ -817,6 +805,13 @@ hide; and edits inside folded text warn instead of silently corrupting."
   (should (init-test--declares '(org-hide-emphasis-markers t)))
   (should (init-test--declares '(org-catch-invisible-edits 'show-and-error))))
 
+;;; -------------------------------------------------------------------- avy
+(ert-deftest init-test/given-avy-then-its-lead-face-matches-ideameow-overlay-color ()
+  "Same #2ECC71/#ffffff as ideameow's .ideameowrc overlay-color/overlay-text-color."
+  (should (init-test--declares '(set-face-attribute 'avy-lead-face nil
+                                                     :background "#2ECC71"
+                                                     :foreground "#ffffff"))))
+
 ;;; ------------------------------------------------------------- expreg
 (ert-deftest init-test/given-expreg-then-M-r-grows-and-M-R-shrinks ()
   "M- stays reachable in the terminal via the ESC prefix; M-R shrinks a step."
@@ -868,16 +863,6 @@ session with the stock preview at the stock one-second delay."
 consult in at startup."
   (should (init-test--declares '(:after (embark consult)))))
 
-(ert-deftest init-test/given-wgrep-and-corfu-terminal-then-they-defer-until-used ()
-  "A block with only :init/:custom/:config has no defer trigger, so use-package
-requires the package at startup.  wgrep defers through :commands (its entry
-command has no autoload of its own; grep buffers and embark's export both reach
-it through the autoloaded wgrep-setup), and corfu-terminal through :defer t
-(its :init only calls the autoloaded mode, and only in a tty)."
-  (should (member '(wgrep-change-to-wgrep-mode)
-                  (init-test--use-package-section 'wgrep :commands)))
-  (should (member t (init-test--use-package-section 'corfu-terminal :defer))))
-
 (ert-deftest init-test/given-corfu-then-history-persists-through-savehist ()
   "corfu-history is added to savehist so completion ordering survives restarts."
   (should (init-test--declares '(add-to-list 'savehist-additional-variables 'corfu-history))))
@@ -916,6 +901,18 @@ scoped to the current frame."
   (should (init-test--declares '([remap other-window] . ace-window)))
   (should (init-test--declares '(aw-scope 'frame))))
 
+(ert-deftest init-test/given-ace-window-then-its-hint-is-green-without-a-background ()
+  "ace-window draws C-c w w and C-c w r hints with its own `aw-leading-char-face',
+which defaults to plain red and inherits nothing from avy — so it needs its own
+green.  It must stay FOREGROUND-only: `aw--overlay-str' appends a newline when
+the hint lands at end of line, and a newline inside a display string makes Emacs
+pad the rest of the line with the face, turning any background into a
+full-width bar."
+  (should (init-test--declares '(set-face-attribute 'aw-leading-char-face nil
+                                                     :background 'unspecified
+                                                     :foreground "#2ECC71"
+                                                     :weight 'bold))))
+
 ;;; --------------------------------------------------------------- diff-hl
 (ert-deftest init-test/given-diff-hl-then-it-is-demanded-eagerly ()
   ":hook alone defers diff-hl and the global mode never turns on at startup;
@@ -935,16 +932,24 @@ command map and check-key is off because the keypad's final key `c' is not a mem
   (should (init-test--declares '(unless (display-graphic-p)
                                   (diff-hl-margin-mode 1)))))
 
-;;; ------------------------------------------------------- terminal / corfu tty
+;;; ------------------------------------------------------- corfu-terminal
+(ert-deftest init-test/given-corfu-terminal-then-it-defers-until-a-tty-needs-it ()
+  "Its :init only calls the autoloaded mode, and only in a tty, so :defer t
+is what keeps corfu-terminal itself out of a GUI startup."
+  (should (member t (init-test--use-package-section 'corfu-terminal :defer))))
+
 (ert-deftest init-test/given-a-terminal-then-corfu-popups-render-in-tty ()
   "Emacs 30 can't draw child frames in a tty, so corfu-terminal-mode takes over."
   (should (init-test--declares '(unless (display-graphic-p)
                                   (corfu-terminal-mode 1)))))
 
-(ert-deftest init-test/given-a-terminal-frame-then-the-mouse-is-enabled ()
-  "GUI frames already support the mouse natively; xterm-mouse-mode teaches a
-tty to decode click/drag/wheel escape sequences from the terminal emulator."
-  (should (init-test--declares '(unless (display-graphic-p)
-                                  (xterm-mouse-mode 1)))))
+;;; --------------------------------------------------------------- wgrep
+(ert-deftest init-test/given-wgrep-then-it-defers-until-a-grep-buffer-needs-it ()
+  "A block with only :init/:custom/:config has no defer trigger, so use-package
+would require wgrep at startup; :commands defers it instead -- its entry
+command has no autoload of its own, so grep buffers and embark's export both
+reach it through the autoloaded wgrep-setup."
+  (should (member '(wgrep-change-to-wgrep-mode)
+                  (init-test--use-package-section 'wgrep :commands))))
 
 ;;; init-tests.el ends here

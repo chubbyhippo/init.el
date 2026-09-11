@@ -137,6 +137,12 @@ printing function itself is aliased to ignore."
 (ert-deftest early-init-test/given-the-first-frame-then-the-menu-bar-is-off ()
   (should (equal (assq 'menu-bar-lines default-frame-alist) '(menu-bar-lines . 0))))
 
+(ert-deftest early-init-test/given-early-init-then-it-strips-the-three-ui-bars ()
+  "All three chrome bars are pushed onto default-frame-alist before first paint."
+  (should (early-init-test--declares '(push '(tool-bar-lines . 0) default-frame-alist)))
+  (should (early-init-test--declares '(push '(vertical-scroll-bars) default-frame-alist)))
+  (should (early-init-test--declares '(push '(menu-bar-lines . 0) default-frame-alist))))
+
 ;;; ================================================= warning suppression
 (ert-deftest early-init-test/given-warnings-then-routine-package-notices-are-suppressed ()
   "Package obsolescence and compilation notices are suppressed from popping up."
@@ -162,12 +168,5 @@ jobs from starting while unplugged."
                  '(("gnu"    . "https://elpa.gnu.org/packages/")
                    ("nongnu" . "https://elpa.nongnu.org/nongnu/"))))
   (should-not (assoc "melpa" package-archives)))
-
-;;; ================================================= structural declarations
-(ert-deftest early-init-test/given-early-init-then-it-strips-the-three-ui-bars ()
-  "All three chrome bars are pushed onto default-frame-alist before first paint."
-  (should (early-init-test--declares '(push '(tool-bar-lines . 0) default-frame-alist)))
-  (should (early-init-test--declares '(push '(vertical-scroll-bars) default-frame-alist)))
-  (should (early-init-test--declares '(push '(menu-bar-lines . 0) default-frame-alist))))
 
 ;;; early-init-tests.el ends here
