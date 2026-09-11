@@ -60,10 +60,14 @@
 
 (defun install-test--installed-files ()
   "Return the list of file paths that install.el downloads."
-  (let* ((body (cdr install-test--form))
-         (let-form (seq-find (lambda (f) (and (consp f) (eq (car f) 'let*))) body))
-         (dolist-form (seq-find (lambda (f) (and (consp f) (eq (car f) 'dolist))) (cddr let-form))))
-    (cadr (cadr (cadr dolist-form)))))
+  (pcase install-test--form
+    (`(progn . ,body)
+     (let* ((let-form (seq-find (lambda (f) (and (consp f) (eq (car f) 'let*))) body)))
+       (pcase let-form
+         (`(let* ,_bindings (dolist (,var (quote ,files)) . ,_))
+          files)
+         (_ (error "Could not extract installed files from let* form: %S" let-form)))))
+    (_ (error "Unexpected structure in install.el: %S" install-test--form))))
 
 ;;; ================================================================ install.el
 (ert-deftest install-test/given-install-then-it-parses-as-valid-elisp ()
