@@ -821,6 +821,36 @@ hide; and edits inside folded text warn instead of silently corrupting."
   (should (init-test--declares '(org-hide-emphasis-markers t)))
   (should (init-test--declares '(org-catch-invisible-edits 'show-and-error))))
 
+(ert-deftest init-test/given-org-then-org-directory-is-created-if-missing ()
+  "org-directory is only a path, not auto-created by Org itself; without
+this, a fresh ~/org missing on disk would break the first org-capture or
+org-agenda call. Deferred behind eval-after-load like the rest of :config,
+same as flymake.el's own keymap setup -- fires once org.el actually loads,
+not necessarily at startup."
+  (let ((config (init-test--use-package-section 'org :config)))
+    (should (member '(unless (file-directory-p org-directory)
+                       (make-directory org-directory t))
+                    config))))
+
+(ert-deftest init-test/given-org-then-babel-loads-more-than-just-elisp ()
+  "org-babel-load-languages defaults to emacs-lisp only; without adding
+python/shell here, #+begin_src blocks in those languages would not
+execute at all."
+  (should (init-test--declares
+           '(org-babel-load-languages '((emacs-lisp . t) (python . t) (shell . t))))))
+
+(ert-deftest init-test/given-org-then-capture-has-a-task-and-a-journal-template ()
+  "org-capture-templates is unset by default, leaving C-c c with only Org's
+single generic fallback; a task (file+headline) and journal
+(file+olp+datetree, not the deprecated file+datetree) template make C-c c
+actually usable."
+  (should (init-test--declares
+           '(org-capture-templates
+             `(("t" "Task" entry (file+headline ,(expand-file-name "tasks.org" org-directory) "Tasks")
+                "* TODO %?\n%U\n%a\n" :empty-lines 1)
+               ("j" "Journal" entry (file+olp+datetree ,(expand-file-name "journal.org" org-directory))
+                "* %U %?\n" :empty-lines 1))))))
+
 ;;; -------------------------------------------------------------------- avy
 (ert-deftest init-test/given-avy-then-its-lead-face-matches-ideameow-overlay-color ()
   "Same #2ECC71/#ffffff as ideameow's .ideameowrc overlay-color/overlay-text-color."

@@ -257,6 +257,13 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | C-c /           | org-sparse-tree         | Sparse tree             |
 | C-c *           | org-toggle-heading      | Toggle heading          |
 
+=~/org= (=org-directory=) is created automatically the first time Org
+loads, if missing. =C-c c= offers two capture templates: =t= (task, filed
+under a Tasks headline in =tasks.org=) and =j= (journal entry, dated into
+=journal.org= via =file+olp+datetree=). Babel executes =emacs-lisp=,
+=python=, and =shell= source blocks; other languages need their own
+=(add-to-list 'org-babel-load-languages '(LANG . t))=.
+
 ** Dired (built-in)
 Open a directory with =C-x d= or =M-x dired RET DIRECTORY RET=. Navigate with
 =j=/=k= in Meow MOTION state, or the standard keys below.

@@ -193,13 +193,22 @@
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c l" . org-store-link))
+  :config
+  (unless (file-directory-p org-directory)
+    (make-directory org-directory t))
   :custom
   (org-directory "~/org")
   (org-agenda-files (list org-directory))
   (org-startup-indented t)
   (org-return-follows-link t)
   (org-hide-emphasis-markers t)
-  (org-catch-invisible-edits 'show-and-error))
+  (org-catch-invisible-edits 'show-and-error)
+  (org-babel-load-languages '((emacs-lisp . t) (python . t) (shell . t)))
+  (org-capture-templates
+   `(("t" "Task" entry (file+headline ,(expand-file-name "tasks.org" org-directory) "Tasks")
+      "* TODO %?\n%U\n%a\n" :empty-lines 1)
+     ("j" "Journal" entry (file+olp+datetree ,(expand-file-name "journal.org" org-directory))
+      "* %U %?\n" :empty-lines 1))))
 
 ;;; End Built-in
 
