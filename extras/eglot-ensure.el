@@ -1,4 +1,4 @@
-;;; eglot-guard.el --- shared "skip eglot until a binary exists" helper  -*- lexical-binding: t; -*-
+;;; eglot-ensure.el --- shared "ensure eglot once a binary is ready" helper  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2026 Chubby Hippo
 ;;
@@ -17,7 +17,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(defun my-eglot-guard-until (modes ready-p)
+(defun my-eglot-ensure-once-ready (modes ready-p)
   "Hold `my-eglot-ensure' back in MODES buffers until READY-P is satisfied.
 MODES is a mode symbol, or a list of mode symbols -- any of them being the
 current buffer's mode (per `derived-mode-p') blocks.  READY-P is a string,
@@ -28,10 +28,10 @@ yet defined -- nothing to advise in that case."
   (when (fboundp 'my-eglot-ensure)
     (let* ((modes (if (listp modes) modes (list modes)))
            (check (if (stringp ready-p) (lambda () (executable-find ready-p)) ready-p))
-           (name (make-symbol (format "my-eglot-guard-until--%s" modes))))
+           (name (make-symbol (format "my-eglot-ensure-once-ready--%s" modes))))
       (advice-add 'my-eglot-ensure :before-while
                   (lambda () (or (not (apply #'derived-mode-p modes)) (funcall check)))
                   `((name . ,name)))
       name)))
 
-(provide 'eglot-guard)
+(provide 'eglot-ensure)

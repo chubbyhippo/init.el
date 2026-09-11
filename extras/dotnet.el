@@ -17,7 +17,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory))
 
 (use-package csharp-mode
   :ensure nil
@@ -27,7 +27,7 @@
   (add-to-list 'eglot-server-programs
                '((csharp-mode csharp-ts-mode) . ("csharp-ls"))))
 
-(my-eglot-guard-until 'csharp-mode "csharp-ls")
+(my-eglot-ensure-once-ready 'csharp-mode "csharp-ls")
 
 (use-package dape
   :ensure t

@@ -72,7 +72,7 @@
 (ert-deftest extras-menu-test/given-extras-then-every-loader-line-is-live-code ()
   "Every per-language (load ...) call is live, top-level code -- none of them
 are commented out right now. Compared against extras-test--menu-files, not
-extras-test--files -- eglot-guard.el is a shared dependency pulled in by
+extras-test--files -- eglot-ensure.el is a shared dependency pulled in by
 `require', not a layer with its own menu entry."
   (let ((targets (delq nil (mapcar #'extras-menu-test--load-target
                                    (extras-menu-test--forms "extras.el")))))

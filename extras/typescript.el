@@ -17,7 +17,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory))
 
 (defun my-typescript--npm-bin (name &optional dir)
   "Return the project-local node_modules/.bin/NAME under DIR, else NAME."
@@ -48,7 +48,7 @@ available."
   (let ((bin (my-typescript--npm-bin "typescript-language-server")))
     (or (file-name-absolute-p bin) (executable-find bin))))
 
-(my-eglot-guard-until '(js-mode typescript-mode tsx-mode) #'my-typescript--lsp-ready-p)
+(my-eglot-ensure-once-ready '(js-mode typescript-mode tsx-mode) #'my-typescript--lsp-ready-p)
 
 (defun my-typescript-eslint-check ()
   "Run ESLint on the current file in a `compile' buffer."

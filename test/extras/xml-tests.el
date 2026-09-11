@@ -49,9 +49,9 @@
 ;; guard, hooking `my-eglot-ensure' onto `nxml-mode' would mean "Searching
 ;; for program: ... lemminx" in *Warnings* on every .xml file until the
 ;; server is actually installed; the guard is the shared
-;; `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in via
+;; `my-eglot-ensure-once-ready' helper from extras/eglot-ensure.el (pulled in via
 ;; `require' with an explicit file path), behaviorally tested once in
-;; eglot-guard-tests.el -- same helper as cobol.el/sql.el/kotlin.el/
+;; eglot-ensure-tests.el -- same helper as cobol.el/sql.el/kotlin.el/
 ;; dotnet.el/java.el.
 ;;
 ;; You supply the external tool: lemminx (github.com/eclipse-lemminx/lemminx),
@@ -92,17 +92,17 @@ yaml.el/markdown.el each patch for their own text-mode-derived major mode."
     (extras-test--eval-with-eval-after-load "xml.el" 'eglot)
     (should (equal (cdr (assoc 'nxml-mode eglot-server-programs)) '("lemminx")))))
 
-(ert-deftest extras-test/given-xml-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-xml-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "xml.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-xml-then-eglot-is-skipped-until-lemminx-exists ()
   "xml.el delegates the skip-until-binary advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el) rather than hand-rolling it."
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el) rather than hand-rolling it."
   (should (extras-test--declares
-           "xml.el" '(my-eglot-guard-until 'nxml-mode "lemminx"))))
+           "xml.el" '(my-eglot-ensure-once-ready 'nxml-mode "lemminx"))))
 
 (ert-deftest extras-test/given-xml-then-it-provides-xml ()
   (should (extras-test--declares "xml.el" '(provide 'xml))))

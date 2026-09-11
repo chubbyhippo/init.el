@@ -57,9 +57,9 @@
 ;; itself, same situation as cobol.el/sql.el/kotlin.el/xml.el. Without a
 ;; guard, opening any .cs file would mean "Searching for program: ...
 ;; csharp-ls" in *Warnings* until the server is installed; the guard is the
-;; shared `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled
+;; shared `my-eglot-ensure-once-ready' helper from extras/eglot-ensure.el (pulled
 ;; in via `require' with an explicit file path), behaviorally tested once
-;; in eglot-guard-tests.el. `(derived-mode-p 'csharp-mode)' alone covers
+;; in eglot-ensure-tests.el. `(derived-mode-p 'csharp-mode)' alone covers
 ;; csharp-ts-mode buffers too -- csharp-mode.el's own
 ;; `derived-mode-add-parents' call registers csharp-mode as
 ;; csharp-ts-mode's virtual parent.
@@ -104,17 +104,17 @@
     (should (equal (cdr (assoc '(csharp-mode csharp-ts-mode) eglot-server-programs))
                    '("csharp-ls")))))
 
-(ert-deftest extras-test/given-dotnet-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-dotnet-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "dotnet.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-dotnet-then-eglot-is-skipped-until-csharp-ls-exists ()
   "dotnet.el delegates the skip-until-binary advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el) rather than hand-rolling it."
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el) rather than hand-rolling it."
   (should (extras-test--declares
-           "dotnet.el" '(my-eglot-guard-until 'csharp-mode "csharp-ls"))))
+           "dotnet.el" '(my-eglot-ensure-once-ready 'csharp-mode "csharp-ls"))))
 
 (ert-deftest extras-test/given-dotnet-then-dape-is-declared-with-no-language-specific-config ()
   "dape ships a built-in netcoredbg config for csharp-mode/csharp-ts-mode,

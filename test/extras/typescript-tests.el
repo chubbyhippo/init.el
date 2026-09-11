@@ -107,9 +107,9 @@
 ;; for program: ... typescript-language-server" in *Warnings* on every
 ;; file -- the same bug cobol.el's/sql.el's/kotlin.el's/xml.el's/dotnet.el's/
 ;; java.el's guards exist to prevent, this layer used to lack it. The guard
-;; is the shared `my-eglot-guard-until' helper from extras/eglot-guard.el
+;; is the shared `my-eglot-ensure-once-ready' helper from extras/eglot-ensure.el
 ;; (pulled in via `require' with an explicit file path), behaviorally
-;; tested once in eglot-guard-tests.el. Unlike every other caller of that
+;; tested once in eglot-ensure-tests.el. Unlike every other caller of that
 ;; helper, this one passes a MODES list (js-mode/typescript-mode/tsx-mode --
 ;; js-ts-mode, typescript-ts-mode and tsx-ts-mode respectively register
 ;; those as their `derived-mode-add-parents', confirmed in Emacs core's
@@ -178,21 +178,21 @@
                                eglot-server-programs))
                    'my-typescript--lsp-contact))))
 
-(ert-deftest extras-test/given-typescript-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-typescript-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "typescript.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-typescript-then-eglot-is-skipped-until-the-server-is-ready ()
   "typescript.el delegates the skip-until-ready advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el), passing a mode list (js-ts-mode/typescript-ts-mode/
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el), passing a mode list (js-ts-mode/typescript-ts-mode/
 tsx-ts-mode's registered derived-mode-add-parents) and a function rather
 than a bare binary string, since readiness must also recognize a
 project-local server."
   (should (extras-test--declares
            "typescript.el"
-           '(my-eglot-guard-until '(js-mode typescript-mode tsx-mode)
+           '(my-eglot-ensure-once-ready '(js-mode typescript-mode tsx-mode)
                                    #'my-typescript--lsp-ready-p))))
 
 (ert-deftest extras-test/given-typescript-then-lsp-ready-p-recognizes-a-project-local-server ()

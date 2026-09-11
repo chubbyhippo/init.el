@@ -36,7 +36,7 @@ exec "$EMACS" -Q --batch \
   -l "$here/init-tests.el" \
   -l "$here/extras-tests.el" \
   -l "$here/extras/common-tests.el" \
-  -l "$here/extras/eglot-guard-tests.el" \
+  -l "$here/extras/eglot-ensure-tests.el" \
   -l "$here/extras/clojure-tests.el" \
   -l "$here/extras/cobol-tests.el" \
   -l "$here/extras/cpp-tests.el" \

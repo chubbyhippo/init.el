@@ -51,9 +51,9 @@
 ;; init.el's global `my-eglot-ensure' fires in every Kotlin buffer; without
 ;; a guard that means "Searching for program: ... kotlin-lsp" in
 ;; *Warnings* on every .kt/.kts file until the server is actually
-;; installed. The guard is the shared `my-eglot-guard-until' helper from
-;; extras/eglot-guard.el (pulled in via `require' with an explicit file
-;; path), behaviorally tested once in eglot-guard-tests.el -- same helper
+;; installed. The guard is the shared `my-eglot-ensure-once-ready' helper from
+;; extras/eglot-ensure.el (pulled in via `require' with an explicit file
+;; path), behaviorally tested once in eglot-ensure-tests.el -- same helper
 ;; as cobol.el/sql.el/xml.el/dotnet.el/java.el.
 ;;
 ;; NO debug adapter. dape ships no Kotlin/JVM config (checked its
@@ -79,17 +79,17 @@ is needed here."
     (should (equal (cdr (assoc 'kotlin-mode eglot-server-programs))
                    '("kotlin-lsp" "--stdio")))))
 
-(ert-deftest extras-test/given-kotlin-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-kotlin-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "kotlin.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-kotlin-then-eglot-is-skipped-until-kotlin-lsp-exists ()
   "kotlin.el delegates the skip-until-binary advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el) rather than hand-rolling it."
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el) rather than hand-rolling it."
   (should (extras-test--declares
-           "kotlin.el" '(my-eglot-guard-until 'kotlin-mode "kotlin-lsp"))))
+           "kotlin.el" '(my-eglot-ensure-once-ready 'kotlin-mode "kotlin-lsp"))))
 
 (ert-deftest extras-test/given-kotlin-then-it-provides-kotlin ()
   (should (extras-test--declares "kotlin.el" '(provide 'kotlin))))

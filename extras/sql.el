@@ -17,7 +17,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory))
 
 (use-package sql
   :ensure nil)
@@ -25,6 +25,6 @@
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(sql-mode . ("sqls"))))
 
-(my-eglot-guard-until 'sql-mode "sqls")
+(my-eglot-ensure-once-ready 'sql-mode "sqls")
 
 (provide 'sql)

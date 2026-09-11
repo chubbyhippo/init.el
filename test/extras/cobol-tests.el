@@ -62,10 +62,10 @@
 ;; So this layer holds eglot back in COBOL buffers until superbol-free is
 ;; actually executable: compiler-only editing stays silent, and building the
 ;; server later turns the LSP on with no edit here. The guard itself is the
-;; shared `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in
+;; shared `my-eglot-ensure-once-ready' helper from extras/eglot-ensure.el (pulled in
 ;; via `require' with an explicit file path, so load order in extras.el does
 ;; not matter) -- sql.el/kotlin.el/xml.el/dotnet.el/java.el all delegate to
-;; the same helper now, behaviorally tested once in eglot-guard-tests.el
+;; the same helper now, behaviorally tested once in eglot-ensure-tests.el
 ;; rather than five times over. scheme.el's own guard is unconditional (no
 ;; binary check at all) since Scheme has no LSP story whatsoever, so it does
 ;; not use this helper. This is html.el's problem mirrored: there the
@@ -126,17 +126,17 @@
     (extras-test--eval-with-eval-after-load "cobol.el" 'eglot)
     (should (equal (cdr (assoc 'cobol-mode eglot-server-programs)) '("superbol-free" "lsp")))))
 
-(ert-deftest extras-test/given-cobol-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-cobol-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "cobol.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-cobol-then-eglot-is-skipped-until-superbol-free-exists ()
   "cobol.el delegates the skip-until-binary advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el) rather than hand-rolling it."
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el) rather than hand-rolling it."
   (should (extras-test--declares
-           "cobol.el" '(my-eglot-guard-until 'cobol-mode "superbol-free"))))
+           "cobol.el" '(my-eglot-ensure-once-ready 'cobol-mode "superbol-free"))))
 
 (ert-deftest extras-test/given-cobol-then-it-provides-cobol ()
   (should (extras-test--declares "cobol.el" '(provide 'cobol))))

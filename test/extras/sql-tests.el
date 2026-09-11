@@ -44,9 +44,9 @@
 ;; init.el's global `my-eglot-ensure' fires in every SQL buffer; without a
 ;; guard that means "Searching for program: ... sqls" in *Warnings* on every
 ;; .sql file until the server is actually installed. The guard is the shared
-;; `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in via
+;; `my-eglot-ensure-once-ready' helper from extras/eglot-ensure.el (pulled in via
 ;; `require' with an explicit file path), behaviorally tested once in
-;; eglot-guard-tests.el rather than in every layer that uses it -- same
+;; eglot-ensure-tests.el rather than in every layer that uses it -- same
 ;; helper as cobol.el/kotlin.el/xml.el/dotnet.el/java.el, all skip-until-
 ;; binary rather than scheme.el's unconditional skip (for a language with no
 ;; LSP story at all).
@@ -116,16 +116,16 @@ its own auto-mode-alist entry already covers .sql."
     (extras-test--eval-with-eval-after-load "sql.el" 'eglot)
     (should (equal (cdr (assoc 'sql-mode eglot-server-programs)) '("sqls")))))
 
-(ert-deftest extras-test/given-sql-then-it-requires-the-shared-eglot-guard ()
+(ert-deftest extras-test/given-sql-then-it-requires-the-shared-eglot-ensure-helper ()
   (should (extras-test--declares
            "sql.el"
-           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+           '(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory)))))
 
 (ert-deftest extras-test/given-sql-then-eglot-is-skipped-until-sqls-exists ()
   "sql.el delegates the skip-until-binary advice to the shared
-my-eglot-guard-until helper (behaviorally tested on its own in
-eglot-guard-tests.el) rather than hand-rolling it."
-  (should (extras-test--declares "sql.el" '(my-eglot-guard-until 'sql-mode "sqls"))))
+my-eglot-ensure-once-ready helper (behaviorally tested on its own in
+eglot-ensure-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares "sql.el" '(my-eglot-ensure-once-ready 'sql-mode "sqls"))))
 
 (ert-deftest extras-test/given-sql-then-it-provides-sql ()
   (should (extras-test--declares "sql.el" '(provide 'sql))))

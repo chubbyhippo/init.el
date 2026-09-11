@@ -17,7 +17,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+(require 'eglot-ensure (expand-file-name "extras/eglot-ensure" user-emacs-directory))
 
 (use-package cobol-mode
   :ensure t
@@ -28,6 +28,6 @@
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(cobol-mode . ("superbol-free" "lsp"))))
 
-(my-eglot-guard-until 'cobol-mode "superbol-free")
+(my-eglot-ensure-once-ready 'cobol-mode "superbol-free")
 
 (provide 'cobol)
