@@ -39,6 +39,7 @@ exec "$EMACS" -Q --batch \
   -l "$here/extras/clojure-tests.el" \
   -l "$here/extras/cobol-tests.el" \
   -l "$here/extras/cpp-tests.el" \
+  -l "$here/extras/dotnet-tests.el" \
   -l "$here/extras/elixir-tests.el" \
   -l "$here/extras/erlang-tests.el" \
   -l "$here/extras/go-tests.el" \

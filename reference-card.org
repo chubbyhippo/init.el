@@ -748,6 +748,14 @@ Few define extra keys; prefer =M-x= and built-in/CIDER/Geiser/inf-ruby maps.
 |----------+----------------------------------|
 | M-x dape | Configs: =gdb=, =codelldb=, etc. |
 
+** C# / .NET (=extras/dotnet.el=)
+Built-in =csharp-mode=/=csharp-ts-mode= (Emacs core handles the tree-sitter
+remap itself) + eglot wired to =csharp-ls= (guarded until it is on PATH).
+F#/VB.NET are out of scope -- their Emacs tooling is MELPA-only.
+| Command  | Description                      |
+|----------+-----------------------------------|
+| M-x dape | =netcoredbg= (built into dape)   |
+
 ** Elixir (=extras/elixir.el=)
 | Command  | Description                 |
 |----------+-----------------------------|

@@ -53,10 +53,10 @@
   (expand-file-name (concat "extras/" name) extras-test-root))
 
 (defvar extras-test--files
-  '("clojure.el" "cobol.el" "cpp.el" "elixir.el" "erlang.el" "go.el" "haskell.el"
-    "html.el" "java.el" "json.el" "kotlin.el" "markdown.el" "perl.el" "php.el"
-    "python.el" "ruby.el" "rust.el" "scheme.el" "sql.el" "typescript.el"
-    "xml.el" "yaml.el" "zig.el")
+  '("clojure.el" "cobol.el" "cpp.el" "dotnet.el" "elixir.el" "erlang.el" "go.el"
+    "haskell.el" "html.el" "java.el" "json.el" "kotlin.el" "markdown.el"
+    "perl.el" "php.el" "python.el" "ruby.el" "rust.el" "scheme.el" "sql.el"
+    "typescript.el" "xml.el" "yaml.el" "zig.el")
   "Every file under extras/.")
 
 ;;; --------------------------------------------------- files as read data
