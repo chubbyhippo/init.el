@@ -714,7 +714,7 @@ there (=l= is already a leaf command on the leader), so it moved to a new
 | which-key         | popup after prefix pause                         |
 | corfu-terminal    | TTY popup backend (automatic when non-GUI)       |
 
-* Extras (=extras/*.el=, optional — uncomment loads at bottom of init.el)
+* Extras (=extras/*.el=, optional — uncomment loads in =extras.el=)
 Most extras add modes, eglot servers, format-on-save, and =dape= debug configs.
 Few define extra keys; prefer =M-x= and built-in/CIDER/Geiser/inf-ruby maps.
 
@@ -783,6 +783,10 @@ Tree-sitter HTML mode / grammar setup; no extra keys.
 ** JSON (=extras/json.el=)
 Tree-sitter JSON mode / grammar setup; no extra keys.
 
+** Kotlin (=extras/kotlin.el=)
+=kotlin-mode= (NonGNU ELPA) + eglot wired to =kotlin-lsp= (JetBrains'
+official server, guarded until it is on PATH); no extra keys, no dape config.
+
 ** Markdown (=extras/markdown.el=)
 Adds the missing eglot hook (markdown-mode derives from =text-mode=); no
 extra keys.
@@ -827,6 +831,12 @@ extra keys.
 | C-x C-e                       | Eval last sexp |
 | M-x run-guile / run-chez      | Specific REPL  |
 | M-x geiser-doc-look-up-manual | Docs (Guile)   |
+
+** SQL (=extras/sql.el=)
+Built-in =sql-mode= (unmodified) + eglot wired to =sqls= (guarded until it
+is on PATH); no extra keys, no dape config. =sqls= itself supports MySQL,
+PostgreSQL, SQLite3, MSSQL, H2 and Vertica per-connection — configure the
+dialect in =~/.config/sqls/config.yml=, not here.
 
 ** TypeScript / JS (=extras/typescript.el=)
 | Command  | Description                  |

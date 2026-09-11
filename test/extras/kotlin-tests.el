@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Kotlin layer for init.el. Disabled by default -- uncomment the
-;; matching loader at the bottom of init.el to enable it.
+;; matching loader in extras.el to enable it.
 ;;
 ;; kotlin-mode is on NonGNU ELPA (Emacs-Kotlin-Mode-Maintainers/kotlin-mode),
 ;; not GNU ELPA or MELPA, so it fits this config's "never MELPA" rule.

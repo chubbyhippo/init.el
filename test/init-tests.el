@@ -698,6 +698,21 @@ without the mode that honors it, so it is added to minibuffer-setup-hook."
   (should (init-test--declares '(find-file (expand-file-name "init.el" user-emacs-directory))))
   (should (init-test--declares '(load-file (expand-file-name "init.el" user-emacs-directory)))))
 
+(ert-deftest init-test/given-the-config-then-the-extras-menu-load-is-commented-out ()
+  "The per-language loaders used to sit at the bottom of init.el itself;
+they now live in extras.el, which init.el would load unconditionally --
+but that (load ...) call is itself commented out right now, so extras.el
+is not reached regardless of what is live inside it. Uncommenting this one
+line in init.el is the only edit needed to turn the whole menu back on."
+  (should-not (init-test--declares
+               '(load (expand-file-name "extras.el" user-emacs-directory) :noerror :nomessage)))
+  (should (with-temp-buffer
+            (insert-file-contents (init-test-file "init.el"))
+            (goto-char (point-min))
+            (re-search-forward
+             "^;; (load (expand-file-name \"extras\\.el\" user-emacs-directory) :noerror :nomessage)$"
+             nil t))))
+
 ;;; ------------------------------------------------------------ project
 (ert-deftest init-test/given-non-vc-projects-then-project-vc-extra-root-markers-are-set ()
   "Without a .git marker, project.el falls back to buffer directory and misroots

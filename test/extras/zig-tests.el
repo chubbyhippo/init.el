@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Zig layer for init.el. Disabled by default — uncomment the matching
-;; loader at the bottom of init.el to enable it.
+;; loader in extras.el to enable it.
 ;;
 ;; Zig is the odd one out: it has no built-in Emacs mode, so the major mode comes
 ;; from zig-mode (NonGNU ELPA, installed like any package here). eglot is built

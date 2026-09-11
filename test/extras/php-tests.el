@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional PHP layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .php.
+;; matching loader in extras.el to enable it. Handles .php.
 ;;
 ;; php-ts-mode is built into Emacs core, but only since Emacs 30 (it did not
 ;; exist in 29) -- there is no classic, non-tree-sitter php-mode in core at

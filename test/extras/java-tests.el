@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Java layer for init.el. Disabled by default — uncomment the matching
-;; loader at the bottom of init.el to enable it.
+;; loader in extras.el to enable it.
 ;;
 ;; Most of the stack is built in: the major mode (java-mode, or the tree-sitter
 ;; java-ts-mode) and eglot, which init.el already hooks onto prog-mode. You

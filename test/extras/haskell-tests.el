@@ -22,7 +22,7 @@
 ;; that pin its behavior down):
 ;;
 ;; Optional Haskell layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .hs / .lhs
+;; matching loader in extras.el to enable it. Handles .hs / .lhs
 ;; plus the cabal files (.cabal, cabal.project, ~/.cabal/config).
 ;;
 ;; UNLIKE every other extra, the major mode is NOT built in: Emacs ships no

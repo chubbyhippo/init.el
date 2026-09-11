@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Rust layer for init.el. Disabled by default — uncomment the matching
-;; loader at the bottom of init.el to enable it.
+;; loader in extras.el to enable it.
 ;;
 ;; Most of the stack is built in: the tree-sitter major mode (rust-ts-mode) and
 ;; eglot, which init.el already hooks onto prog-mode. You supply the external

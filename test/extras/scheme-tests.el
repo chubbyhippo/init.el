@@ -22,8 +22,8 @@
 ;; that pin its behavior down):
 ;;
 ;; Optional Scheme layer for init.el — Guile as the default Scheme, with Chez
-;; kept active for SICP. Disabled by default — uncomment the matching loader at
-;; the bottom of init.el to enable it. Every package here is on NonGNU ELPA, so
+;; kept active for SICP. Disabled by default — uncomment the matching loader in
+;; extras.el to enable it. Every package here is on NonGNU ELPA, so
 ;; it installs through the same `package' / `use-package' setup as the rest of
 ;; the config (no MELPA needed).
 ;;

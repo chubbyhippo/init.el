@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional COBOL layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .cob / .cbl /
+;; matching loader in extras.el to enable it. Handles .cob / .cbl /
 ;; .cpy / .cbx — and their upcased mainframe spellings, since `auto-mode-case-fold'
 ;; makes Emacs retry auto-mode-alist case-insensitively.
 ;;

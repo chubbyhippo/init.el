@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional C/C++ layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. One file covers both
+;; matching loader in extras.el to enable it. One file covers both
 ;; languages: they share a language server, a debug adapter, headers, and build
 ;; tooling, so splitting them would only duplicate config. Handles
 ;; .c / .h and .cpp / .cc / .hpp / … .

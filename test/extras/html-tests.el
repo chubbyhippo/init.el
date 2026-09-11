@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional HTML/CSS layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. One file covers both:
+;; matching loader in extras.el to enable it. One file covers both:
 ;; they share the same npm package for their language servers and are edited
 ;; together. Handles .html / .htm and .css (.scss keeps the built-in scss-mode).
 ;;

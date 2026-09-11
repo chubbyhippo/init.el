@@ -22,7 +22,7 @@
 ;; that pin its behavior down):
 ;;
 ;; Optional Markdown layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .md and
+;; matching loader in extras.el to enable it. Handles .md and
 ;; .markdown.
 ;;
 ;; Emacs core has no built-in Markdown mode at all -- not even a tree-sitter

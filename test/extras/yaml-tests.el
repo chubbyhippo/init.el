@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional YAML layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .yml/.yaml.
+;; matching loader in extras.el to enable it. Handles .yml/.yaml.
 ;;
 ;; The major mode (yaml-ts-mode, Emacs 29+) and eglot are both built in.
 ;; eglot's own table already maps yaml-ts-mode (and the classic yaml-mode) to

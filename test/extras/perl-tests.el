@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Perl layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .pl / .pm /
+;; matching loader in extras.el to enable it. Handles .pl / .pm /
 ;; .t / .pod and `#!…perl' scripts — Emacs already maps those to perl-mode.
 ;;
 ;; Everything here is built in. There is no perl-ts-mode in Emacs 30, and no

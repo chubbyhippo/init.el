@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional JSON layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Handles .json.
+;; matching loader in extras.el to enable it. Handles .json.
 ;;
 ;; Everything here is built in: json-ts-mode (Emacs 29+) and eglot, which
 ;; init.el already hooks onto prog-mode — json-ts-mode derives from prog-mode,

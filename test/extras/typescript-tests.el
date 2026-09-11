@@ -22,7 +22,7 @@
 ;; that pin its behavior down):
 ;;
 ;; Optional JS/TS layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. One file covers both
+;; matching loader in extras.el to enable it. One file covers both
 ;; languages: they share a language server, a debug adapter, and tooling, so
 ;; splitting them would only duplicate config. Handles .js / .jsx / .ts / .tsx.
 ;;

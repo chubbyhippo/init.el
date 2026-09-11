@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional SQL layer for init.el. Disabled by default -- uncomment the
-;; matching loader at the bottom of init.el to enable it. `sql-mode' is
+;; matching loader in extras.el to enable it. `sql-mode' is
 ;; built in and already covers .sql via its own default auto-mode-alist
 ;; entry, so unlike most other extras/*.el this layer adds no :mode, :hook
 ;; or major-mode work of its own -- only LSP wiring.

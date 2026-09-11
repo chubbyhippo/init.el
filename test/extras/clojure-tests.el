@@ -22,7 +22,7 @@
 ;; that pin its behavior down):
 ;;
 ;; Optional Clojure layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it. Every package here is
+;; matching loader in extras.el to enable it. Every package here is
 ;; on NonGNU ELPA, so it installs through the same `package' / `use-package'
 ;; setup as the rest of the config (no MELPA needed).
 ;;

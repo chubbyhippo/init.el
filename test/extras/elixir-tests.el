@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Elixir layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it.
+;; matching loader in extras.el to enable it.
 ;;
 ;; Most of the stack is built in: the tree-sitter major modes (elixir-ts-mode,
 ;; and heex-ts-mode for Phoenix ~H / .heex templates — both ship with Emacs 30)

@@ -22,7 +22,7 @@
 ;; its behavior down):
 ;;
 ;; Optional Erlang layer for init.el. Disabled by default — uncomment the
-;; matching loader at the bottom of init.el to enable it.
+;; matching loader in extras.el to enable it.
 ;;
 ;; Erlang is the odd one out. There is no built-in tree-sitter mode for it, and
 ;; the canonical `erlang-mode' (erlang.el) is NOT on GNU/NonGNU ELPA — it ships
