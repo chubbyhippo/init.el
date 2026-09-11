@@ -785,8 +785,9 @@ dir (early-init.el, extras/*.el) is trusted explicitly so it lints too."
              (list (abbreviate-file-name (file-truename user-emacs-directory)))))))
 
 (ert-deftest init-test/given-a-diagnostic-then-it-shows-inline-at-end-of-line ()
-  "IDE-style: diagnostics render inline at end of line with Unicode pointers."
-  (should (init-test--declares '(flymake-show-diagnostics-at-end-of-line 'fancy))))
+  "IDE-style: diagnostics render inline at end of line, showing only the
+most severe one per line to keep it compact."
+  (should (init-test--declares '(flymake-show-diagnostics-at-end-of-line 'short))))
 
 (ert-deftest init-test/given-a-flymake-error-jump-then-comma-dot-repeat ()
   "After one SPC . e / SPC , e jump, keep tapping . / , — the entry keys are

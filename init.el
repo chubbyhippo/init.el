@@ -178,7 +178,7 @@
   :hook (emacs-lisp-mode . my-elisp-flymake)
   :custom
   (trusted-content (list (abbreviate-file-name (file-truename user-emacs-directory))))
-  (flymake-show-diagnostics-at-end-of-line 'fancy)
+  (flymake-show-diagnostics-at-end-of-line 'short)
   :config
   (defvar-keymap my-flymake-repeat-map
     :repeat t
