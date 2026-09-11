@@ -34,6 +34,7 @@ exec "$EMACS" -Q --batch \
   --eval "(setq package-user-dir \"$elpa\")" \
   -l "$here/early-init-tests.el" \
   -l "$here/init-tests.el" \
+  -l "$here/install-tests.el" \
   -l "$here/extras-tests.el" \
   -l "$here/extras/common-tests.el" \
   -l "$here/extras/eglot-ensure-tests.el" \
