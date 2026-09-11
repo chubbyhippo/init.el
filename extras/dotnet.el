@@ -17,6 +17,8 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (use-package csharp-mode
   :ensure nil
   :mode "\\.csx\\'")
@@ -25,11 +27,7 @@
   (add-to-list 'eglot-server-programs
                '((csharp-mode csharp-ts-mode) . ("csharp-ls"))))
 
-(when (fboundp 'my-eglot-ensure)
-  (advice-add 'my-eglot-ensure :before-while
-              (lambda () (or (not (derived-mode-p 'csharp-mode))
-                             (executable-find "csharp-ls")))
-              '((name . my-dotnet--skip-eglot-until-csharp-ls))))
+(my-eglot-guard-until 'csharp-mode "csharp-ls")
 
 (use-package dape
   :ensure t

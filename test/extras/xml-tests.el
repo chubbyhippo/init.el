@@ -48,8 +48,11 @@
 ;; itself (same situation as cobol.el, sql.el, kotlin.el). Without a
 ;; guard, hooking `my-eglot-ensure' onto `nxml-mode' would mean "Searching
 ;; for program: ... lemminx" in *Warnings* on every .xml file until the
-;; server is actually installed; the advice added here holds eglot back
-;; in nxml-mode buffers specifically until `lemminx' is on PATH.
+;; server is actually installed; the guard is the shared
+;; `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in via
+;; `require' with an explicit file path), behaviorally tested once in
+;; eglot-guard-tests.el -- same helper as cobol.el/sql.el/kotlin.el/
+;; dotnet.el/java.el.
 ;;
 ;; You supply the external tool: lemminx (github.com/eclipse-lemminx/lemminx),
 ;; the de-facto standard XML language server (Java, built on Eclipse
@@ -89,23 +92,17 @@ yaml.el/markdown.el each patch for their own text-mode-derived major mode."
     (extras-test--eval-with-eval-after-load "xml.el" 'eglot)
     (should (equal (cdr (assoc 'nxml-mode eglot-server-programs)) '("lemminx")))))
 
+(ert-deftest extras-test/given-xml-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "xml.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
 (ert-deftest extras-test/given-xml-then-eglot-is-skipped-until-lemminx-exists ()
-  "The advice on my-eglot-ensure should hold eglot back in nxml-mode buffers
-until lemminx is on PATH, and never touch other modes."
-  (defun my-eglot-ensure () 'ran)
-  (unwind-protect
-      (progn
-        (extras-test--eval-def "xml.el" 'when '(fboundp 'my-eglot-ensure))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) nil)))
-          (should-not (my-eglot-ensure)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) "/usr/bin/lemminx")))
-          (should (eq (my-eglot-ensure) 'ran)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) nil)))
-          (should (eq (my-eglot-ensure) 'ran))))
-    (advice-remove 'my-eglot-ensure 'my-xml--skip-eglot-until-lemminx)
-    (fmakunbound 'my-eglot-ensure)))
+  "xml.el delegates the skip-until-binary advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares
+           "xml.el" '(my-eglot-guard-until 'nxml-mode "lemminx"))))
 
 (ert-deftest extras-test/given-xml-then-it-provides-xml ()
   (should (extras-test--declares "xml.el" '(provide 'xml))))

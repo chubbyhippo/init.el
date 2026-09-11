@@ -53,11 +53,18 @@
   (expand-file-name (concat "extras/" name) extras-test-root))
 
 (defvar extras-test--files
-  '("clojure.el" "cobol.el" "cpp.el" "dotnet.el" "elixir.el" "erlang.el" "go.el"
-    "haskell.el" "html.el" "java.el" "json.el" "kotlin.el" "markdown.el"
-    "mermaid.el" "perl.el" "php.el" "python.el" "ruby.el" "rust.el" "scheme.el"
-    "sql.el" "typescript.el" "xml.el" "yaml.el" "zig.el")
+  '("clojure.el" "cobol.el" "cpp.el" "dotnet.el" "eglot-guard.el" "elixir.el"
+    "erlang.el" "go.el" "haskell.el" "html.el" "java.el" "json.el" "kotlin.el"
+    "markdown.el" "mermaid.el" "perl.el" "php.el" "python.el" "ruby.el"
+    "rust.el" "scheme.el" "sql.el" "typescript.el" "xml.el" "yaml.el" "zig.el")
   "Every file under extras/.")
+
+(defvar extras-test--menu-files
+  (seq-remove (lambda (f) (equal f "eglot-guard.el")) extras-test--files)
+  "Every extras/*.el file with its own toggleable entry in extras.el's menu.
+A strict subset of `extras-test--files' -- eglot-guard.el is a shared
+dependency each layer that needs it pulls in itself via `require', not a
+user-facing layer with its own on/off switch, so it carries no menu entry.")
 
 ;;; --------------------------------------------------- files as read data
 (defun extras-test--forms (name)

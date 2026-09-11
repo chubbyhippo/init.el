@@ -43,9 +43,13 @@
 ;; WHY THE eglot HOOK IS GUARDED. sql-mode derives from prog-mode, so
 ;; init.el's global `my-eglot-ensure' fires in every SQL buffer; without a
 ;; guard that means "Searching for program: ... sqls" in *Warnings* on every
-;; .sql file until the server is actually installed. Same shape of advice as
-;; cobol.el (skip until the binary exists) rather than scheme.el's
-;; unconditional skip (which is for a language with no LSP story at all).
+;; .sql file until the server is actually installed. The guard is the shared
+;; `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in via
+;; `require' with an explicit file path), behaviorally tested once in
+;; eglot-guard-tests.el rather than in every layer that uses it -- same
+;; helper as cobol.el/kotlin.el/xml.el/dotnet.el/java.el, all skip-until-
+;; binary rather than scheme.el's unconditional skip (for a language with no
+;; LSP story at all).
 ;;
 ;; sql-product decides dialect-specific font-lock/abbrevs and is declared
 ;; :safe, so a per-project .dir-locals.el entry works without any config
@@ -112,23 +116,16 @@ its own auto-mode-alist entry already covers .sql."
     (extras-test--eval-with-eval-after-load "sql.el" 'eglot)
     (should (equal (cdr (assoc 'sql-mode eglot-server-programs)) '("sqls")))))
 
+(ert-deftest extras-test/given-sql-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "sql.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
 (ert-deftest extras-test/given-sql-then-eglot-is-skipped-until-sqls-exists ()
-  "The advice on my-eglot-ensure should hold eglot back in sql-mode buffers
-until sqls is on PATH, and never touch other modes."
-  (defun my-eglot-ensure () 'ran)
-  (unwind-protect
-      (progn
-        (extras-test--eval-def "sql.el" 'when '(fboundp 'my-eglot-ensure))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) nil)))
-          (should-not (my-eglot-ensure)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) "/usr/bin/sqls")))
-          (should (eq (my-eglot-ensure) 'ran)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) nil)))
-          (should (eq (my-eglot-ensure) 'ran))))
-    (advice-remove 'my-eglot-ensure 'my-sql--skip-eglot-until-sqls)
-    (fmakunbound 'my-eglot-ensure)))
+  "sql.el delegates the skip-until-binary advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares "sql.el" '(my-eglot-guard-until 'sql-mode "sqls"))))
 
 (ert-deftest extras-test/given-sql-then-it-provides-sql ()
   (should (extras-test--declares "sql.el" '(provide 'sql))))

@@ -17,16 +17,14 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (use-package sql
   :ensure nil)
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(sql-mode . ("sqls"))))
 
-(when (fboundp 'my-eglot-ensure)
-  (advice-add 'my-eglot-ensure :before-while
-              (lambda () (or (not (derived-mode-p 'sql-mode))
-                             (executable-find "sqls")))
-              '((name . my-sql--skip-eglot-until-sqls))))
+(my-eglot-guard-until 'sql-mode "sqls")
 
 (provide 'sql)

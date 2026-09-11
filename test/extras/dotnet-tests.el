@@ -56,11 +56,13 @@
 ;; (checked eglot-server-programs directly), so this layer registers one
 ;; itself, same situation as cobol.el/sql.el/kotlin.el/xml.el. Without a
 ;; guard, opening any .cs file would mean "Searching for program: ...
-;; csharp-ls" in *Warnings* until the server is installed; the advice here
-;; holds eglot back in csharp-mode buffers specifically until `csharp-ls'
-;; is on PATH. `(derived-mode-p 'csharp-mode)' alone covers csharp-ts-mode
-;; buffers too -- csharp-mode.el's own `derived-mode-add-parents' call
-;; registers csharp-mode as csharp-ts-mode's virtual parent.
+;; csharp-ls" in *Warnings* until the server is installed; the guard is the
+;; shared `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled
+;; in via `require' with an explicit file path), behaviorally tested once
+;; in eglot-guard-tests.el. `(derived-mode-p 'csharp-mode)' alone covers
+;; csharp-ts-mode buffers too -- csharp-mode.el's own
+;; `derived-mode-add-parents' call registers csharp-mode as
+;; csharp-ts-mode's virtual parent.
 ;;
 ;; You supply the external tool: csharp-ls
 ;; (github.com/razzmatazz/csharp-language-server), a community,
@@ -102,23 +104,17 @@
     (should (equal (cdr (assoc '(csharp-mode csharp-ts-mode) eglot-server-programs))
                    '("csharp-ls")))))
 
+(ert-deftest extras-test/given-dotnet-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "dotnet.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
 (ert-deftest extras-test/given-dotnet-then-eglot-is-skipped-until-csharp-ls-exists ()
-  "The advice on my-eglot-ensure should hold eglot back in csharp-mode
-buffers until csharp-ls is on PATH, and never touch other modes."
-  (defun my-eglot-ensure () 'ran)
-  (unwind-protect
-      (progn
-        (extras-test--eval-def "dotnet.el" 'when '(fboundp 'my-eglot-ensure))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) nil)))
-          (should-not (my-eglot-ensure)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) "/usr/bin/csharp-ls")))
-          (should (eq (my-eglot-ensure) 'ran)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) nil)))
-          (should (eq (my-eglot-ensure) 'ran))))
-    (advice-remove 'my-eglot-ensure 'my-dotnet--skip-eglot-until-csharp-ls)
-    (fmakunbound 'my-eglot-ensure)))
+  "dotnet.el delegates the skip-until-binary advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares
+           "dotnet.el" '(my-eglot-guard-until 'csharp-mode "csharp-ls"))))
 
 (ert-deftest extras-test/given-dotnet-then-dape-is-declared-with-no-language-specific-config ()
   "dape ships a built-in netcoredbg config for csharp-mode/csharp-ts-mode,

@@ -35,6 +35,17 @@
 ;;     Central) — loaded into jdtls so dape's built-in `jdtls' config can set
 ;;     breakpoints and step
 ;;
+;; WHY THE eglot HOOK IS GUARDED. eglot ships NO built-in Java entry either
+;; (checked eglot-server-programs directly) -- this layer's own
+;; eglot-server-programs registration is the only thing eglot knows about
+;; java-mode/java-ts-mode at all. Without a guard, opening any .java file
+;; before jdtls is installed would mean "Searching for program: ... jdtls"
+;; in *Warnings* on every file, the same bug cobol.el's/sql.el's/kotlin.el's/
+;; xml.el's/dotnet.el's guards exist to prevent -- this layer used to lack
+;; it. The guard is the shared `my-eglot-guard-until' helper from
+;; extras/eglot-guard.el (pulled in via `require' with an explicit file
+;; path), behaviorally tested once in eglot-guard-tests.el.
+;;
 ;; Both are installed by wsl-ubuntu-settings' init-el-extras.sh: jdtls into
 ;; ~/.local/share/jdtls (linked at ~/.local/bin/jdtls), the debug jar into
 ;; ~/.local/share/java-debug/.
@@ -98,6 +109,20 @@
     (extras-test--eval-with-eval-after-load "java.el" 'eglot)
     (should (equal (cdr (assoc '(java-mode java-ts-mode) eglot-server-programs))
                    '("jdtls" :initializationOptions my-java--jdtls-initialization-options)))))
+
+(ert-deftest extras-test/given-java-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "java.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
+(ert-deftest extras-test/given-java-then-eglot-is-skipped-until-jdtls-exists ()
+  "eglot has no built-in fallback for java-mode/java-ts-mode either, so
+without this guard opening a .java file before jdtls is installed would
+spam *Warnings* -- the same class of bug cobol.el/sql.el/kotlin.el/xml.el/
+dotnet.el guard against. Delegates to the shared my-eglot-guard-until
+helper (behaviorally tested on its own in eglot-guard-tests.el)."
+  (should (extras-test--declares
+           "java.el" '(my-eglot-guard-until 'java-mode "jdtls"))))
 
 (ert-deftest extras-test/given-java-then-it-provides-java ()
   (should (extras-test--declares "java.el" '(provide 'java))))

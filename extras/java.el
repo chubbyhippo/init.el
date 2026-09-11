@@ -17,6 +17,8 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (use-package java-ts-mode
   :ensure nil
   :init
@@ -58,5 +60,7 @@
                '((java-mode java-ts-mode)
                  . ("jdtls" :initializationOptions
                     my-java--jdtls-initialization-options))))
+
+(my-eglot-guard-until 'java-mode "jdtls")
 
 (provide 'java)

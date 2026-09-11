@@ -59,12 +59,18 @@
 ;; Emacs 30.2):
 ;;   no server registered      Wrong type argument: processp, nil
 ;;   registered, not on PATH   Searching for program: ... superbol-free
-;; So the advice tested below skips eglot in COBOL buffers until superbol-free is
+;; So this layer holds eglot back in COBOL buffers until superbol-free is
 ;; actually executable: compiler-only editing stays silent, and building the
-;; server later turns the LSP on with no edit here. scheme.el uses the same
-;; advice unconditionally — Scheme has no LSP at all, whereas COBOL's merely has
-;; to be built. This is html.el's problem mirrored: there the prog-mode hook
-;; never reaches the mode, here it reaches a mode with nothing behind it.
+;; server later turns the LSP on with no edit here. The guard itself is the
+;; shared `my-eglot-guard-until' helper from extras/eglot-guard.el (pulled in
+;; via `require' with an explicit file path, so load order in extras.el does
+;; not matter) -- sql.el/kotlin.el/xml.el/dotnet.el/java.el all delegate to
+;; the same helper now, behaviorally tested once in eglot-guard-tests.el
+;; rather than five times over. scheme.el's own guard is unconditional (no
+;; binary check at all) since Scheme has no LSP story whatsoever, so it does
+;; not use this helper. This is html.el's problem mirrored: there the
+;; prog-mode hook never reaches the mode, here it reaches a mode with
+;; nothing behind it.
 ;;
 ;; NO debug adapter. dape ships no COBOL config, and the GnuCOBOL debugger is
 ;; superbol-vscode-debug — a VS Code extension wrapping gdb over the C that cobc
@@ -120,23 +126,17 @@
     (extras-test--eval-with-eval-after-load "cobol.el" 'eglot)
     (should (equal (cdr (assoc 'cobol-mode eglot-server-programs)) '("superbol-free" "lsp")))))
 
+(ert-deftest extras-test/given-cobol-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "cobol.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
 (ert-deftest extras-test/given-cobol-then-eglot-is-skipped-until-superbol-free-exists ()
-  "The advice on my-eglot-ensure should hold eglot back in cobol-mode buffers
-until superbol-free is on PATH, and never touch other modes."
-  (defun my-eglot-ensure () 'ran)
-  (unwind-protect
-      (progn
-        (extras-test--eval-def "cobol.el" 'when '(fboundp 'my-eglot-ensure))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) nil)))
-          (should-not (my-eglot-ensure)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) "/usr/bin/superbol-free")))
-          (should (eq (my-eglot-ensure) 'ran)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) nil)))
-          (should (eq (my-eglot-ensure) 'ran))))
-    (advice-remove 'my-eglot-ensure 'my-cobol--skip-eglot-until-superbol)
-    (fmakunbound 'my-eglot-ensure)))
+  "cobol.el delegates the skip-until-binary advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares
+           "cobol.el" '(my-eglot-guard-until 'cobol-mode "superbol-free"))))
 
 (ert-deftest extras-test/given-cobol-then-it-provides-cobol ()
   (should (extras-test--declares "cobol.el" '(provide 'cobol))))

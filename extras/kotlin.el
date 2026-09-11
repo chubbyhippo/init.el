@@ -17,16 +17,14 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (use-package kotlin-mode
   :ensure t)
 
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(kotlin-mode . ("kotlin-lsp" "--stdio"))))
 
-(when (fboundp 'my-eglot-ensure)
-  (advice-add 'my-eglot-ensure :before-while
-              (lambda () (or (not (derived-mode-p 'kotlin-mode))
-                             (executable-find "kotlin-lsp")))
-              '((name . my-kotlin--skip-eglot-until-kotlin-lsp))))
+(my-eglot-guard-until 'kotlin-mode "kotlin-lsp")
 
 (provide 'kotlin)

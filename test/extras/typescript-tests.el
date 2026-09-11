@@ -32,7 +32,8 @@
 ;;   - TypeScript compiler & LSP server:
 ;;       npm install -g typescript typescript-language-server
 ;;     — eglot launches `typescript-language-server' automatically for
-;;     .js / .jsx / .ts / .tsx once it's on PATH.
+;;     .js / .jsx / .ts / .tsx once it's on PATH (project-local, via
+;;     `npm install -D', works too -- see WHY THE eglot HOOK IS GUARDED below).
 ;;   - Direct TypeScript runtimes (optional, for running/debugging without build step):
 ;;       npm install -g tsx ts-node
 ;;     — needed if running `js-debug-tsx' or `js-debug-ts-node' via dape.
@@ -97,6 +98,27 @@
 ;; modes and eglot are built in. (typescript-mode / tide / lsp-* /
 ;; flymake-eslint / apheleia are MELPA-only, so they're not used here.)
 ;;
+;; WHY THE eglot HOOK IS GUARDED. eglot ships NO built-in entry for
+;; js-mode/js-ts-mode/typescript-ts-mode/tsx-ts-mode/typescript-mode either
+;; (checked eglot-server-programs directly) -- this layer's own
+;; eglot-server-programs registration above is the only thing eglot knows
+;; about any of these modes. Without a guard, opening any .js/.ts/.tsx file
+;; before typescript-language-server is installed would mean "Searching
+;; for program: ... typescript-language-server" in *Warnings* on every
+;; file -- the same bug cobol.el's/sql.el's/kotlin.el's/xml.el's/dotnet.el's/
+;; java.el's guards exist to prevent, this layer used to lack it. The guard
+;; is the shared `my-eglot-guard-until' helper from extras/eglot-guard.el
+;; (pulled in via `require' with an explicit file path), behaviorally
+;; tested once in eglot-guard-tests.el. Unlike every other caller of that
+;; helper, this one passes a MODES list (js-mode/typescript-mode/tsx-mode --
+;; js-ts-mode, typescript-ts-mode and tsx-ts-mode respectively register
+;; those as their `derived-mode-add-parents', confirmed in Emacs core's
+;; js.el and typescript-ts-mode.el) and a function, not a bare binary
+;; string, since "ready" here must also recognize a project-local
+;; node_modules/.bin/typescript-language-server the plain global PATH
+;; check would miss -- `my-typescript--lsp-ready-p' reuses
+;; `my-typescript--npm-bin's own resolution instead of duplicating it.
+;;
 ;; Overriding eglot's own default (plain PATH lookup) via
 ;; `my-typescript--lsp-contact' makes a project-local
 ;; typescript-language-server win too, same as ESLint/Prettier.
@@ -155,6 +177,59 @@
                                 (typescript-mode :language-id "typescript"))
                                eglot-server-programs))
                    'my-typescript--lsp-contact))))
+
+(ert-deftest extras-test/given-typescript-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "typescript.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
+(ert-deftest extras-test/given-typescript-then-eglot-is-skipped-until-the-server-is-ready ()
+  "typescript.el delegates the skip-until-ready advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el), passing a mode list (js-ts-mode/typescript-ts-mode/
+tsx-ts-mode's registered derived-mode-add-parents) and a function rather
+than a bare binary string, since readiness must also recognize a
+project-local server."
+  (should (extras-test--declares
+           "typescript.el"
+           '(my-eglot-guard-until '(js-mode typescript-mode tsx-mode)
+                                   #'my-typescript--lsp-ready-p))))
+
+(ert-deftest extras-test/given-typescript-then-lsp-ready-p-recognizes-a-project-local-server ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--lsp-ready-p)
+  (let* ((root (make-temp-file "ts-ready-local" t))
+         (bindir (expand-file-name "node_modules/.bin/" root))
+         (bin (expand-file-name "typescript-language-server" bindir)))
+    (unwind-protect
+        (progn
+          (make-directory bindir t)
+          (write-region "" nil bin)
+          (let ((default-directory root))
+            (cl-letf (((symbol-function 'file-executable-p) (lambda (f) (equal f bin))))
+              (should (my-typescript--lsp-ready-p)))))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-lsp-ready-p-falls-back-to-path ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--lsp-ready-p)
+  (let ((root (make-temp-file "ts-ready-path" t)))
+    (unwind-protect
+        (let ((default-directory root))
+          (cl-letf (((symbol-function 'executable-find)
+                     (lambda (b) (equal b "typescript-language-server"))))
+            (should (my-typescript--lsp-ready-p))))
+      (delete-directory root t))))
+
+(ert-deftest extras-test/given-typescript-then-lsp-ready-p-is-nil-with-neither ()
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)
+  (extras-test--eval-def "typescript.el" 'defun 'my-typescript--lsp-ready-p)
+  (let ((root (make-temp-file "ts-ready-neither" t)))
+    (unwind-protect
+        (let ((default-directory root))
+          (cl-letf (((symbol-function 'executable-find) (lambda (_) nil)))
+            (should-not (my-typescript--lsp-ready-p))))
+      (delete-directory root t))))
 
 (ert-deftest extras-test/given-typescript-then-eslint-check-shells-out-through-compile ()
   (extras-test--eval-def "typescript.el" 'defun 'my-typescript--npm-bin)

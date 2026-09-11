@@ -17,6 +17,8 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (defun my-typescript--npm-bin (name &optional dir)
   "Return the project-local node_modules/.bin/NAME under DIR, else NAME."
   (if-let* ((root (locate-dominating-file (or dir default-directory) "node_modules"))
@@ -39,6 +41,14 @@
                   (typescript-ts-mode :language-id "typescript")
                   (typescript-mode :language-id "typescript"))
                  . my-typescript--lsp-contact)))
+
+(defun my-typescript--lsp-ready-p ()
+  "Non-nil once typescript-language-server (project-local or on PATH) is
+available."
+  (let ((bin (my-typescript--npm-bin "typescript-language-server")))
+    (or (file-name-absolute-p bin) (executable-find bin))))
+
+(my-eglot-guard-until '(js-mode typescript-mode tsx-mode) #'my-typescript--lsp-ready-p)
 
 (defun my-typescript-eslint-check ()
   "Run ESLint on the current file in a `compile' buffer."

@@ -51,8 +51,10 @@
 ;; init.el's global `my-eglot-ensure' fires in every Kotlin buffer; without
 ;; a guard that means "Searching for program: ... kotlin-lsp" in
 ;; *Warnings* on every .kt/.kts file until the server is actually
-;; installed. Same shape of advice as cobol.el and sql.el (skip until the
-;; binary exists).
+;; installed. The guard is the shared `my-eglot-guard-until' helper from
+;; extras/eglot-guard.el (pulled in via `require' with an explicit file
+;; path), behaviorally tested once in eglot-guard-tests.el -- same helper
+;; as cobol.el/sql.el/xml.el/dotnet.el/java.el.
 ;;
 ;; NO debug adapter. dape ships no Kotlin/JVM config (checked its
 ;; dape-configs alist). fwcd/kotlin-debug-adapter exists standalone and
@@ -77,23 +79,17 @@ is needed here."
     (should (equal (cdr (assoc 'kotlin-mode eglot-server-programs))
                    '("kotlin-lsp" "--stdio")))))
 
+(ert-deftest extras-test/given-kotlin-then-it-requires-the-shared-eglot-guard ()
+  (should (extras-test--declares
+           "kotlin.el"
+           '(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory)))))
+
 (ert-deftest extras-test/given-kotlin-then-eglot-is-skipped-until-kotlin-lsp-exists ()
-  "The advice on my-eglot-ensure should hold eglot back in kotlin-mode buffers
-until kotlin-lsp is on PATH, and never touch other modes."
-  (defun my-eglot-ensure () 'ran)
-  (unwind-protect
-      (progn
-        (extras-test--eval-def "kotlin.el" 'when '(fboundp 'my-eglot-ensure))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) nil)))
-          (should-not (my-eglot-ensure)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) t))
-                  ((symbol-function 'executable-find) (lambda (_) "/usr/local/bin/kotlin-lsp")))
-          (should (eq (my-eglot-ensure) 'ran)))
-        (cl-letf (((symbol-function 'derived-mode-p) (lambda (&rest _) nil)))
-          (should (eq (my-eglot-ensure) 'ran))))
-    (advice-remove 'my-eglot-ensure 'my-kotlin--skip-eglot-until-kotlin-lsp)
-    (fmakunbound 'my-eglot-ensure)))
+  "kotlin.el delegates the skip-until-binary advice to the shared
+my-eglot-guard-until helper (behaviorally tested on its own in
+eglot-guard-tests.el) rather than hand-rolling it."
+  (should (extras-test--declares
+           "kotlin.el" '(my-eglot-guard-until 'kotlin-mode "kotlin-lsp"))))
 
 (ert-deftest extras-test/given-kotlin-then-it-provides-kotlin ()
   (should (extras-test--declares "kotlin.el" '(provide 'kotlin))))

@@ -17,6 +17,8 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
+(require 'eglot-guard (expand-file-name "extras/eglot-guard" user-emacs-directory))
+
 (declare-function my-eglot-ensure "init" ())
 
 (use-package nxml-mode
@@ -26,10 +28,6 @@
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs '(nxml-mode . ("lemminx"))))
 
-(when (fboundp 'my-eglot-ensure)
-  (advice-add 'my-eglot-ensure :before-while
-              (lambda () (or (not (derived-mode-p 'nxml-mode))
-                             (executable-find "lemminx")))
-              '((name . my-xml--skip-eglot-until-lemminx))))
+(my-eglot-guard-until 'nxml-mode "lemminx")
 
 (provide 'xml)
