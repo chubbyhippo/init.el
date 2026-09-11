@@ -846,6 +846,11 @@ dialect in =~/.config/sqls/config.yml=, not here.
 |                                 | project's package.json declares either |
 | M-x dape                       | =js-debug-*= (Node / Chrome)           |
 
+** XML (=extras/xml.el=)
+Built-in =nxml-mode= (unmodified) + eglot wired to =lemminx= (guarded until
+it is on PATH), plus the missing eglot hook (nxml-mode derives from
+=text-mode=); no extra keys, no dape config.
+
 ** YAML (=extras/yaml.el=)
 Adds the missing eglot hook (yaml-ts-mode derives from =text-mode=); no
 extra keys.

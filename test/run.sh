@@ -56,6 +56,7 @@ exec "$EMACS" -Q --batch \
   -l "$here/extras/scheme-tests.el" \
   -l "$here/extras/sql-tests.el" \
   -l "$here/extras/typescript-tests.el" \
+  -l "$here/extras/xml-tests.el" \
   -l "$here/extras/yaml-tests.el" \
   -l "$here/extras/zig-tests.el" \
   -f ert-run-tests-batch-and-exit

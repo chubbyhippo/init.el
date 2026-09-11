@@ -46,6 +46,7 @@
 (load (expand-file-name "extras/scheme.el"     user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/sql.el"        user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/typescript.el" user-emacs-directory) :noerror :nomessage)
+(load (expand-file-name "extras/xml.el"        user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/yaml.el"       user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/zig.el"        user-emacs-directory) :noerror :nomessage)
 
