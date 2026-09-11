@@ -799,6 +799,14 @@ official server, guarded until it is on PATH); no extra keys, no dape config.
 Adds the missing eglot hook (markdown-mode derives from =text-mode=); no
 extra keys.
 
+** Mermaid (=extras/mermaid.el=)
+No major mode (mermaid-mode is MELPA-only) and no LSP -- just a render
+command. Needs =npm install -g @mermaid-js/mermaid-cli= (=mmdc=).
+| Command                  | Description                                  |
+|---------------------------+----------------------------------------------|
+| M-x my-mermaid-render     | Render diagram at point (or .mmd buffer) to SVG |
+| C-c C-c r (in markdown)   | Same, bound into markdown-mode's own map     |
+
 ** Perl (=extras/perl.el=)
 | Change / command | Description                                   |
 |------------------+-----------------------------------------------|

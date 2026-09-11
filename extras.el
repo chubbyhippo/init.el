@@ -39,6 +39,7 @@
 (load (expand-file-name "extras/json.el"       user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/kotlin.el"     user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/markdown.el"   user-emacs-directory) :noerror :nomessage)
+(load (expand-file-name "extras/mermaid.el"    user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/perl.el"       user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/php.el"        user-emacs-directory) :noerror :nomessage)
 (load (expand-file-name "extras/python.el"     user-emacs-directory) :noerror :nomessage)
