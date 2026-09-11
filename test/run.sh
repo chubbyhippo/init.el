@@ -52,6 +52,7 @@ exec "$EMACS" -Q --batch \
   -l "$here/extras/ruby-tests.el" \
   -l "$here/extras/rust-tests.el" \
   -l "$here/extras/scheme-tests.el" \
+  -l "$here/extras/sql-tests.el" \
   -l "$here/extras/typescript-tests.el" \
   -l "$here/extras/yaml-tests.el" \
   -l "$here/extras/zig-tests.el" \

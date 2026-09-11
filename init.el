@@ -798,6 +798,7 @@ ace-window would otherwise jump to the other window."
 ;; (load (expand-file-name "extras/ruby.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/rust.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/scheme.el"     user-emacs-directory) :noerror :nomessage)
+;; (load (expand-file-name "extras/sql.el"        user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/typescript.el" user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/yaml.el"       user-emacs-directory) :noerror :nomessage)
 ;; (load (expand-file-name "extras/zig.el"        user-emacs-directory) :noerror :nomessage)
