@@ -170,6 +170,9 @@
 (use-package flymake
   :ensure nil
   :commands (flymake-goto-next-error flymake-goto-prev-error)
+  :bind (("M-n" . flymake-goto-next-error)
+         ("M-p" . flymake-goto-prev-error)
+         ("C-c f d" . flymake-show-buffer-diagnostics))
   :preface
   (defun my-elisp-flymake ()
     "Flymake for elisp buffers: byte-compile diagnostics, no checkdoc."

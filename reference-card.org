@@ -699,7 +699,8 @@ there (=l= is already a leaf command on the leader), so it moved to a new
 | C-c l c                              | L c          | eglot-list-connections             | List connections                       |
 | C-c L                                | L e          | eglot-events-buffer                | Open LSP events log                    |
 | M-x eglot-format                     | -            | eglot-format                       | Format region                          |
-| M-x flymake-show-buffer-diagnostics  | -            | flymake-show-buffer-diagnostics    | List buffer diagnostics                |
+| C-c f d                              | -            | flymake-show-buffer-diagnostics    | List buffer diagnostics                |
+| M-n / M-p                            | -            | flymake-goto-{next,prev}-error     | Next / previous diagnostic             |
 | M-x flymake-show-project-diagnostics | -            | flymake-show-project-diagnostics   | Project diagnostics                    |
 | SPC . e / SPC , e                    | -            | -                                  | Next/prev Flymake error                |
 | xref via consult                     | -            | -                                  | Definitions/refs UI                    |

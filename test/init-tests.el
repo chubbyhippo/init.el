@@ -783,6 +783,13 @@ M-RET and the leader's r a already cover it."
 :commands makes SPC , e / SPC . e resolvable anywhere."
   (should (init-test--declares '(flymake-goto-next-error flymake-goto-prev-error))))
 
+(ert-deftest init-test/given-flymake-then-navigation-and-diagnostics-are-bound ()
+  "Flymake binds M-n/M-p for error navigation and C-c f d for buffer diagnostics."
+  (dolist (binding '(("M-n" . flymake-goto-next-error)
+                     ("M-p" . flymake-goto-prev-error)
+                     ("C-c f d" . flymake-show-buffer-diagnostics)))
+    (should (init-test--declares binding))))
+
 (ert-deftest init-test/given-an-elisp-buffer-then-flymake-uses-byte-compile-not-checkdoc ()
   "Elisp buffers get no eglot, so my-elisp-flymake turns on the built-in
 byte-compile backend.  checkdoc is removed BEFORE enabling: flymake collects
