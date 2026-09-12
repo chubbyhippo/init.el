@@ -630,10 +630,10 @@ runs happily alongside corfu."
   (should (init-test--declares '(when (fboundp 'global-completion-preview-mode)
                                   (global-completion-preview-mode 1)))))
 
-(ert-deftest init-test/given-lsp-io-then-the-process-read-buffer-is-1mb ()
-  "read-process-output-max is raised from the 64 KB default to 1 MB so large
+(ert-deftest init-test/given-lsp-io-then-the-process-read-buffer-is-4mb ()
+  "read-process-output-max is raised from the 64 KB default to 4 MB so large
 LSP responses arrive in fewer chunks — snappier eglot."
-  (should (init-test--declares '(setq read-process-output-max (* 1024 1024)))))
+  (should (init-test--declares '(setq read-process-output-max (* 4 1024 1024)))))
 
 (ert-deftest init-test/given-the-config-then-redisplay-favors-speed-over-precision ()
   "The four scrolling/fontification/font-cache knobs the Emacs manual and

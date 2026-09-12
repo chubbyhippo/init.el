@@ -111,10 +111,10 @@ window layouts so =C-c left/right= can undo/redo them.  They pair naturally.
 ** Performance and cleanliness settings
 
 #+begin_src elisp
-(setq read-process-output-max (* 1024 1024))
+(setq read-process-output-max (* 4 1024 1024))
 #+end_src
 
-Raise the process read buffer from the 64 KB default to 1 MB.  Large LSP
+Raise the process read buffer from the 64 KB default to 4 MB.  Large LSP
 responses then arrive in far fewer chunks — noticeably snappier eglot.
 
 #+begin_src elisp
