@@ -460,7 +460,7 @@ The heart of the interactive experience — several small packages that layer:
 - *corfu* — in-buffer completion popup.
   #+begin_src elisp
   (corfu-auto t)
-  (corfu-auto-delay 0.05)   ; instantaneous popup (50 ms debounce)
+  (corfu-auto-delay 0.1)   ; snappy popup aligned with eglot sync (100 ms debounce)
   (corfu-auto-prefix 2)
   (corfu-preview-current nil) ; prevent ghost preview flickering while scrolling candidates
   (add-to-list 'savehist-additional-variables 'corfu-history)  ; remember completion order across sessions

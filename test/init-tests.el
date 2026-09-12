@@ -925,10 +925,10 @@ consult in at startup."
   (should (init-test--declares '(:after (embark consult)))))
 
 (ert-deftest init-test/given-corfu-then-auto-delay-is-low-and-preview-is-disabled ()
-  "Corfu pops up with 50 ms delay and no in-buffer preview for snappiness."
+  "Corfu pops up with 100 ms delay and no in-buffer preview for snappiness."
   (let ((custom (init-test--use-package-section 'corfu :custom)))
     (should (member '(corfu-auto t) custom))
-    (should (member '(corfu-auto-delay 0.05) custom))
+    (should (member '(corfu-auto-delay 0.1) custom))
     (should (member '(corfu-preview-current nil) custom))))
 
 (ert-deftest init-test/given-corfu-then-history-persists-through-savehist ()

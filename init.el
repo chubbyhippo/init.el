@@ -337,7 +337,7 @@
   (declare-function corfu-previous "corfu")
   :custom
   (corfu-auto t)
-  (corfu-auto-delay 0.05)
+  (corfu-auto-delay 0.1)
   (corfu-auto-prefix 2)
   (corfu-preview-current nil)
   (corfu-cycle t)
