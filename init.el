@@ -165,6 +165,8 @@
          ("C-c L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
+  (eglot-send-changes-idle-time 0.3)
+  (eglot-ignored-server-capabilities '(:inlayHintProvider))
   (eglot-events-buffer-config '(:size 0 :format full)))
 
 (use-package flymake
@@ -335,8 +337,9 @@
   (declare-function corfu-previous "corfu")
   :custom
   (corfu-auto t)
-  (corfu-auto-delay 0.2)
+  (corfu-auto-delay 0.05)
   (corfu-auto-prefix 2)
+  (corfu-preview-current nil)
   (corfu-cycle t)
   (corfu-popupinfo-delay '(0.5 . 0.1))
   :config
@@ -370,6 +373,8 @@ would take the major mode's own capf with it."
     (if (eglot-managed-p)
         (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
       (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
+  :custom
+  (cape-dabbrev-check-other-buffers nil)
   :init
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)

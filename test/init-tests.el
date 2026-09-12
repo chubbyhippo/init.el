@@ -746,6 +746,14 @@ every elisp buffer (no LSP here); my-eglot-ensure skips lisp-data-mode descendan
   "Logging every LSP event is a measurable drag; the events buffer is sized to 0."
   (should (init-test--declares '(eglot-events-buffer-config '(:size 0 :format full)))))
 
+(ert-deftest init-test/given-eglot-then-inlay-hints-are-ignored-for-responsiveness ()
+  "Heavy inlay hints are excluded from server capabilities to reduce JSON-RPC traffic."
+  (should (init-test--declares '(eglot-ignored-server-capabilities '(:inlayHintProvider)))))
+
+(ert-deftest init-test/given-eglot-then-change-idle-time-matches-intellij ()
+  "IntelliJ's highlighting daemon runs code analysis after 300 ms idle time."
+  (should (init-test--declares '(eglot-send-changes-idle-time 0.3))))
+
 (ert-deftest init-test/given-eglot-then-its-commands-sit-under-a-buffer-local-prefix ()
   "eglot's own mode-map starts nearly empty (only the eldoc remap); its
 commands are bound directly under C-c, sharing three prefixes with existing
@@ -916,9 +924,21 @@ session with the stock preview at the stock one-second delay."
 consult in at startup."
   (should (init-test--declares '(:after (embark consult)))))
 
+(ert-deftest init-test/given-corfu-then-auto-delay-is-low-and-preview-is-disabled ()
+  "Corfu pops up with 50 ms delay and no in-buffer preview for snappiness."
+  (let ((custom (init-test--use-package-section 'corfu :custom)))
+    (should (member '(corfu-auto t) custom))
+    (should (member '(corfu-auto-delay 0.05) custom))
+    (should (member '(corfu-preview-current nil) custom))))
+
 (ert-deftest init-test/given-corfu-then-history-persists-through-savehist ()
   "corfu-history is added to savehist so completion ordering survives restarts."
   (should (init-test--declares '(add-to-list 'savehist-additional-variables 'corfu-history))))
+
+(ert-deftest init-test/given-cape-then-dabbrev-does-not-scan-other-buffers ()
+  "cape-dabbrev-check-other-buffers is nil so dabbrev searches stay local to the buffer."
+  (let ((custom (init-test--use-package-section 'cape :custom)))
+    (should (member '(cape-dabbrev-check-other-buffers nil) custom))))
 
 (ert-deftest init-test/given-an-eglot-buffer-then-cape-supers-the-capfs ()
   "While eglot manages a buffer, its completions and dabbrev's arrive merged as

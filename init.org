@@ -269,6 +269,8 @@ one of them be recognized as a project root too.
          ("C-c L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
+  (eglot-send-changes-idle-time 0.3)
+  (eglot-ignored-server-capabilities '(:inlayHintProvider))
   (eglot-events-buffer-config '(:size 0 :format full)))
 #+end_src
 
@@ -457,10 +459,17 @@ The heart of the interactive experience — several small packages that layer:
   #+end_src
 - *corfu* — in-buffer completion popup.
   #+begin_src elisp
+  (corfu-auto t)
+  (corfu-auto-delay 0.05)   ; instantaneous popup (50 ms debounce)
+  (corfu-auto-prefix 2)
+  (corfu-preview-current nil) ; prevent ghost preview flickering while scrolling candidates
   (add-to-list 'savehist-additional-variables 'corfu-history)  ; remember completion order across sessions
   #+end_src
 - *cape* — extra completion-at-point functions (dabbrev, file, keyword) and
   the eglot-merge below.
+  #+begin_src elisp
+  (setq cape-dabbrev-check-other-buffers nil) ; keep dabbrev searches within the current buffer for speed
+  #+end_src
 
 ** cape + eglot — merge the capfs safely
 
@@ -474,6 +483,8 @@ The heart of the interactive experience — several small packages that layer:
   (if (eglot-managed-p)
       (add-hook 'completion-at-point-functions #'my-eglot-capf -10 t)
     (remove-hook 'completion-at-point-functions #'my-eglot-capf t)))
+;; in cape's :custom block:
+(cape-dabbrev-check-other-buffers nil)
 ;; in cape's :init block:
 (add-hook 'eglot-managed-mode-hook #'my-eglot-capfs)
 #+end_src
