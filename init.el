@@ -59,6 +59,7 @@
   (keymap-global-set "C-c b l" #'bookmark-bmenu-list)
   (keymap-global-set "C-z"   #'undo-only)
   (keymap-global-set "C-S-z" #'undo-redo)
+  (keymap-global-set "M-/"   #'completion-at-point)
   (windmove-default-keybindings)
   (winner-mode 1)
   (setq read-process-output-max (* 4 1024 1024))

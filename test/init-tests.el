@@ -687,6 +687,10 @@ without the mode that honors it, so it is added to minibuffer-setup-hook."
   (should (init-test--declares '(keymap-global-set "C-c b m" #'bookmark-set)))
   (should (init-test--declares '("C-c b j" . consult-bookmark))))
 
+(ert-deftest init-test/given-completion-then-M-slash-is-bound-to-completion-at-point ()
+  "M-/ is bound globally to completion-at-point for reliable manual completion."
+  (should (init-test--declares '(keymap-global-set "M-/" #'completion-at-point))))
+
 (ert-deftest init-test/given-a-bookmark-then-list-is-on-C-c-b-l ()
   "The C-c b bookmark prefix's list command (l → bookmark-bmenu-list)."
   (should (init-test--declares '(keymap-global-set "C-c b l" #'bookmark-bmenu-list))))

@@ -201,6 +201,7 @@ In isearch: =C-s=/=C-r= again = next/prev; =RET= exit; =C-g= cancel;
 | C-x C-e     | eval-last-sexp                   | Eval sexp before point       |
 | C-M-x       | eval-defun                       | Eval defun                   |
 | TAB / C-M-i | completion-at-point              | Complete at point            |
+| M-/         | completion-at-point              | Complete at point (global)   |
 | M-n / M-p   | next/previous-history-element    | Minibuffer history           |
 | C-g         | abort                            | Quit minibuffer              |
 

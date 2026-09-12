@@ -92,13 +92,15 @@ so the config still loads on older Emacs, and it coexists happily with corfu
 (keymap-global-set "C-c b l" #'bookmark-bmenu-list)
 (keymap-global-set "C-z"   #'undo-only)
 (keymap-global-set "C-S-z" #'undo-redo)
+(keymap-global-set "M-/"   #'completion-at-point)
 #+end_src
 
 Note the bookmark split: =C-c b m= = *make/set* a bookmark, =C-c b l= = *list*
 (=bookmark-bmenu-list=); the *jump* half, =C-c b j= → =consult-bookmark=, is
 defined in the consult block.  =C-z= / =C-S-z= are a familiar undo/redo pair
 (=undo-only= never re-does, so it can't walk back *into* a redo branch by
-accident).
+accident).  =M-/= triggers =completion-at-point= directly, complementing
+Corfu's automatic popup with an ergonomic on-demand trigger.
 
 #+begin_src elisp
 (windmove-default-keybindings)
