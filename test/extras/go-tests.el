@@ -73,6 +73,12 @@
   (should (member '(go-ts-mode-indent-offset 4)
                   (extras-test--use-package-section "go.el" 'go-ts-mode :custom))))
 
+(ert-deftest extras-test/given-go-then-gopls-workspace-configuration-is-tuned ()
+  (should (extras-test--declares "go.el" 'eglot-workspace-configuration))
+  (should (extras-test--declares "go.el" '(completionBudget . "200ms")))
+  (should (extras-test--declares "go.el" '(deepCompletion . t)))
+  (should (extras-test--declares "go.el" '(matcher . "Fuzzy"))))
+
 (ert-deftest extras-test/given-go-then-dape-is-declared-with-no-language-specific-config ()
   (should (member t (extras-test--use-package-section "go.el" 'dape :ensure)))
   (should (member '(dape-buffer-window-arrangement 'right)
