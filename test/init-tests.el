@@ -750,9 +750,9 @@ every elisp buffer (no LSP here); my-eglot-ensure skips lisp-data-mode descendan
   "Heavy inlay hints are excluded from server capabilities to reduce JSON-RPC traffic."
   (should (init-test--declares '(eglot-ignored-server-capabilities '(:inlayHintProvider)))))
 
-(ert-deftest init-test/given-eglot-then-change-idle-time-matches-intellij ()
-  "IntelliJ's highlighting daemon runs code analysis after 300 ms idle time."
-  (should (init-test--declares '(eglot-send-changes-idle-time 0.3))))
+(ert-deftest init-test/given-eglot-then-change-idle-time-is-snappy ()
+  "Eglot syncs changes after 100 ms to align with quick Corfu completion."
+  (should (init-test--declares '(eglot-send-changes-idle-time 0.1))))
 
 (ert-deftest init-test/given-eglot-then-its-commands-sit-under-a-buffer-local-prefix ()
   "eglot's own mode-map starts nearly empty (only the eldoc remap); its

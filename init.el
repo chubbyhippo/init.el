@@ -165,7 +165,7 @@
          ("C-c L"   . eglot-events-buffer))
   :custom
   (eglot-autoshutdown t)
-  (eglot-send-changes-idle-time 0.3)
+  (eglot-send-changes-idle-time 0.1)
   (eglot-ignored-server-capabilities '(:inlayHintProvider))
   (eglot-events-buffer-config '(:size 0 :format full)))
 
