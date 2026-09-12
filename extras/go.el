@@ -43,11 +43,6 @@
     (when (treesit-language-available-p 'gomod)
       (add-to-list 'auto-mode-alist '("/go\\.mod\\'" . go-mod-ts-mode))))
   :hook (go-ts-mode . my-go--format-on-save)
-  :config
-  (setq-default eglot-workspace-configuration
-                '((:gopls . ((completionBudget . "200ms")
-                             (deepCompletion . t)
-                             (matcher . "Fuzzy")))))
   :custom
   (go-ts-mode-indent-offset 4))
 
