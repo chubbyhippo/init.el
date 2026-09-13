@@ -608,9 +608,13 @@ so tramp/compression handlers work after startup."
   (should (init-test--declares 'lock-file-name-transforms)))
 
 (ert-deftest init-test/given-font-available-then-jetbrains-mono-and-line-spacing-are-set ()
-  "When JetBrainsMono Nerd Font is available, use it at size 13 with line spacing 0.2."
-  (should (init-test--declares '(find-font (font-spec :name "JetBrainsMono Nerd Font"))))
-  (should (init-test--declares '(set-face-attribute 'default nil :family "JetBrainsMono Nerd Font" :height 130)))
+  "When JetBrainsMono Nerd Font (or Windows NF variant) is available, use it at size 13 with line spacing 0.2."
+  (should (init-test--declares ''("JetBrainsMono Nerd Font"
+                                 "JetBrainsMono NF"
+                                 "JetBrainsMono NFM"
+                                 "JetBrains Mono")))
+  (should (init-test--declares '(find-font (font-spec :name name))))
+  (should (init-test--declares '(set-face-attribute 'default nil :family font :height 130)))
   (should (init-test--declares '(setq-default line-spacing 0.2))))
 
 (ert-deftest init-test/given-a-terminal-frame-then-the-mouse-is-enabled ()
