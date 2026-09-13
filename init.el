@@ -335,6 +335,7 @@
 (defvar corfu-map)
 (use-package corfu
   :ensure t
+  :demand t
   :preface
   (declare-function global-corfu-mode "corfu")
   (declare-function corfu-popupinfo-mode "corfu-popupinfo")

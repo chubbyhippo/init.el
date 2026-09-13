@@ -467,6 +467,7 @@ The heart of the interactive experience — several small packages that layer:
   #+end_src
 - *corfu* — in-buffer completion popup.
   #+begin_src elisp
+  :demand t
   (corfu-auto t)
   (corfu-auto-delay 0.1)   ; snappy popup aligned with eglot sync (100 ms debounce)
   (corfu-auto-prefix 2)
