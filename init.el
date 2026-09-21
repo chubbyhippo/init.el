@@ -39,9 +39,9 @@
 (use-package emacs
   :config
   (load-theme 'modus-operandi)
-  (when-let ((font (cl-some (lambda (name)
-                              (when (find-font (font-spec :name name))
-                                name))
+  (when-let* ((font (cl-some (lambda (name)
+                               (when (find-font (font-spec :name name))
+                                 name))
                             '("JetBrainsMono Nerd Font"
                               "JetBrainsMono NF"
                               "JetBrainsMono NFM"
