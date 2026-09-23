@@ -57,6 +57,7 @@
   (save-place-mode 1)
   (electric-pair-mode 1)
   (global-so-long-mode 1)
+  (global-display-line-numbers-mode 1)
   (when (fboundp 'global-completion-preview-mode)
     (global-completion-preview-mode 1))
   (keymap-global-set "C-c f f" #'find-file)

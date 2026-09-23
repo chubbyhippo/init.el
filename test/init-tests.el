@@ -628,6 +628,10 @@ tty to decode click/drag/wheel escape sequences from the terminal emulator."
 global-so-long-mode neutralizes them."
   (should (init-test--declares '(global-so-long-mode 1))))
 
+(ert-deftest init-test/given-the-config-then-global-display-line-numbers-mode-is-enabled ()
+  "global-display-line-numbers-mode is enabled so buffer line numbers are displayed globally."
+  (should (init-test--declares '(global-display-line-numbers-mode 1))))
+
 (ert-deftest init-test/given-emacs-30-then-completion-preview-coexists-with-corfu ()
   "Emacs 30's built-in ghost-text preview is enabled (guarded by fboundp) and
 runs happily alongside corfu."

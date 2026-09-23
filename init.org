@@ -59,6 +59,7 @@ collects the global modes, keys, and settings; the rest are small
 (save-place-mode 1)
 (electric-pair-mode 1)
 (global-so-long-mode 1)
+(global-display-line-numbers-mode 1)
 #+end_src
 
 - =modus-operandi= — a built-in high-contrast light theme (no external theme package).
@@ -79,6 +80,7 @@ collects the global modes, keys, and settings; the rest are small
 - =global-so-long-mode= — files with *pathologically long lines* (minified
   JS, single-line logs) can wedge Emacs; so-long detects them and disables
   the expensive machinery so they open instantly.
+- =global-display-line-numbers-mode= — display line numbers in all buffers.
 
 #+begin_src elisp
 (when (fboundp 'global-completion-preview-mode)
